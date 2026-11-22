@@ -1,0 +1,159 @@
+/* "App is Coming Soon" + pinned dark → light mode wipe (live: #App-coming-soon). */
+
+.section {
+  overflow-x: clip;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2em 2em 0;
+  text-align: center;
+}
+
+.title {
+  max-width: 910px;
+  margin: 6px 0 12px;
+  font-size: 75px;
+  font-weight: 800;
+  line-height: 1.5;
+  background-image: linear-gradient(to bottom, #f5f5f8, #bbbbbd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lede {
+  max-width: 510px;
+  margin: 0 auto;
+  color: rgb(255 255 255 / 75%);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: 1px;
+}
+
+.badges {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 8px 0 6px;
+  padding: 30px 0;
+}
+.badge {
+  width: 242px;
+  height: auto;
+}
+
+/* pinned wipe */
+.pin {
+  position: relative;
+  height: 200svh;
+}
+.pinInner {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  background: var(--background);
+}
+.light {
+  z-index: 1;
+  background: #fff;
+  clip-path: inset(100% 0 0 0);
+}
+
+.handHolder {
+  position: relative;
+  width: 400px;
+  height: fit-content;
+  margin-top: 24px;
+}
+.hand {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.appScreen {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 2.6% 26% 26.2% 16%;
+}
+.appScreen img {
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+@media (max-width: 991px) {
+  .title {
+    font-size: 55px;
+  }
+}
+
+@media (max-width: 767px) {
+  .head {
+    padding: 4px 16px 0;
+  }
+  .title {
+    font-size: 38px;
+    line-height: 1.2;
+  }
+  .lede {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .badges {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 32px;
+    padding: 0;
+  }
+  .badge {
+    width: 160px;
+  }
+  .handHolder {
+    margin-top: 96px;
+    transform: scale(1.32);
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 479px) {
+  .title {
+    font-size: 32px;
+  }
+  .lede {
+    font-size: 15px;
+  }
+  .badge {
+    width: 150px;
+  }
+  .handHolder {
+    width: 300px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin {
+    height: auto;
+  }
+  .pinInner {
+    position: relative;
+  }
+  .light {
+    display: none;
+  }
+}

@@ -1,0 +1,365 @@
+/*
+ * Home hero. Geometry ported from the live Webflow build (alluvi.store), including the vh-based
+ * phone geometry the screen overlay depends on. Load choreography = IX2 a-75/a-76, compressed so the
+ * heading (LCP) paints within ~0.2s instead of the live 2s.
+ */
+
+.hero {
+  --hero-ease: cubic-bezier(0.25, 0.1, 0.25, 1); /* IX2 "ease" */
+  position: relative;
+  overflow-x: clip;
+}
+
+/* ---------- intro ---------- */
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3em 1rem 0;
+  text-align: center;
+}
+
+.heading {
+  width: 90%;
+  max-width: 980px;
+  margin: 20px 0 10px;
+  font-size: 75px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0;
+  background-image: linear-gradient(to bottom, #f5f5f8, #bbbbbd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: heading-in 0.5s var(--hero-ease) 0.1s both;
+}
+.heading strong {
+  font-weight: 700;
+}
+.headingAccent {
+  background-image: linear-gradient(131deg, #ff8200, #5fc9fa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lede {
+  max-width: 980px;
+  margin: 0;
+  padding-bottom: 60px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 1px;
+  color: rgb(255 255 255 / 70%);
+  animation: rise-in 0.5s var(--hero-ease) 0.3s both;
+}
+
+.ctaRow {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.4em;
+}
+.ctaLink {
+  color: var(--brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+.ctaLink:hover {
+  color: #ffa54d;
+}
+
+/* ---------- giant split wordmark + phone demo ---------- */
+
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  margin-inline: auto;
+}
+
+.wordsSticky {
+  position: sticky;
+  top: 75px;
+  z-index: 0;
+  display: flex;
+  justify-content: center;
+  width: 99vw;
+  animation:
+    words-scale 0.6s var(--hero-ease) 0.45s both,
+    words-drop 0.8s var(--hero-ease) 0.8s both;
+}
+
+.words {
+  position: absolute;
+  top: 70px;
+  display: flex;
+  justify-content: center;
+  width: 99vw;
+  margin: 0;
+  overflow: hidden;
+  font-size: 13vw;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.wordHalf {
+  position: relative;
+  width: 50vw;
+  overflow: hidden;
+}
+
+.wordLeft,
+.wordRight {
+  display: block;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.wordLeft {
+  padding-right: 5vw;
+  text-align: right;
+  background-image: linear-gradient(131deg, #eec5bd, #ff8200 0%, #f3b1a5 35%, #91c1dd 78%, #5fc9fa);
+  animation: from-left 1s var(--hero-ease) both;
+}
+.wordRight {
+  text-align: left;
+  background-image: linear-gradient(131deg, #5fc9fa, #ff8200 88%, #ff8200);
+  animation: from-right 1s var(--hero-ease) both;
+}
+
+.demo {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 200vh;
+  animation: fade-in 0.5s var(--hero-ease) 0.6s both;
+}
+
+.demoSticky {
+  position: sticky;
+  top: 0;
+}
+
+.phoneFrame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: 1em;
+  overflow: hidden;
+  border-radius: 75px;
+}
+
+.phoneHolder {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100vh;
+  margin-right: -26vh;
+  padding-top: 11vh;
+  overflow: hidden;
+}
+
+.hand {
+  position: relative;
+  z-index: 1;
+  width: auto;
+  max-width: none;
+  height: 100%;
+}
+
+.screen {
+  position: absolute;
+  top: 12vh;
+  bottom: 30vh;
+  z-index: 0;
+  width: 27.7vh;
+  margin-left: 9.7%;
+  overflow: hidden;
+  border-radius: 8%;
+  background: #000;
+}
+
+.screenImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+.screenDash {
+  transform: translateX(100%);
+}
+
+/* ---------- keyframes ---------- */
+
+/* Heading and lede are the LCP candidates: they move in (IX2 a-75/a-76 transforms) but never start
+   transparent, because Chrome only counts LCP once an element is visible, and the animation start
+   can be held back by hydration on slow phones. */
+@keyframes heading-in {
+  from {
+    transform: translateY(20px) skew(-3deg, -3deg);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes rise-in {
+  from {
+    transform: translateY(20px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes from-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes from-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes words-scale {
+  from {
+    scale: 0.8;
+  }
+  to {
+    scale: 1;
+  }
+}
+@keyframes words-drop {
+  from {
+    translate: 0 -5vh;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- breakpoints (live: 1280 / 991 / 767) ---------- */
+
+@media (min-width: 1280px) {
+  .headingAccent {
+    background-image: linear-gradient(131deg, #eec5bd, #f3b1a5 35%, #c6caf6 72%, #dad9e9);
+  }
+  .wordLeft {
+    background-image: linear-gradient(131deg, #eec5bd, #ff8200 0%, #f3b1a5 35%, #c6caf6 72%, #dad9e9);
+  }
+  .wordRight {
+    background-image: linear-gradient(131deg, #eec5bd, #f3b1a5 6%, #c6caf6 61%, #dad9e9 72%, #eec5bd);
+  }
+}
+
+@media (max-width: 991px) {
+  .intro {
+    padding-top: 2em;
+  }
+  .heading {
+    font-size: 42px;
+    line-height: 1.3;
+  }
+  .stage {
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Fill the first screen so the giant wordmark just peeks in at the bottom and the phone starts
+     below the fold (as on the live site); keeps the heading as the mobile LCP element. */
+  .intro {
+    justify-content: center;
+    min-height: calc(100svh - var(--announcement-height) - var(--header-height) - 6.5rem);
+  }
+  .heading {
+    width: 100%;
+    margin: 12px 0 16px;
+    font-size: 40px;
+    line-height: 1.25;
+  }
+  .lede {
+    width: 92%;
+    padding-bottom: 48px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .ctaRow {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .ctaSep {
+    display: none;
+  }
+
+  .wordsSticky {
+    width: 100%;
+  }
+  .words {
+    width: 100%;
+    gap: 6px;
+    padding: 0 12px;
+    overflow: visible;
+    font-size: 68px;
+    line-height: 1.1;
+  }
+  .wordHalf {
+    flex: 0 0 auto;
+    width: auto;
+    overflow: visible;
+    /* scroll offsets are desktop-only on the live site */
+    transform: none !important;
+  }
+  .wordLeft {
+    padding-right: 0;
+  }
+
+  .phoneFrame {
+    align-items: flex-start;
+    border-radius: 0;
+  }
+  /* The hand image is ~65.7vh wide and the phone's centre sits ~19.7vh from its left edge:
+     offset it so the phone is centred and the hand bleeds off the right, like the live site. */
+  .phoneHolder {
+    margin-right: 0;
+    margin-left: calc(50% - 19.7vh);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heading,
+  .lede,
+  .wordsSticky,
+  .wordLeft,
+  .wordRight,
+  .demo {
+    animation: none;
+  }
+}

@@ -1,12 +1,42 @@
 import type { NextConfig } from "next";
 
+/**
+ * Legacy live-site routes (docs/CONTENT_INVENTORY.md "Route parity"). All permanent (308, which
+ * search engines treat like 301). Routes that are rebuilt (shop, product, policies, …) are not here.
+ */
+const LEGACY_REDIRECTS: { source: string; destination: string }[] = [
+  { source: "/fake-sellers", destination: "/spot-a-fake#watchlist" },
+  { source: "/order-confirmation", destination: "/track-order" },
+  { source: "/order-information", destination: "/track-order" },
+  { source: "/payment-review", destination: "/track-order" },
+  { source: "/payment-completed", destination: "/track-order" },
+  { source: "/telegram-order", destination: "/shop" },
+  { source: "/wholesale-console", destination: "/wholesale" },
+  { source: "/management-console", destination: "/admin" },
+  // Unknown purpose on the live site; default per CONTENT_INVENTORY is the home page.
+  { source: "/ai-service", destination: "/" },
+  { source: "/train-model", destination: "/" },
+  { source: "/test-product", destination: "/" },
+  { source: "/refersufbrfbrr", destination: "/" },
+];
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Dev-only: lets devices on the local network load dev assets/HMR.
+  allowedDevOrigins: ["192.168.1.177", "192.168.*.*"],
   cacheComponents: true,
   partialPrefetching: true,
+  // Policy pages read content/pages/*.md at render time; ship them with the server bundle.
+  outputFileTracingIncludes: {
+    "/policies/*": ["./content/pages/**/*.md"],
+  },
+  async redirects() {
+    return LEGACY_REDIRECTS.map((r) => ({ ...r, permanent: true }));
+  },
   turbopack: {
     rules: {
-      "*.css": {
+      // Only the Tailwind entry. A "*.css" key would also catch *.module.css and, via `as`,
+      // re-type them as global CSS, so CSS Modules would export no class names.
+      "globals.css": {
         loaders: ["@tailwindcss/turbopack"],
         as: "*.css",
       },

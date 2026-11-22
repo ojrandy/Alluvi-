@@ -1,0 +1,173 @@
+/* Retatrutide 56-day stability test: sticky panel where Stage 1 hands over to Stage 2 (live: #features). */
+
+.section {
+  padding: 15px 0;
+}
+
+.scroller {
+  position: relative;
+  min-height: 150vh;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.container {
+  width: 100%;
+  max-width: 1370px;
+  margin: 0 auto;
+  padding: 0 2em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 30px;
+}
+
+.title {
+  margin: 0 0 10px;
+  font-size: 75px;
+  font-weight: 500;
+  line-height: 1.2;
+  background-image: linear-gradient(to bottom, #f5f5f8, #bbbbbd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.copy {
+  margin: 0;
+  color: #b4bcd0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 1px;
+}
+.copy a {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.copy a:hover {
+  color: #ffa54d;
+}
+.subtitle {
+  color: #fff;
+  font-size: 1.25em;
+  font-weight: 700;
+}
+.white {
+  color: #fff;
+  font-weight: 700;
+}
+.key {
+  color: var(--brand);
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+.list {
+  position: relative;
+  min-height: 62vh;
+}
+
+.item {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.stageNo {
+  margin: 0 10px -14px 0;
+  font-size: 75px;
+  font-weight: 800;
+  line-height: 1.5;
+  background-image: linear-gradient(128deg, #eec5bd, #f3b1a5 26%, #c6caf6 74%, #dad9e9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* below 992px (and with reduced motion) the sticky swap is dropped and the stages simply stack */
+@media (max-width: 991px), (prefers-reduced-motion: reduce) {
+  .scroller {
+    min-height: 0;
+  }
+  .sticky {
+    position: relative;
+    display: block;
+    height: auto;
+    overflow: visible;
+    padding: 47px 0;
+  }
+  .list {
+    min-height: 0;
+  }
+  .item {
+    position: static;
+    margin-bottom: 5vh;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .title {
+    font-size: 55px;
+  }
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 0 1em;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .intro,
+  .item {
+    align-items: center;
+    text-align: center;
+  }
+  .title {
+    font-size: 42px;
+  }
+  .copy {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .item {
+    margin-bottom: 0;
+    padding: 24px 0;
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+  }
+  .item:last-child {
+    border-bottom: none;
+  }
+  .stageNo {
+    margin: 0;
+    font-size: 42px;
+    line-height: 1.2;
+  }
+}
+
+@media (max-width: 479px) {
+  .title {
+    font-size: 34px;
+  }
+}

@@ -1,0 +1,548 @@
+[
+  {
+    "slug": "tesamorelin-20mg",
+    "name": "Tesamorelin 20mg (R&D Only)",
+    "pricePence": 12000,
+    "shortDescription": "A 20mg Tesamorelin formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "description": "A 20mg Tesamorelin formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "category": "Research compound",
+    "badge": "New arrival",
+    "disclaimer": "MANDATORY DISCLAIMER: This product is used solely for in vitro experiments and cannot be: (1) Used in clinical trials involving humans, (2) Administered to humans as part of an experiment or investigation, or (3) Supplied to another party for human investigational use. The information provided is for educational purposes only.",
+    "safetyNote": "Safety Protocol: Produced for laboratory research only. Not for human or veterinary consumption.",
+    "labReportUrl": null,
+    "specs": {
+      "batchNumber": null,
+      "fillVolume": null,
+      "purity": null,
+      "dateTested": null,
+      "compounds": [],
+      "packageContents": [
+        "Pre-filled Research pen (20mg Tesamorelin)",
+        "Research information sheet"
+      ],
+      "labReports": []
+    },
+    "images": [
+      {
+        "url": "/images/tesaimages/tesafront.webp",
+        "alt": "Tesamorelin 20mg: front of packaging"
+      },
+      {
+        "url": "/images/tesaimages/tesapen.webp",
+        "alt": "Tesamorelin 20mg: pre-filled research pen"
+      },
+      {
+        "url": "/images/tesaimages/tesaopen.webp",
+        "alt": "Tesamorelin 20mg: opened packaging"
+      },
+      {
+        "url": "/images/tesaimages/tesauv.webp",
+        "alt": "Tesamorelin 20mg: UV authenticity mark"
+      }
+    ],
+    "relatedNames": [
+      "Retatrutide 20mg (R&D Only)",
+      "Retatrutide 40mg (R&D Only)"
+    ],
+    "sortOrder": 1,
+    "metaTitle": "Tesamorelin 20mg (R&D Only) | Advanced Research | Alluvi"
+  },
+  {
+    "slug": "mots-c-40mg",
+    "name": "MOTS-C 40mg (R&D Only)",
+    "pricePence": 10000,
+    "shortDescription": "A 40mg MOTS-C formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "description": "A 40mg MOTS-C formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "category": "Research compound",
+    "badge": "New arrival",
+    "disclaimer": "MANDATORY DISCLAIMER: This product is used solely for in vitro experiments and cannot be: (1) Used in clinical trials involving humans, (2) Administered to humans as part of an experiment or investigation, or (3) Supplied to another party for human investigational use. The information provided is for educational purposes only.",
+    "safetyNote": "Safety Protocol: Produced for laboratory research only. Not for human or veterinary consumption.",
+    "labReportUrl": null,
+    "specs": {
+      "batchNumber": null,
+      "fillVolume": null,
+      "purity": null,
+      "dateTested": null,
+      "compounds": [],
+      "packageContents": [
+        "Pre-filled Research pen (40mg MOTS-C)",
+        "Research information sheet"
+      ],
+      "labReports": []
+    },
+    "images": [
+      {
+        "url": "/images/motscimages/motscfront.webp",
+        "alt": "MOTS-C 40mg: front of packaging"
+      },
+      {
+        "url": "/images/motscimages/motscpen.webp",
+        "alt": "MOTS-C 40mg: pre-filled research pen"
+      },
+      {
+        "url": "/images/motscimages/motscopen.webp",
+        "alt": "MOTS-C 40mg: opened packaging"
+      },
+      {
+        "url": "/images/motscimages/motscuv.webp",
+        "alt": "MOTS-C 40mg: UV authenticity mark"
+      }
+    ],
+    "relatedNames": [
+      "Retatrutide 20mg (R&D Only)",
+      "Retatrutide 40mg (R&D Only)"
+    ],
+    "sortOrder": 2,
+    "metaTitle": "MOTS-C 40mg (R&D Only) | Advanced Research | Alluvi"
+  },
+  {
+    "slug": "cjc-1295-10mg",
+    "name": "CJC-1295 (No DAC) 10mg (R&D Only)",
+    "pricePence": 10000,
+    "shortDescription": "A 10mg CJC-1295 (without DAC) formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "description": "A 10mg CJC-1295 (without DAC) formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "category": "Research compound",
+    "badge": "New arrival",
+    "disclaimer": "MANDATORY DISCLAIMER: This product is used solely for in vitro experiments and cannot be: (1) Used in clinical trials involving humans, (2) Administered to humans as part of an experiment or investigation, or (3) Supplied to another party for human investigational use. The information provided is for educational purposes only.",
+    "safetyNote": "Safety Protocol: Produced for laboratory research only. Not for human or veterinary consumption.",
+    "labReportUrl": null,
+    "specs": {
+      "batchNumber": null,
+      "fillVolume": null,
+      "purity": null,
+      "dateTested": null,
+      "compounds": [],
+      "packageContents": [
+        "Pre-filled Research pen (10mg CJC-1295 without DAC)",
+        "Research information sheet"
+      ],
+      "labReports": []
+    },
+    "images": [
+      {
+        "url": "/images/cjcimages/cjcfront.webp",
+        "alt": "CJC-1295 (No DAC) 10mg: front of packaging"
+      },
+      {
+        "url": "/images/cjcimages/cjcpen.webp",
+        "alt": "CJC-1295 (No DAC) 10mg: pre-filled research pen"
+      },
+      {
+        "url": "/images/cjcimages/cjcopen.webp",
+        "alt": "CJC-1295 (No DAC) 10mg: opened packaging"
+      },
+      {
+        "url": "/images/cjcimages/cjcuv.webp",
+        "alt": "CJC-1295 (No DAC) 10mg: UV authenticity mark"
+      }
+    ],
+    "relatedNames": [
+      "Retatrutide 20mg (R&D Only)",
+      "Retatrutide 40mg (R&D Only)"
+    ],
+    "sortOrder": 3,
+    "metaTitle": "CJC-1295 (No DAC) 10mg (R&D Only) | Advanced Research | Alluvi"
+  },
+  {
+    "slug": "tirzepatide-40mg",
+    "name": "Tirzepatide 40mg (R&D Only)",
+    "pricePence": 9000,
+    "shortDescription": "A 40mg Tirzepatide formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "description": "A 40mg Tirzepatide formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "category": "Research compound",
+    "badge": null,
+    "disclaimer": "MANDATORY DISCLAIMER: This product is used solely for in vitro experiments and cannot be: (1) Used in clinical trials involving humans, (2) Administered to humans as part of an experiment or investigation, or (3) Supplied to another party for human investigational use. The information provided is for educational purposes only.",
+    "safetyNote": "Safety Protocol: Produced for laboratory research only. Not for human or veterinary consumption.",
+    "labReportUrl": "https://verify.janoshik.com/tests/239744-ALLUVI_TIRZEPATIDE_40MG_KIT_S7637Z45SNLZ",
+    "specs": {
+      "batchNumber": "BT3426LAM",
+      "fillVolume": "3 ml",
+      "purity": "99.82%",
+      "dateTested": "05 Oct 2026",
+      "compounds": [
+        {
+          "compound": "Tirzepatide",
+          "concentration": "13.35 mg/ml",
+          "verifiedContent": "40.05 mg"
+        }
+      ],
+      "packageContents": [
+        "Pre-filled Research pen (40mg Tirzepatide)",
+        "Research information sheet"
+      ],
+      "labReports": [
+        {
+          "label": "Purity Test",
+          "url": "https://verify.janoshik.com/tests/239744-ALLUVI_TIRZEPATIDE_40MG_KIT_S7637Z45SNLZ"
+        },
+        {
+          "label": "Heavy Metal Screening",
+          "url": "https://verify.janoshik.com/tests/240672-ALLUVI_TIRZEPATIDE_40MG_KIT_QACPQ97FC66W"
+        },
+        {
+          "label": "LCMS Screening",
+          "url": "https://verify.janoshik.com/tests/240673-ALLUVI_TIRZEPATIDE_40MG_KIT_NXEUFMQW5U95"
+        },
+        {
+          "label": "Sterility Test",
+          "url": "https://verify.janoshik.com/tests/240674-ALLUVI_TIRZEPATIDE_40MG_KIT_RTPQ764KAUNE"
+        }
+      ]
+    },
+    "images": [
+      {
+        "url": "/images/trizyimages/trizyfront.jpg",
+        "alt": "Tirzepatide 40mg: front of packaging"
+      },
+      {
+        "url": "/images/trizyimages/trizypen.jpg",
+        "alt": "Tirzepatide 40mg: pre-filled research pen"
+      },
+      {
+        "url": "/images/trizyimages/trizyopen.jpg",
+        "alt": "Tirzepatide 40mg: opened packaging"
+      },
+      {
+        "url": "/images/trizyimages/trizyuv.jpg",
+        "alt": "Tirzepatide 40mg: UV authenticity mark"
+      }
+    ],
+    "relatedNames": [
+      "Retatrutide 40mg (R&D Only)"
+    ],
+    "sortOrder": 4,
+    "metaTitle": "Tirzepatide 40mg (R&D Only) | Advanced Research | Alluvi"
+  },
+  {
+    "slug": "retatrutide-40mg",
+    "name": "Retatrutide 40mg (R&D Only)",
+    "pricePence": 14000,
+    "shortDescription": "A 40mg Retatrutide formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "description": "A 40mg Retatrutide formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "category": "Research compound",
+    "badge": null,
+    "disclaimer": "MANDATORY DISCLAIMER: This product is used solely for in vitro experiments and cannot be: (1) Used in clinical trials involving humans, (2) Administered to humans as part of an experiment or investigation, or (3) Supplied to another party for human investigational use. The information provided is for educational purposes only.",
+    "safetyNote": "Safety Protocol: Produced for laboratory research only. Not for human or veterinary consumption.",
+    "labReportUrl": "https://verify.janoshik.com/tests/239742-ALLUVI_RETATRUTIDE_40MG_KIT_EM6LUXF19LHZ",
+    "specs": {
+      "batchNumber": "RT9264BUG",
+      "fillVolume": "2.6 ml",
+      "purity": "99.83%",
+      "dateTested": "05 Oct 2026",
+      "compounds": [
+        {
+          "compound": "Retatrutide",
+          "concentration": "16.62 mg/ml",
+          "verifiedContent": "43.21 mg"
+        }
+      ],
+      "packageContents": [
+        "Pre-filled Research pen (40mg Retatrutide)",
+        "Research information sheet"
+      ],
+      "labReports": [
+        {
+          "label": "Purity Test",
+          "url": "https://verify.janoshik.com/tests/239742-ALLUVI_RETATRUTIDE_40MG_KIT_EM6LUXF19LHZ"
+        },
+        {
+          "label": "Heavy Metal Screening",
+          "url": "https://verify.janoshik.com/tests/240665-ALLUVI_RETATRUTIDE_40MG_KIT_KGM7VLE9RPXB"
+        },
+        {
+          "label": "LCMS Screening",
+          "url": "https://verify.janoshik.com/tests/240666-ALLUVI_RETATRUTIDE_40MG_KIT_9GRD3UU2R4K4"
+        },
+        {
+          "label": "Sterility Test",
+          "url": "https://verify.janoshik.com/tests/240663-ALLUVI_RETATRUTIDE_40MG_KIT_5JT37HIEBSYR"
+        }
+      ]
+    },
+    "images": [
+      {
+        "url": "/images/reta40images/reta40front.jpg",
+        "alt": "Retatrutide 40mg: front of packaging"
+      },
+      {
+        "url": "/images/reta40images/reta40pen.jpg",
+        "alt": "Retatrutide 40mg: pre-filled research pen"
+      },
+      {
+        "url": "/images/reta40images/reta40open.jpg",
+        "alt": "Retatrutide 40mg: opened packaging"
+      },
+      {
+        "url": "/images/reta40images/reta40uv.jpg",
+        "alt": "Retatrutide 40mg: UV authenticity mark"
+      }
+    ],
+    "relatedNames": [
+      "Retatrutide 20mg (R&D Only)",
+      "Tirzepatide 40mg (R&D Only)"
+    ],
+    "sortOrder": 5,
+    "metaTitle": "Retatrutide 40mg (R&D Only) | Advanced Research | Alluvi"
+  },
+  {
+    "slug": "retatrutide-20mg",
+    "name": "Retatrutide 20mg (R&D Only)",
+    "pricePence": 9000,
+    "shortDescription": "A 20mg Retatrutide formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "description": "A 20mg Retatrutide formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "category": "Research compound",
+    "badge": null,
+    "disclaimer": "MANDATORY DISCLAIMER: This product is used solely for in vitro experiments and cannot be: (1) Used in clinical trials involving humans, (2) Administered to humans as part of an experiment or investigation, or (3) Supplied to another party for human investigational use. The information provided is for educational purposes only.",
+    "safetyNote": "Safety Protocol: Produced for laboratory research only. Not for human or veterinary consumption.",
+    "labReportUrl": "https://verify.janoshik.com/tests/239743-ALLUVI_RETATRUTIDE_20MG_KIT_1IUIK66E23KN",
+    "specs": {
+      "batchNumber": "AR1721TRT",
+      "fillVolume": "2.6 ml",
+      "purity": "99.84%",
+      "dateTested": "05 Oct 2026",
+      "compounds": [
+        {
+          "compound": "Retatrutide",
+          "concentration": "8.48 mg/ml",
+          "verifiedContent": "22.05 mg"
+        }
+      ],
+      "packageContents": [
+        "Pre-filled Research pen (20mg Retatrutide)",
+        "Research information sheet"
+      ],
+      "labReports": [
+        {
+          "label": "Purity Test",
+          "url": "https://verify.janoshik.com/tests/239743-ALLUVI_RETATRUTIDE_20MG_KIT_1IUIK66E23KN"
+        },
+        {
+          "label": "Heavy Metal Screening",
+          "url": "https://verify.janoshik.com/tests/240669-ALLUVI_RETATRUTIDE_20MG_KIT_YHQZ8ZZMXHAP"
+        },
+        {
+          "label": "Sterility Test",
+          "url": "https://verify.janoshik.com/tests/240670-ALLUVI_RETATRUTIDE_20MG_KIT_AHP36HQEMKTC"
+        }
+      ]
+    },
+    "images": [
+      {
+        "url": "/images/reta20images/reta20front.jpg",
+        "alt": "Retatrutide 20mg: front of packaging"
+      },
+      {
+        "url": "/images/reta20images/reta20pen.jpg",
+        "alt": "Retatrutide 20mg: pre-filled research pen"
+      },
+      {
+        "url": "/images/reta20images/reta20open.jpg",
+        "alt": "Retatrutide 20mg: opened packaging"
+      },
+      {
+        "url": "/images/reta20images/reta20uv.jpg",
+        "alt": "Retatrutide 20mg: UV authenticity mark"
+      }
+    ],
+    "relatedNames": [
+      "Retatrutide 40mg (R&D Only)",
+      "Tirzepatide 40mg (R&D Only)"
+    ],
+    "sortOrder": 6,
+    "metaTitle": "Retatrutide 20mg (R&D Only) | Advanced Research | Alluvi"
+  },
+  {
+    "slug": "glow-70mg",
+    "name": "Glow 70mg (R&D Only)",
+    "pricePence": 9000,
+    "shortDescription": "A 70mg Glow formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "description": "A 70mg Glow formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "category": "Research compound",
+    "badge": null,
+    "disclaimer": "MANDATORY DISCLAIMER: This product is used solely for in vitro experiments and cannot be: (1) Used in clinical trials involving humans, (2) Administered to humans as part of an experiment or investigation, or (3) Supplied to another party for human investigational use. The information provided is for educational purposes only.",
+    "safetyNote": "Safety Protocol: Produced for laboratory research only. Not for human or veterinary consumption.",
+    "labReportUrl": "https://verify.janoshik.com/tests/163217-ALLUVI_GLOW_70MG_KIT_DCL3AJSE4JQP",
+    "specs": {
+      "batchNumber": "GL0621XSA",
+      "fillVolume": "3.4 ml",
+      "purity": null,
+      "dateTested": null,
+      "compounds": [
+        {
+          "compound": "GHK-Cu",
+          "concentration": "7.59 mg/ml",
+          "verifiedContent": "25.8 mg"
+        },
+        {
+          "compound": "BPC-157",
+          "concentration": "2.39 mg/ml",
+          "verifiedContent": "8.13 mg"
+        },
+        {
+          "compound": "TB-500",
+          "concentration": "1.99 mg/ml",
+          "verifiedContent": "6.76 mg"
+        }
+      ],
+      "packageContents": [
+        "2 × Pre-filled Research pens (Each pen contains 5mg BPC-157, 5mg TB-500, 25mg GHK-Cu)",
+        "Total contents: 10mg BPC-157, 10mg TB-500, 50mg GHK-Cu"
+      ],
+      "labReports": [
+        {
+          "label": "Janoshik analytical report",
+          "url": "https://verify.janoshik.com/tests/163217-ALLUVI_GLOW_70MG_KIT_DCL3AJSE4JQP"
+        }
+      ]
+    },
+    "images": [
+      {
+        "url": "/images/glowimages/glowfront.webp",
+        "alt": "Glow 70mg: front of packaging"
+      },
+      {
+        "url": "/images/glowimages/glowpen.webp",
+        "alt": "Glow 70mg: pre-filled research pen"
+      },
+      {
+        "url": "/images/glowimages/glowopen.webp",
+        "alt": "Glow 70mg: opened packaging"
+      },
+      {
+        "url": "/images/glowimages/glowuv.webp",
+        "alt": "Glow 70mg: UV authenticity mark"
+      }
+    ],
+    "relatedNames": [
+      "Retatrutide 20mg (R&D Only)",
+      "Retatrutide 40mg (R&D Only)"
+    ],
+    "sortOrder": 7,
+    "metaTitle": "Glow 70mg (R&D Only) | Advanced Research | Alluvi"
+  },
+  {
+    "slug": "bpc-157-tb-500-40mg",
+    "name": "BPC-157 & TB-500 40mg (R&D Only)",
+    "pricePence": 12000,
+    "shortDescription": "A 40mg BPC-157 & TB-500 formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "description": "A 40mg BPC-157 & TB-500 formulation supplied in a pre-filled research device, provided exclusively for controlled laboratory R&D applications. Delivered in sealed format to support compound stability analysis, formulation studies, and delivery mechanism evaluation.",
+    "category": "Research compound",
+    "badge": null,
+    "disclaimer": "MANDATORY DISCLAIMER: This product is used solely for in vitro experiments and cannot be: (1) Used in clinical trials involving humans, (2) Administered to humans as part of an experiment or investigation, or (3) Supplied to another party for human investigational use. The information provided is for educational purposes only.",
+    "safetyNote": "Safety Protocol: Produced for laboratory research only. Not for human or veterinary consumption.",
+    "labReportUrl": "https://verify.janoshik.com/tests/163218-ALLUVI_BPC157_TB500_40MG_KIT_EAI125ZEF8TB",
+    "specs": {
+      "batchNumber": "BP1701FSR",
+      "fillVolume": "3 ml",
+      "purity": null,
+      "dateTested": null,
+      "compounds": [
+        {
+          "compound": "BPC-157",
+          "concentration": "7.33 mg/ml",
+          "verifiedContent": "21.99 mg"
+        },
+        {
+          "compound": "TB-500",
+          "concentration": "6.53 mg/ml",
+          "verifiedContent": "19.59 mg"
+        }
+      ],
+      "packageContents": [
+        "Pre-filled Research pen (20mg BPC-157, 20mg TB-500)",
+        "Research information sheet"
+      ],
+      "labReports": [
+        {
+          "label": "Janoshik analytical report",
+          "url": "https://verify.janoshik.com/tests/163218-ALLUVI_BPC157_TB500_40MG_KIT_EAI125ZEF8TB"
+        }
+      ]
+    },
+    "images": [
+      {
+        "url": "/images/bpcimages/bpcfront.jpg",
+        "alt": "BPC-157 & TB-500 40mg: front of packaging"
+      },
+      {
+        "url": "/images/bpcimages/bpcpen.jpg",
+        "alt": "BPC-157 & TB-500 40mg: pre-filled research pen"
+      },
+      {
+        "url": "/images/bpcimages/bpcthree.jpg",
+        "alt": "BPC-157 & TB-500 40mg: opened packaging"
+      },
+      {
+        "url": "/images/bpcimages/bpcuv.jpg",
+        "alt": "BPC-157 & TB-500 40mg: UV authenticity mark"
+      }
+    ],
+    "relatedNames": [
+      "Retatrutide 20mg (R&D Only)",
+      "Tirzepatide 40mg (R&D Only)",
+      "Retatrutide 40mg (R&D Only)"
+    ],
+    "sortOrder": 8,
+    "metaTitle": "BPC-157 & TB-500 40mg (R&D Only) | Advanced Research | Alluvi"
+  },
+  {
+    "slug": "nad-plus-1000mg",
+    "name": "NAD+ 1,000mg",
+    "pricePence": 14000,
+    "shortDescription": "NAD+ (Nicotinamide Adenine Dinucleotide) research formulation for laboratory analysis and in vitro studies only. Provided exclusively for controlled laboratory R&D applications.",
+    "description": "NAD+ (Nicotinamide Adenine Dinucleotide) research formulation for laboratory analysis and in vitro studies only. Provided exclusively for controlled laboratory R&D applications.",
+    "category": "Support",
+    "badge": null,
+    "disclaimer": "MANDATORY DISCLAIMER: This product is used solely for in vitro experiments and cannot be: (1) Used in clinical trials involving humans, (2) Administered to humans as part of an experiment or investigation, or (3) Supplied to another party for human investigational use. The information provided is for educational purposes only.",
+    "safetyNote": "Safety Protocol: Produced for laboratory research only. Not for human or veterinary consumption.",
+    "labReportUrl": "https://verify.janoshik.com/tests/239746-ALLUVI_NAD_1000MG_KIT_9N7ZBI9ZDGEL",
+    "specs": {
+      "batchNumber": "ND68442NIC",
+      "fillVolume": "3 ml",
+      "purity": null,
+      "dateTested": "05 Oct 2026",
+      "compounds": [
+        {
+          "compound": "NAD+",
+          "concentration": "168.59 mg/ml",
+          "verifiedContent": "505.77 mg"
+        }
+      ],
+      "packageContents": [
+        "2 × Pre-filled NAD+ pens (500mg each)",
+        "Research information sheet"
+      ],
+      "labReports": [
+        {
+          "label": "Janoshik analytical report",
+          "url": "https://verify.janoshik.com/tests/239746-ALLUVI_NAD_1000MG_KIT_9N7ZBI9ZDGEL"
+        }
+      ]
+    },
+    "images": [
+      {
+        "url": "/images/nadimages/nadfront.webp",
+        "alt": "NAD+ 1,000mg: front of packaging"
+      },
+      {
+        "url": "/images/nadimages/nadpen.webp",
+        "alt": "NAD+ 1,000mg: pre-filled research pen"
+      },
+      {
+        "url": "/images/nadimages/nadopen.webp",
+        "alt": "NAD+ 1,000mg: opened packaging"
+      },
+      {
+        "url": "/images/nadimages/naduv.webp",
+        "alt": "NAD+ 1,000mg: UV authenticity mark"
+      }
+    ],
+    "relatedNames": [
+      "Tirzepatide 40mg (R&D Only)",
+      "Retatrutide 20mg (R&D Only)",
+      "Retatrutide 40mg (R&D Only)"
+    ],
+    "sortOrder": 9,
+    "metaTitle": "NAD+ 1,000mg | Advanced Research | Alluvi"
+  }
+]

@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# allow committing the env template
+!.env.example
+
+# scraped content from the live site (raw, untrusted)
+/content-recovery/raw/
