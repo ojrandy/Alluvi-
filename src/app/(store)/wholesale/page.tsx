@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Mail, Send } from "lucide-react";
+import { Mail, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { site } from "@/lib/site";
 
@@ -58,6 +58,13 @@ export default function WholesalePage() {
               <a href={site.contact.telegramUrl} target="_blank" rel="noopener noreferrer">
                 <Send data-icon="inline-start" aria-hidden="true" />
                 Telegram {site.contact.telegramHandle}
+                <span className="sr-only">(opens in a new tab)</span>
+              </a>
+            </Button>
+            <Button asChild variant="glass" size="xl">
+              <a href={site.contact.whatsappUrl} target="_blank" rel="noopener noreferrer">
+                <MessageCircle data-icon="inline-start" aria-hidden="true" />
+                WhatsApp
                 <span className="sr-only">(opens in a new tab)</span>
               </a>
             </Button>

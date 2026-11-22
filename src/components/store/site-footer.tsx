@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cacheLife } from "next/cache";
-import { ArrowUpRight, FlaskConical, Landmark, Mail, Send, ShieldCheck, Truck } from "lucide-react";
+import { ArrowUpRight, FlaskConical, Landmark, Mail, MessageCircle, Send, ShieldCheck, Truck } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { site, type NavLink } from "@/lib/site";
 
@@ -63,6 +63,18 @@ export function SiteFooter() {
               >
                 <Send className="size-4 text-muted-foreground" aria-hidden="true" />
                 Telegram {site.contact.telegramHandle}
+                <span className="sr-only">(opens in a new tab)</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href={site.contact.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-foreground/85 hover:text-brand"
+              >
+                <MessageCircle className="size-4 text-muted-foreground" aria-hidden="true" />
+                WhatsApp
                 <span className="sr-only">(opens in a new tab)</span>
               </a>
             </li>

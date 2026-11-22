@@ -7,12 +7,13 @@
   "contact": {
     "researchEmail": "research@alluvi.org",
     "supportEmail": "support@alluvi.org",
-    "telegramHandle": "@Sophie_alluvi_xxx",
-    "telegramUrl": "https://t.me/Sophie_alluvi_xxx"
+    "telegramHandle": "@ukalluvi",
+    "telegramUrl": "https://t.me/ukalluvi",
+    "whatsappUrl": "https://wa.me/message/3GOTNZ2THRYZE1"
   },
   "announcements": [
     { "label": "FREE SHIPPING", "text": "Free shipping on every order for our first 60 days.", "tone": "promo" },
-    { "label": "SOCIAL MEDIA WARNING", "text": "Alluvi has never operated on any social media platforms. Please don't make any payments or fall victim to anything claiming to be Alluvi on social media platforms.", "tone": "warning" },
+    { "label": "SOCIAL MEDIA WARNING", "text": "Our only official channels are Telegram @ukalluvi and our WhatsApp linked on this site. Please don't make any payments or fall victim to anything else claiming to be Alluvi on social media platforms.", "tone": "warning" },
     { "label": "OFFICIAL SITE", "text": "Our official site is www.alluvi.org, we are only handling this site. Please Beware of other scam sites.", "tone": "warning" },
     { "label": "SECURITY ALERT", "text": "Fake websites impersonating Alluvi are appearing in Google search results. These sites are not affiliated with us in any way. Please do not interact with them or share any personal or payment information.", "tone": "warning" },
     { "label": "RESEARCH USE ONLY, NOT FOR HUMAN CONSUMPTION", "text": "All products are for laboratory research and in vitro studies only. Not for human or veterinary use.", "tone": "info" }
@@ -32,7 +33,8 @@
           { "label": "All research peptides", "href": "/shop" },
           { "label": "Track your order", "href": "/track-order" },
           { "label": "Wholesale", "href": "/wholesale" },
-          { "label": "Order on Telegram", "href": "https://t.me/Sophie_alluvi_xxx", "external": true }
+          { "label": "Order on Telegram", "href": "https://t.me/ukalluvi", "external": true },
+          { "label": "Chat on WhatsApp", "href": "https://wa.me/message/3GOTNZ2THRYZE1", "external": true }
         ]
       },
       {

@@ -85,6 +85,8 @@ Tokens are single-use and expire after 30 minutes. Only the hash is stored.
 ### `order_events`
 | id uuid PK | order_id FK (cascade) | type text (`created`,`status_changed`,`email_sent`,`email_failed`,`note`) | data jsonb | actor text (`system`/admin email) | created_at |
 
+`status_changed` events **must** store `data: { from, to }` (order statuses). `/track-order` builds the customer timeline from them (`getOrderStatusChanges`); only the status and time are shown, never the actor or other data.
+
 ### `rate_limits`
 | key varchar(191) PK (e.g. `login:<ipHash>`) | count int | reset_at datetime |
 Fixed-window counters stored in the DB, because Passenger can run several worker processes and an in-memory limiter would not be shared.

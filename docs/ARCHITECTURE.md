@@ -95,7 +95,13 @@ The checkout sidebar is priced by `quoteCheckout` (same `pricing.ts`), never by 
 
 ### 4.2 Admin status change
 `updateOrderStatus(id, status, tracking?)` → `requireAdmin()` → validate allowed transition →
-update + insert `order_events` → if `shipped`, email customer → `revalidatePath`.
+update + insert `order_events` (`status_changed`, `data: {from, to}`) → if `shipped`, email customer → `revalidatePath`.
+
+### 4.3a Track order
+`/track-order` is a static shell. `trackOrder` (Server Action): Zod (accepts `ALV-XXXXXX`, `alv xxxxxx` or the bare 6 chars) →
+rate limit 10/10 min per IP hash → load by order number → constant-time email digest compare (dummy digest when the order is missing) →
+one generic "not found" message for every miss. A match returns a minimal DTO (status, timeline, items, totals, tracking number + Royal Mail link;
+no address or phone) and grants the `alluvi_orders` cookie so "View full order" opens the confirmation page.
 
 ### 4.3 Caching
 - Public catalogue queries use `'use cache'` + `cacheTag('products')` / `cacheTag('product:'+slug)`.

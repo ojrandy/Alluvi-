@@ -4,7 +4,7 @@
 > Status: `TODO` · `DOING` · `DONE` · `BLOCKED` · `CUT`
 
 ## Current focus
-**Next up:** D1-9 Track order (header Track link and redirects already point to /track-order).
+**Next up:** D2-1 Admin auth. Note: local `.env.local` has an empty `SESSION_SECRET`; `next start` (production mode) refuses order lookups/checkout without it. Set a 32+ char value locally and in production.
 **Blocked on client:** Namecheap cPanel access (SSH + MySQL + email), bank details.
 
 ## v1
@@ -21,7 +21,7 @@
 | D1-6 | Static & policy pages | DONE | 2026-11-22 | /about, /spot-a-fake (+ watchlist), /our-location, /wholesale (temp contact), /announcements, /policies/[slug] ×5 with TOC + anchors from content/pages/*.md (verbatim, `npm run content:pages`). Legacy redirects in next.config.ts. All inventory routes 200/308 except later-task routes (/track-order D1-9, accounts D2-1A, /admin D2-1). ADR-014/015 |
 | D1-7 | Cart + drawer | DONE | 2026-11-22 | Sheet drawer (lines, stepper, remove, indicative subtotal, RUO note, Checkout), opens on add-to-cart. Persists across reload, Escape/keyboard OK, no hydration warnings |
 | D1-8 | Checkout + placeOrder + emails + confirmation | DONE | 2026-11-22 | Shared Zod schema, pricing.ts (row locks, promo/threshold), placeOrder (honeypot, DB rate limit 5/10min, tx + stock guard + order-no retry, optional account in same tx), emails via after() with email_sent/failed events, confirmation gated by signed cookie or email. 18 Playwright e2e checks pass (guest, account, existing email, tamper, over-stock, stock race, honeypot, rate limit, SMTP down) + both emails verified in Mailpit. customer-auth.ts helpers built for D2-1A |
-| D1-9 | Track order | TODO | | |
+| D1-9 | Track order | DONE | 2026-11-22 | `trackOrder` action (rate limit 10/10min, constant-time email compare, one generic miss message, lenient order-no input), timeline from `status_changed {from,to}` events (skipped steps read as done; cancelled branch), Royal Mail link, no address/phone in response, unlocks full confirmation. 16 Playwright checks pass against `next start` + MariaDB; 0 overflow at 360px |
 | D2-1 | Admin auth | TODO | | |
 | D2-1A | Customer accounts (optional) | TODO | | Added 2026-11-22 per client |
 | D2-2 | Admin shell + overview | TODO | | |
@@ -58,6 +58,8 @@
 | Domain ambiguity (.store vs .bz) | SEO split | Pick one canonical, 301 the other | Client |
 
 ## Change log
+- 2026-11-22: Client contact channels: Telegram → `t.me/ukalluvi` (@ukalluvi), WhatsApp `wa.me/message/3GOTNZ2THRYZE1` added (`content/site.json` → footer contact + Shop column, /wholesale inquiry card). Client confirmed these are the only official channels: press release §3/§8/§11/Contact and the "Social media warning" banner updated to say so.
+- 2026-11-22: D1-9 done. Status labels moved to `src/lib/order-status.ts` (shared by confirmation + track order). Header prefetch of `/account` 404s until D2-1A ships.
 - 2026-11-22: D1-5..D1-8 done. src/db pool is now lazy (CI build without DB works). Header nav using usePathname wrapped in Suspense (needed for dynamic routes without static params). Seeded bank details are placeholders: set real ones before launch (DEPLOYMENT pre-launch checklist).
 - 2026-11-22: Project initialised; stack locked (see DECISIONS ADR-001..009).
 - 2026-11-22: Client confirmed Namecheap hosting, bank transfer, guest checkout + optional accounts. DB switched Postgres → MySQL (ADR-010); deploy via GitHub Actions (ADR-007); added D2-1A.

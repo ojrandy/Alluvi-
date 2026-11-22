@@ -16,9 +16,14 @@ Contrary to the presentation of an "independent investigation," the programme re
 
 The purpose of the broadcast therefore appears less about consumer protection and more about preserving market exclusivity for a multinational pharmaceutical brand. Alluvi operates as a Research and Development lab in proteins and amino acids independently and transparently to develop research-grade generic analogues for laboratory study only NOT pharmaceutical—an activity permitted under UK and EU R&D law and unrelated to pharmaceutical retail.
 
-## 3. No Social-Media Sales or Promotion
+## 3. Official Channels Only
 
-Alluvi has no official presence on TikTok, Facebook, Instagram, WhatsApp, or similar platforms. Any page or individual claiming to be or represent Alluvi is unauthorised and often used by scammers to solicit payments. We report such activity under the Fraud Act 2006 (S. 2) and Trade Marks Act 1994 (S. 92), supported by the Online Safety Act 2023.
+Alluvi's only official messaging channels are:
+
+- Telegram: [@ukalluvi](https://t.me/ukalluvi)
+- WhatsApp: [wa.me/message/3GOTNZ2THRYZE1](https://wa.me/message/3GOTNZ2THRYZE1)
+
+Alluvi has no official presence on TikTok, Facebook, Instagram, or similar platforms, and no other Telegram or WhatsApp accounts. Any other page or individual claiming to be or represent Alluvi is unauthorised and often used by scammers to solicit payments. We report such activity under the Fraud Act 2006 (S. 2) and Trade Marks Act 1994 (S. 92), supported by the Online Safety Act 2023.
 
 Consumers should verify any communication directly through [Research@alluvi.org](mailto:Research@alluvi.org).
 
@@ -67,7 +72,7 @@ Alluvi operates under internal SOPs reflecting Good Laboratory Practice (GLP) an
 - Non-hazardous packaging per ADR 2019
 - Prominent R&D-only disclaimers
 
-Consumers are strongly advised not to purchase injectable products via social media or unverified resellers. Alluvi distributes solely through its official domains for institutional and analytical use.
+Consumers are strongly advised not to purchase injectable products via social media or unverified resellers. Alluvi distributes solely through its official domains and official Telegram and WhatsApp channels listed above, for institutional and analytical use.
 
 ## 9. Responsible Reporting and Transparency
 
@@ -80,7 +85,7 @@ While Alluvi makes no therapeutic claims, it acknowledges the ongoing global int
 ## 11. Summary Alluvi:
 
 - Operates lawfully under UK/EU R&D frameworks.
-- Has no social-media sales presence.
+- Has no social-media sales presence; its only official messaging channels are Telegram (@ukalluvi) and WhatsApp (listed above).
 - Supplies research-grade peptides only, fully labelled and traceable.
 - Reports fraudulent impersonators and misinformation.
 
@@ -91,5 +96,9 @@ We remain fully committed to ethical science, compliance transparency, and consu
 For any related queries, please contact:
 
 Email: [research@alluvi.org](mailto:research@alluvi.org)
+
+Telegram: [@ukalluvi](https://t.me/ukalluvi)
+
+WhatsApp: [wa.me/message/3GOTNZ2THRYZE1](https://wa.me/message/3GOTNZ2THRYZE1)
 
 Website: [https://alluvi.org](https://alluvi.org)

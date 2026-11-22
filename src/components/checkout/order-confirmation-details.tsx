@@ -5,16 +5,8 @@ import type { BankDetails } from "@/db/schema";
 import { countryName } from "@/lib/constants";
 import { formatLondonDateTime } from "@/lib/format";
 import { formatGBP } from "@/lib/money";
+import { ORDER_STATUS_LABEL } from "@/lib/order-status";
 import type { OrderWithItems } from "@/server/queries/orders";
-
-const STATUS_LABEL: Record<OrderWithItems["status"], string> = {
-  pending_payment: "Awaiting payment",
-  paid: "Payment received",
-  processing: "Processing",
-  shipped: "Shipped",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
 
 type Props = { order: OrderWithItems; bank: BankDetails | null; shippingLabel: string };
 
@@ -83,7 +75,7 @@ export function OrderConfirmationDetails({ order, bank, shippingLabel }: Props) 
         <section aria-labelledby="sum-title" className="rounded-3xl border border-border bg-card p-5 sm:p-6">
           <div className="flex items-center justify-between gap-2">
             <h2 id="sum-title" className="text-h3">Summary</h2>
-            <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-xs font-semibold">{STATUS_LABEL[order.status]}</span>
+            <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-xs font-semibold">{ORDER_STATUS_LABEL[order.status]}</span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">Placed {formatLondonDateTime(order.createdAt)}</p>
           <ul className="mt-4 divide-y divide-border text-sm">

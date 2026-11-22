@@ -9,7 +9,7 @@ type SiteContent = {
   tagline: string;
   canonicalDomain: string;
   officialDomains: string[];
-  contact: { researchEmail: string; supportEmail: string; telegramHandle: string; telegramUrl: string };
+  contact: { researchEmail: string; supportEmail: string; telegramHandle: string; telegramUrl: string; whatsappUrl: string };
   announcements: Announcement[];
   nav: NavLink[];
   footer: {
