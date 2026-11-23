@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { ArrowUpRight, ScanSearch, ShieldX } from "lucide-react";
+import { ArrowUpRight, ScanSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FAKE_SELLER_FLAGS, FAKE_SELLERS, type FakeSeller } from "@/components/store/fake-sellers";
+import { FakeSellerWatchlist } from "@/components/store/fake-seller-watchlist";
 
 export const metadata: Metadata = {
   title: "Spot a Fake",
@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 };
 
 const VERIFY_URL = "https://spotafakealluvi.com/";
-const COUNTRIES: FakeSeller["country"][] = ["United Kingdom", "Brazil", "Paraguay"];
 
 /**
  * /spot-a-fake: the live verify CTA, plus the counterfeit watchlist from the live /fake-sellers
@@ -48,34 +47,7 @@ export default function SpotAFakePage() {
           </p>
         </div>
 
-        {COUNTRIES.map((country) => {
-          const sellers = FAKE_SELLERS.filter((s) => s.country === country);
-          return (
-            <div key={country} className="mt-12">
-              <h3 className="flex items-center gap-2 text-lg font-semibold">
-                <span aria-hidden="true">{FAKE_SELLER_FLAGS[country]}</span>
-                {country} <span className="text-muted-foreground">({sellers.length})</span>
-              </h3>
-              <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" role="list">
-                {sellers.map((s) => (
-                  <li key={s.name} className="flex flex-col rounded-2xl border border-border bg-card p-5">
-                    <span className="self-start rounded-full bg-destructive/15 px-2.5 py-1 text-[0.65rem] font-bold tracking-wider text-destructive uppercase">
-                      Counterfeit
-                    </span>
-                    <p className="mt-4 font-semibold">{s.name}</p>
-                    <p className="mt-1 text-[0.7rem] font-bold tracking-wider text-muted-foreground uppercase">{s.channel}</p>
-                    <p className="mt-1 font-mono text-sm break-all text-foreground/85">{s.handle}</p>
-                    <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">{s.note}</p>
-                    <p className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-destructive">
-                      <ShieldX className="size-4" aria-hidden="true" />
-                      Do Not Buy
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })}
+        <FakeSellerWatchlist />
 
         <p className="mt-14 max-w-3xl text-sm leading-relaxed text-muted-foreground">
           This list is maintained by Alluvi for buyer safety. Alluvi products are sold exclusively for in vitro research

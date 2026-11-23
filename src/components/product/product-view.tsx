@@ -129,7 +129,7 @@ export function ProductView({ product: p, related, shortName }: Props) {
           <ul className="mx-auto grid max-w-4xl gap-6 sm:grid-cols-2" role="list">
             {related.map((r) => (
               <li key={r.id} className="flex [&>article]:flex-1">
-                <ProductCard product={r} />
+                <ProductCard product={r} eyebrow="Compound" />
               </li>
             ))}
           </ul>
