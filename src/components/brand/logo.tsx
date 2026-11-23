@@ -4,10 +4,19 @@ import { cn } from "@/lib/utils";
  * "ALLUVI HEALTH CARE" wordmark, from the client's SVG (public/images/Alluvi-logo-black543.svg).
  * Uses currentColor so it adapts to any surface. viewBox is cropped to the glyphs.
  */
-export function Logo({ className, title = "Alluvi" }: { className?: string; title?: string }) {
+export function Logo({
+  className,
+  title = "Alluvi",
+  wordmarkOnly = false,
+}: {
+  className?: string;
+  title?: string;
+  /** Crop to "ALLUVI" only (no "HEALTH CARE" line), as in the live site's nav pill. */
+  wordmarkOnly?: boolean;
+}) {
   return (
     <svg
-      viewBox="3.5 17 91 36"
+      viewBox={wordmarkOnly ? "3.5 17.5 91 25" : "3.5 17 91 36"}
       role="img"
       aria-label={title}
       className={cn("h-7 w-auto", className)}

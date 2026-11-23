@@ -35,7 +35,7 @@ settings (key/value json)
 
 ### `customer_tokens`
 | id char(36) PK | customer_id FK (cascade) | type enum(`reset_password`,`verify_email`) | token_hash char(64) (sha256) unique | expires_at datetime | used_at datetime null |
-Tokens are single-use and expire after 30 minutes. Only the hash is stored.
+Tokens are single-use and expire after 30 minutes. Only the hash is stored. Issuing a token deletes earlier ones of the same type for that customer. A `customer_linked` order event records each guest order attached to an account after email verification (`data: {customerId, via}`).
 
 ## Tables
 
@@ -83,9 +83,14 @@ Tokens are single-use and expire after 30 minutes. Only the hash is stored.
 | id uuid PK | order_id FK (cascade) | product_id FK null (set null) | product_name text | product_slug text | unit_price_pence int | quantity int > 0 | line_total_pence int |
 
 ### `order_events`
-| id uuid PK | order_id FK (cascade) | type text (`created`,`status_changed`,`email_sent`,`email_failed`,`note`) | data jsonb | actor text (`system`/admin email) | created_at |
+| id uuid PK | order_id FK (cascade) | type text (`created`,`status_changed`,`email_sent`,`email_failed`,`note`,`customer_linked`) | data jsonb | actor text (`system`/admin email) | created_at |
 
 `status_changed` events **must** store `data: { from, to }` (order statuses). `/track-order` builds the customer timeline from them (`getOrderStatusChanges`); only the status and time are shown, never the actor or other data.
+
+Event `data` shapes written by the admin (D2-3, actor = admin email):
+- `status_changed`: `{ from, to, trackingNumber? (set when shipping), restocked?: [{productId, quantity}] (on cancel) }`
+- `note`: `{ field: "tracking_number", from, to }` or `{ field: "internal_note", cleared }` (the note text lives on the order only)
+- `email_sent` / `email_failed`: `{ template: "order-received" | "admin-new-order" | "order-shipped", messageId | error }`
 
 ### `rate_limits`
 | key varchar(191) PK (e.g. `login:<ipHash>`) | count int | reset_at datetime |
@@ -94,7 +99,9 @@ Fixed-window counters stored in the DB, because Passenger can run several worker
 ### `settings`
 | key text PK | value jsonb | updated_at |
 Keys: `bank_details` `{accountName, sortCode, accountNumber, bankName}`,
-`shipping_options` `[{key, label, pricePence, freeOverPence?}]`, `notify_email`.
+`shipping_options` `[{key, label, description?, pricePence, freeOverPence?}]` (keys starting `uk_` are UK only), `notify_email` (falls back to `ORDER_NOTIFY_EMAIL`),
+`free_shipping_promo` `{label, startsAt, endsAt, enabled?}` (whole London days; `enabled:false` = off, row kept so a re-seed does not re-enable it).
+All edited in `/admin/settings` and read per request (`src/server/settings.ts`, never cached).
 
 ## Order state machine
 
@@ -103,8 +110,26 @@ pending_payment ──▶ paid ──▶ processing ──▶ shipped ──▶ 
        │              │           │
        └──────────────┴───────────┴──▶ cancelled
 ```
-Allowed transitions are enforced in `src/server/actions/orders.ts`, not in the UI.
-Cancelling restores stock.
+The map lives in `src/lib/order-transitions.ts` (the admin UI uses it to offer only legal moves); it is
+enforced in `src/server/actions/orders.ts` under a row lock, never trusted from the UI. No step can be skipped
+(e.g. paid → shipped must go through processing). `completed` and `cancelled` are final.
+Cancelling restores stock for every line whose product still exists.
+
+## Dashboard metrics
+Computed in `src/server/queries/admin.ts` (never cached). Used by the `/admin` overview.
+- **Days are London calendar days.** "Today" starts at 00:00 UK time (23:00 UTC in BST). "7 days" = today + the previous 6 days; "30 days" likewise. Bounds are computed in `src/lib/london-day.ts` and passed to SQL as UTC instants.
+- **Orders** = every order placed in the window, whatever its status (cancelled included).
+- **Revenue** = `SUM(total_pence)` of orders placed in the window with status `paid`, `processing`, `shipped` or `completed` (payment received). Pending and cancelled orders are excluded. It is attributed to the order date, not the payment date.
+- **Pending payments** = all orders currently `pending_payment`, any age (count + total).
+- The 30-day chart groups by UTC hour in SQL and folds hours into London days in JS. This avoids `CONVERT_TZ`, which needs MySQL time-zone tables that shared hosting often lacks.
+
+Manual check (replace the bounds with London midnight expressed in UTC):
+```sql
+SELECT COUNT(*) FROM orders WHERE created_at >= '<today 00:00 UK in UTC>';
+SELECT SUM(total_pence) FROM orders
+ WHERE created_at >= '<start of 7-day window in UTC>' AND status IN ('paid','processing','shipped','completed');
+SELECT COUNT(*), SUM(total_pence) FROM orders WHERE status = 'pending_payment';
+```
 
 ## Seeding
 `npm run content:products` builds `content/products.json` from the scrape. `npm run db:seed` **inserts only what is missing** and never overwrites prices, stock or settings, so it is safe to run in production. `--force` refreshes catalogue copy, specs and images for existing products only. Seeded stock is a random placeholder between 50 and 100 until the admin sets real stock. The `free_shipping_promo` setting `{startsAt, endsAt, label}` is seeded as 60 days from the first seed, which is launch day.

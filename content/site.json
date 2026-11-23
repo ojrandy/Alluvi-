@@ -20,8 +20,8 @@
   ],
   "nav": [
     { "label": "Shop", "href": "/shop" },
-    { "label": "About", "href": "/about" },
     { "label": "Verify", "href": "https://spotafakealluvi.com/", "external": true },
+    { "label": "About Us", "href": "/about" },
     { "label": "Track", "href": "/track-order" },
     { "label": "Alluvi Brazil", "href": "https://alluvibrazil.org/", "external": true }
   ],
@@ -40,6 +40,7 @@
       {
         "title": "Company",
         "links": [
+          { "label": "Home", "href": "/" },
           { "label": "About Us", "href": "/about" },
           { "label": "Announcements", "href": "/announcements" },
           { "label": "Our Location", "href": "/our-location" },

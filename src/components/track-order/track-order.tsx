@@ -79,7 +79,7 @@ export function TrackOrder() {
   );
 }
 
-function OrderResult({ order }: { order: TrackedOrder }) {
+export function OrderResult({ order }: { order: TrackedOrder }) {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
       <section className="rounded-3xl border border-border bg-card p-5 sm:p-7">

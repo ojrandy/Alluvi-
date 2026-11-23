@@ -16,3 +16,9 @@ export const ORDER_STATUS_PATH = ["pending_payment", "paid", "processing", "ship
 /** Royal Mail public tracking page for a tracking number. */
 export const royalMailTrackingUrl = (trackingNumber: string) =>
   `https://www.royalmail.com/track-your-item#/tracking-results/${encodeURIComponent(trackingNumber.replace(/\s+/g, ""))}`;
+
+const PAYMENT_METHOD_LABEL: Record<string, string> = { bank_transfer: "Bank transfer" };
+
+/** "bank_transfer" → "Bank transfer"; unknown keys are humanised rather than hidden. */
+export const paymentMethodLabel = (key: string) =>
+  PAYMENT_METHOD_LABEL[key] ?? key.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());

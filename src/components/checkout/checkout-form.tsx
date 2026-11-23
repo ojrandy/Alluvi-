@@ -19,12 +19,21 @@ import { controlClass, FormField, TextInput } from "./form-field";
 import { OrderSummary } from "./order-summary";
 import { useCheckoutQuote } from "./use-checkout-quote";
 
-type Props = { shippingOptions: ShippingOption[]; promoLabel: string | null; loggedIn: boolean };
+/** The signed-in customer's details, used to prefill the form. Null for guests. */
+export type CheckoutAccount = Pick<
+  CheckoutFormValues,
+  "email" | "firstName" | "lastName" | "phone" | "addressLine1" | "addressLine2" | "city" | "postcode"
+> & { country: string };
+
+type Props = { shippingOptions: ShippingOption[]; promoLabel: string | null; account: CheckoutAccount | null };
 
 const pickShipping = (options: ShippingOption[], country: string) =>
   options.find((o) => (country === "GB") === o.key.startsWith(UK_ONLY_SHIPPING_PREFIX))?.key ?? options[0]?.key ?? "";
 
-export function CheckoutForm({ shippingOptions, promoLabel, loggedIn }: Props) {
+export function CheckoutForm({ shippingOptions, promoLabel, account }: Props) {
+  const loggedIn = !!account;
+  // A saved country outside the shipping list (e.g. a list change since) falls back to the UK.
+  const initialCountry = (SHIPPING_COUNTRIES.some((c) => c.code === account?.country) ? account?.country : "GB") as CheckoutFormValues["country"];
   const router = useRouter();
   const hydrated = useCartHydrated();
   const lines = useCart((s) => s.lines);
@@ -37,16 +46,16 @@ export function CheckoutForm({ shippingOptions, promoLabel, loggedIn }: Props) {
     resolver: zodResolver(checkoutFormSchema),
     mode: "onTouched",
     defaultValues: {
-      email: "",
-      firstName: "",
-      lastName: "",
-      phone: "",
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      postcode: "",
-      country: "GB",
-      shippingMethod: pickShipping(shippingOptions, "GB"),
+      email: account?.email ?? "",
+      firstName: account?.firstName ?? "",
+      lastName: account?.lastName ?? "",
+      phone: account?.phone ?? "",
+      addressLine1: account?.addressLine1 ?? "",
+      addressLine2: account?.addressLine2 ?? "",
+      city: account?.city ?? "",
+      postcode: account?.postcode ?? "",
+      country: initialCountry,
+      shippingMethod: pickShipping(shippingOptions, initialCountry),
       customerNote: "",
       ruoAccepted: false as unknown as true, // must be ticked; the schema enforces literal(true)
       website: "",
@@ -126,6 +135,17 @@ export function CheckoutForm({ shippingOptions, promoLabel, loggedIn }: Props) {
 
         <fieldset className="space-y-4">
           <legend className="text-h3 mb-4">Contact</legend>
+          <p className="-mt-2 text-sm text-muted-foreground">
+            {loggedIn ? (
+              <>Signed in. This order will be saved to your account.</>
+            ) : (
+              <>
+                Have an account?{" "}
+                <Link href="/login?next=%2Fcheckout" className="text-brand underline-offset-4 hover:underline">Sign in</Link> to
+                use your saved details. Or continue as a guest.
+              </>
+            )}
+          </p>
           <FormField id="email" label="Email" error={errors.email?.message}>
             <TextInput id="email" type="email" autoComplete="email" inputMode="email" error={errors.email?.message} {...register("email")} />
           </FormField>

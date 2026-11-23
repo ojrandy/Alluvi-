@@ -28,3 +28,8 @@ export async function rateLimit(key: string, limit: number, windowSeconds: numbe
   const count = row?.count ?? 1;
   return { ok: count <= limit, remaining: Math.max(0, limit - count), resetAt: row?.resetAt ?? new Date() };
 }
+
+/** Clears a counter, e.g. after a successful login so earlier typos don't count against the next one. */
+export async function resetRateLimit(key: string): Promise<void> {
+  await db.delete(schema.rateLimits).where(eq(schema.rateLimits.key, key.slice(0, 191)));
+}

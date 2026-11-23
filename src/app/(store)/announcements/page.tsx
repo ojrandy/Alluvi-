@@ -22,7 +22,7 @@ export default function AnnouncementsPage() {
       </header>
 
       <div className="mt-12 space-y-8">
-        <Post badge="New" image={{ src: "/images/TelegramOrderNotification.png", alt: "Telegram Order Notification" }}>
+        <Post badge="New" eager image={{ src: "/images/TelegramOrderNotification.png", alt: "Telegram Order Notification" }}>
           <p className="eyebrow">Telegram orders now open</p>
           <h2 className="text-h2 mt-3">WE&apos;RE BACK IN STOCK!</h2>
           <p className="mt-4 text-muted-foreground">
@@ -87,11 +87,29 @@ export default function AnnouncementsPage() {
   );
 }
 
-function Post({ badge, image, children }: { badge: string; image: { src: string; alt: string }; children: React.ReactNode }) {
+function Post({
+  badge,
+  image,
+  eager = false,
+  children,
+}: {
+  badge: string;
+  image: { src: string; alt: string };
+  /** The first post's image is the LCP element; load it eagerly. */
+  eager?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <article className="grid overflow-hidden rounded-3xl border border-border bg-card md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
       <div className="relative aspect-square bg-surface-raised md:aspect-auto md:min-h-full">
-        <Image src={image.src} alt={image.alt} fill sizes="(min-width: 768px) 40vw, 100vw" className="object-contain p-4" />
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          sizes="(min-width: 768px) 40vw, 100vw"
+          loading={eager ? "eager" : "lazy"}
+          className="object-contain p-4"
+        />
         <span className="absolute top-4 left-4 rounded-full bg-brand px-2.5 py-1 text-[0.65rem] font-extrabold tracking-wider text-brand-foreground uppercase">
           {badge}
         </span>

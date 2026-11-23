@@ -6,7 +6,9 @@ import { CheckCircle2, Lock } from "lucide-react";
 import { OrderConfirmationDetails } from "@/components/checkout/order-confirmation-details";
 import { UnlockOrderForm } from "@/components/checkout/unlock-order-form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getCurrentCustomer } from "@/server/customer-auth";
 import { canViewOrder } from "@/server/order-access";
+import { customerOwnsOrder } from "@/server/queries/customer-orders";
 import { ORDER_NO_PATTERN } from "@/server/order-number";
 import { getOrderByNo } from "@/server/queries/orders";
 import { getStoreSettings, usableBankDetails } from "@/server/settings";
@@ -31,8 +33,9 @@ async function Confirmation({ params, searchParams }: PageProps<"/order-confirma
   const orderNo = decodeURIComponent(raw).toUpperCase();
   if (!ORDER_NO_PATTERN.test(orderNo)) notFound();
 
-  // Access check first: without the cookie we reveal nothing, not even whether the order exists.
-  if (!(await canViewOrder(orderNo))) {
+  // Access check first: without the cookie (or owning the order via a signed-in account) we reveal
+  // nothing, not even whether the order exists.
+  if (!(await canViewOrder(orderNo)) && !(await isOwnOrder(orderNo))) {
     return (
       <section className="mx-auto max-w-md text-center">
         <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-white/[0.05]" aria-hidden="true">
@@ -81,4 +84,9 @@ async function Confirmation({ params, searchParams }: PageProps<"/order-confirma
       <OrderConfirmationDetails order={order} bank={bank} shippingLabel={shippingLabel} />
     </div>
   );
+}
+
+async function isOwnOrder(orderNo: string): Promise<boolean> {
+  const customer = await getCurrentCustomer();
+  return customer ? customerOwnsOrder(customer.id, orderNo) : false;
 }

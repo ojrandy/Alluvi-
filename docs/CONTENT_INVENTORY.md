@@ -79,11 +79,11 @@ related products, and 4 images (front, pen, open, UV).
 | `/spot-a-fake`, `/fake-sellers` | | Rebuilt (D1-6); `/fake-sellers` 301 → `/spot-a-fake#watchlist` (watchlist copy kept there) | `(store)/spot-a-fake` |
 | `/our-location` | | Rebuild | `(store)/our-location` |
 | `/announcements` | | Rebuilt (D1-6, content verified) | `(store)/announcements` |
-| `/login`, `/signup`, `/account`, `/forgot-password`, `/reset-password` | | Rebuild (optional accounts, ADR-005, task D2-1A) | `(store)/login` etc., `(store)/account` |
+| `/login`, `/signup`, `/account`, `/forgot-password`, `/reset-password` | | Rebuilt (D2-1A, ADR-005/016). Plus new `/verify-email`, `/account/details`, `/account/orders/[orderNo]`. All `noindex`. There were never config redirects for these routes, so none to remove | `(store)/login` etc., `(store)/account` |
 | `/order-information`, `/payment-review`, `/payment-completed` | | 301 → `/track-order` | — |
 | `/wholesale`, `/wholesale-console` | | v2; temp page "contact us for wholesale" | `(store)/wholesale` |
 | `/telegram-order` | | v2; 301 → `/shop` | — |
-| `/admin`, `/management-console` | | `/management-console` 301 → `/admin` | `(admin)/admin` |
+| `/admin`, `/management-console` | | `/management-console` 301 → `/admin`. `/admin/*` guarded (D2-1); `/admin/login` | `(admin)/admin` |
 | `/ai-service`, `/train-model`, `/test-product`, `/refersufbrfbrr` | | Ask client; default 301 → `/` | — |
 
 ## Redirects (D1-6)

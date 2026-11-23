@@ -45,3 +45,6 @@ next-env.d.ts
 
 # scraped content from the live site (raw, untrusted)
 /content-recovery/raw/
+
+# admin product uploads in local dev (UPLOADS_DIR default)
+/.uploads/
