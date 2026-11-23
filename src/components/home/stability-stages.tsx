@@ -8,7 +8,7 @@ const STAGES = 2;
 
 function Ext({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer">
+    <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-6 items-center">
       {children}
     </a>
   );

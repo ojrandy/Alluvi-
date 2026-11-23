@@ -3,7 +3,8 @@ import { inArray } from "drizzle-orm";
 import { db, schema, type DbExecutor } from "@/db";
 import type { BankDetails, ShippingOption } from "@/db/schema";
 
-export type FreeShippingPromo = { startsAt: string; endsAt: string; label: string };
+/** `enabled: false` (set from /admin/settings) keeps the row so a re-seed cannot bring the promo back. */
+export type FreeShippingPromo = { startsAt: string; endsAt: string; label: string; enabled?: boolean };
 
 export type StoreSettings = {
   shippingOptions: ShippingOption[];
@@ -36,7 +37,7 @@ export async function getStoreSettings(executor: DbExecutor = db): Promise<Store
 
 /** ADR-012: free shipping while now is within startsAt..endsAt. */
 export function isPromoActive(promo: FreeShippingPromo | null, now = new Date()): boolean {
-  if (!promo) return false;
+  if (!promo || promo.enabled === false) return false;
   const start = Date.parse(promo.startsAt);
   const end = Date.parse(promo.endsAt);
   if (Number.isNaN(start) || Number.isNaN(end)) return false;

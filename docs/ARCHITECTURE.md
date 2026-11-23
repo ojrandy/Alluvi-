@@ -49,9 +49,13 @@ src/
       shop/  product/[slug]/  checkout/  order-confirmation/[orderNo]/  track-order/
       about/  spot-a-fake/  our-location/  policies/[slug]/
       login/  signup/  forgot-password/  reset-password/  account/   # optional customer accounts
-    (admin)/admin/           # dashboard, shares admin shell (sidebar)
-      login/  page.tsx (overview)  orders/  orders/[id]/  products/  products/[id]/  settings/
-    api/admin/orders/export/route.ts   # CSV download (only route handler we need)
+    (admin)/admin/           # dashboard
+      login/                 # bare layout (outside the shell)
+      (console)/             # shell: collapsible sidebar, top bar, mobile sheet nav (layout.tsx)
+        page.tsx (overview)  orders/  orders/[id]/  products/  products/new/  products/[id]/  settings/
+    api/admin/orders/export/route.ts   # CSV download
+    api/admin/uploads/route.ts         # admin image upload (multipart, 5 MB; Server Actions cap at 1 MB)
+    uploads/[file]/route.ts            # serves uploaded images from UPLOADS_DIR
     sitemap.ts  robots.ts  layout.tsx  globals.css  not-found.tsx
   components/
     ui/                      # shadcn primitives — do not hand-edit beyond theming
@@ -67,6 +71,7 @@ src/
     customer-auth.ts         # customer session, requireCustomer(), tokens
     mail.ts                  # transporter + send helpers
     pricing.ts               # the ONLY place totals are computed
+    storage.ts               # product image storage (local disk now, swappable; ADR-017)
   emails/                    # email templates (order-received, order-shipped, admin-new-order)
   lib/
     validators/              # shared Zod schemas
@@ -94,8 +99,29 @@ docs/                        # you are here
 The checkout sidebar is priced by `quoteCheckout` (same `pricing.ts`), never by the client cart snapshot.
 
 ### 4.2 Admin status change
-`updateOrderStatus(id, status, tracking?)` → `requireAdmin()` → validate allowed transition →
-update + insert `order_events` (`status_changed`, `data: {from, to}`) → if `shipped`, email customer → `revalidatePath`.
+`updateOrderStatus(orderId, status, trackingNumber?)` (src/server/actions/orders.ts) → Zod → `requireAdmin()` →
+transaction: lock the order row (`FOR UPDATE`) → check `ORDER_TRANSITIONS` (src/lib/order-transitions.ts) →
+compare-and-set update (`WHERE status = from`) → on `cancelled`, restore stock → insert `order_events`
+(`status_changed`, `data: {from, to, trackingNumber?, restocked?}`, actor = admin email) → commit →
+`revalidateTag('products','max')` if stock moved → if `shipped`, `sendOrderShippedEmail` in `after()` → `refresh()`.
+The shipped email is sent once: `shipped` is reachable only from `processing` and never left backwards, and the
+sender also skips if an `order-shipped` `email_sent` event exists. Tracking number and internal note have their
+own actions (`updateOrderTracking`, `updateOrderNote`) that log `note` events.
+
+### 4.2a Orders list + CSV
+`/admin/orders` reads `q` / `status` / `page` from searchParams (parsed once by `parseAdminOrderFilters`, shared
+with the export). Server-side LIKE search (wildcards escaped) on order no, email and "first last"; 20 per page;
+TanStack Table v9 renders only (no client row models). `GET /api/admin/orders/export` uses the same filters
+(all pages, cap 10,000 rows), `verifySession()` → 401, UTF-8 BOM + CRLF + RFC 4180 quoting, and prefixes cells
+starting with `= + - @` with `'` (CSV formula injection).
+
+### 4.2b Products admin
+`saveProduct` (src/server/actions/products.ts) takes the raw form values and re-parses them with the same
+`productFormSchema` the browser resolver uses (`src/lib/validators/admin-products.ts`, £ → pence) → `requireAdmin()`
+→ transaction with the row locked (stock written only if the admin changed it) → replace `product_images` →
+`updateTag("products")` + `updateTag("product:<slug>")` for old and new slug → `refresh()`. Images are uploaded
+first (`POST /api/admin/uploads` → `imageStorage.save`) and only referenced once the product is saved; files no
+product references any more are removed in `after()`. Delete archives instead when the product has orders.
 
 ### 4.3a Track order
 `/track-order` is a static shell. `trackOrder` (Server Action): Zod (accepts `ALV-XXXXXX`, `alv xxxxxx` or the bare 6 chars) →
@@ -115,7 +141,11 @@ no address or phone) and grants the `alluvi_orders` cookie so "View full order" 
 
 - Money is **integer pence** everywhere. Client-supplied prices are ignored.
 - All Server Actions validate input with Zod and authorize (`requireAdmin()` for admin).
-- Session cookie: `httpOnly`, `secure`, `sameSite=lax`, 7-day expiry, HS256 with `SESSION_SECRET`.
+- Sessions (ADR-016): `alluvi_admin` (7 days, key derived from `SESSION_SECRET`) and `alluvi_customer` (30 days, `CUSTOMER_SESSION_SECRET`). Both are `httpOnly`, `secure` in production, `sameSite=lax`, HS256 via `src/server/session-tokens.ts`, and carry a password-version claim so a password change revokes them.
+- `src/proxy.ts` redirects `/admin/*` → `/admin/login`, `/account/*` → `/login?next=` and returns 401 for `/api/admin/*`. It is optimistic only: `requireAdmin()` (`src/server/auth.ts`) and `requireCustomer()` (`src/server/customer-auth.ts`) run in every page and action.
+- Account tokens (reset / verify) are 32 random bytes, stored as sha256, single use, 30 minutes, consumed under a row lock (`src/server/customer-tokens.ts`). Guest orders are linked to an account only after the email is verified (`linkGuestOrders`, `customer_linked` event).
+- Auth errors are generic and unknown emails cost the same bcrypt work (no user enumeration). Rate limits: admin login 5/15 min per IP + 50/15 min global; customer login 20/15 min per IP + 5/15 min per email; signup, forgot-password and reset are also limited.
+- Client IP for rate limiting = right-most `x-forwarded-for` hop (`TRUSTED_PROXY_HOPS`), never the client-controlled left-most one.
 - Login, signup, checkout and track-order are rate-limited through the `rate_limits` table, which is shared across Passenger workers.
 - `server-only` imported by `db/`, `server/` so they can never be bundled to the client.
 - Security headers set in `next.config.ts` (CSP, HSTS, X-Frame-Options, Referrer-Policy).

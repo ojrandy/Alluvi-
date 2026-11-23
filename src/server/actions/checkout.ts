@@ -8,7 +8,8 @@ import type { OrderEmailData } from "@/emails/layout";
 import { firstFieldErrors, type ActionResult } from "@/lib/action-result";
 import { checkoutItemsSchema, checkoutSchema, normalizeUkPostcode } from "@/lib/validators/checkout";
 import { COUNTRY_CODES } from "@/lib/constants";
-import { createCustomerSession, getCustomerSession, hashPassword } from "../customer-auth";
+import { createCustomerSession, getCurrentCustomer, hashPassword } from "../customer-auth";
+import { isDuplicateKey } from "../db-errors";
 import { grantOrderAccess } from "../order-access";
 import { sendNewOrderEmails } from "../order-emails";
 import { isOrderNoCollision, newOrderNo } from "../order-number";
@@ -52,7 +53,8 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
   const limit = await rateLimit(`checkout:${ipHash}`, RATE_LIMIT.max, RATE_LIMIT.windowSeconds);
   if (!limit.ok) return { ok: false, error: "Too many order attempts. Please wait a few minutes and try again." };
 
-  const session = await getCustomerSession();
+  // Authoritative (DB-checked) session: a revoked or deleted account checks out as a guest instead.
+  const session = await getCurrentCustomer();
   const wantsAccount = !session && !!v.createAccount && !!v.password;
   // bcrypt is slow on purpose; hash before the transaction so row locks are held briefly.
   const passwordHash = wantsAccount ? await hashPassword(v.password!) : null;
@@ -71,7 +73,7 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
         let customerId: string | null = null;
         let accountCreated = false;
         if (session) {
-          const [c] = await tx.select({ id: schema.customers.id }).from(schema.customers).where(eq(schema.customers.id, session.customerId)).limit(1);
+          const [c] = await tx.select({ id: schema.customers.id }).from(schema.customers).where(eq(schema.customers.id, session.id)).limit(1);
           customerId = c?.id ?? null;
         } else if (passwordHash) {
           const [existing] = await tx.select({ id: schema.customers.id }).from(schema.customers).where(eq(schema.customers.email, v.email)).limit(1);
@@ -148,7 +150,9 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
 
       // ---- committed: nothing below may turn a saved order into an error response ----
       try {
-        if (result.accountCreated && result.customerId) await createCustomerSession(result.customerId);
+        if (result.accountCreated && result.customerId && passwordHash) {
+          await createCustomerSession({ id: result.customerId, passwordHash });
+        }
         await grantOrderAccess(orderNo);
       } catch (err) {
         // Worst case the customer is asked for their email on the confirmation page.
@@ -184,14 +188,7 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
   return { ok: false, error: GENERIC_ERROR };
 }
 
-function isDuplicateCustomer(err: unknown): boolean {
-  for (let e: unknown = err, d = 0; e && d < 4; d++) {
-    const o = e as { code?: string; message?: string; cause?: unknown };
-    if (o.code === "ER_DUP_ENTRY" && /customers_email_uq/.test(o.message ?? "")) return true;
-    e = o.cause;
-  }
-  return false;
-}
+const isDuplicateCustomer = (err: unknown) => isDuplicateKey(err, "customers_email_uq");
 
 function toEmailData(
   id: string,

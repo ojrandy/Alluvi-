@@ -19,12 +19,14 @@ npm run db:seed                   # safe to re-run; --force refreshes catalogue 
 npm run dev                       # http://localhost:3000  (admin: /admin)
 ```
 
-Admin password hash: `npm run hash-password -- "new-password"`, then paste the output into `ADMIN_PASSWORD_HASH`.
+Admin password hash: `npm run hash-password -- "new-password"`, then paste the printed line **as-is, backslashes included** (`ADMIN_PASSWORD_HASH=\$2b\$12\$…`) into `.env.local`, the cPanel env vars or the CI secret. An unescaped hash is silently emptied by Next.js env expansion, and admin login stays disabled with `[auth] … missing or malformed` in the log (ADR-016). Changing the hash signs the admin out everywhere.
 
 ## Environment variables
 See `.env.example`. All are required in production.
 `SESSION_SECRET` and `CUSTOMER_SESSION_SECRET` must each be ≥ 32 random chars and must be different from each other.
-In production the app refuses to place orders without them (IP hashing and the order-confirmation cookie are signed with `SESSION_SECRET`). In dev they fall back to fixed dev-only values.
+In production the app refuses to place orders without them (IP hashing and the order-confirmation cookie are signed with `SESSION_SECRET`), admin login fails closed without `SESSION_SECRET`, and customer sign-in fails without `CUSTOMER_SESSION_SECRET`. In dev they fall back to fixed dev-only values.
+`TRUSTED_PROXY_HOPS` (default `1`): how many proxies append to `x-forwarded-for` in front of the app. **Verify on staging** by logging in with a wrong admin password 6 times: the 6th must be blocked, and other IPs must not be. If every visitor shares one limit, the app is seeing the proxy address; if a forged `X-Forwarded-For` header resets the limit, raise or lower the hop count. Set it to `2` behind Cloudflare.
+`NEXT_PUBLIC_SITE_URL` is used in account email links (verify / reset), so it must be the public https origin at **build** time.
 
 **Pre-launch checklist (checkout, D1-8):**
 - Set real bank details in `settings.bank_details` (/admin/settings once D2-5 ships). While the seeded `TO BE CONFIGURED` / `00000000` placeholders are present, customers are told the bank details will be emailed instead of seeing fake ones.
@@ -44,8 +46,11 @@ In production the app refuses to place orders without them (IP hashing and the o
 2. **Database:** cPanel → *MySQL Databases*: create the DB and a user, then grant ALL privileges.
    `DATABASE_URL=mysql://<cpuser>_<dbuser>:<pass>@localhost:3306/<cpuser>_<db>`
 3. **Email:** cPanel → *Email Accounts*: create `orders@<domain>`. SMTP host `mail.<domain>`, port 465 SSL.
-4. **Uploads folder:** create `~/alluvi-uploads` (persistent, outside the deploy dir). The app
-   writes product images there (`UPLOADS_DIR`) and serves them via a route.
+4. **Uploads folder:** create `~/alluvi-uploads` (persistent, outside the deploy dir) and set
+   `UPLOADS_DIR=/home/<cpuser>/alluvi-uploads` (absolute path) in the Node app's env vars. Admin
+   product images are written there and served by the app at `/uploads/<file>` (ADR-017). The deploy
+   must never `rsync --delete` into this folder. Back it up with the database: product rows reference
+   these files.
 5. **SSH:** enable SSH access (cPanel → *SSH Access* / *Manage SSH Keys*). Add a deploy key whose
    private half is stored in GitHub secrets. If the plan has no SSH, fall back to FTP deploy (see below).
 6. **SSL:** cPanel → *SSL/TLS Status* → AutoSSL on the domain. Force HTTPS redirect in *Domains*.

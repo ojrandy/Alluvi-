@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -81,13 +81,20 @@ export const selectCount = (s: CartState) => s.lines.reduce((n, l) => n + l.quan
 export const selectSubtotalPence = (s: CartState) => s.lines.reduce((n, l) => n + l.pricePence * l.quantity, 0);
 
 /** Rehydrate the persisted cart once on the client; returns true once it's safe to render cart data. */
+/**
+ * True once the persisted cart is loaded. `useSyncExternalStore` hydrates with the server snapshot
+ * (false) even when the cart was already rehydrated by another component: a Suspense boundary that
+ * streams in later (e.g. the checkout form) would otherwise render the client branch during
+ * hydration and throw React #418.
+ */
 export function useCartHydrated() {
-  const [hydrated, setHydrated] = useState(() => useCart.persist.hasHydrated());
+  const hydrated = useSyncExternalStore(
+    (cb) => useCart.persist.onFinishHydration(cb),
+    () => useCart.persist.hasHydrated(),
+    () => false,
+  );
   useEffect(() => {
-    if (hydrated) return;
-    const unsub = useCart.persist.onFinishHydration(() => setHydrated(true));
-    void useCart.persist.rehydrate();
-    return unsub;
-  }, [hydrated]);
+    if (!useCart.persist.hasHydrated()) void useCart.persist.rehydrate();
+  }, []);
   return hydrated;
 }

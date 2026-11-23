@@ -1,11 +1,13 @@
 import "server-only";
+import { and, eq, sql } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { adminNewOrderEmail } from "@/emails/admin-new-order";
 import type { OrderEmailData } from "@/emails/layout";
 import { orderReceivedEmail } from "@/emails/order-received";
+import { orderShippedEmail, type ShippedEmailData } from "@/emails/order-shipped";
 import { sendMail } from "./mail";
 
-type Template = "order-received" | "admin-new-order";
+type Template = "order-received" | "admin-new-order" | "order-shipped";
 
 /**
  * Send the customer confirmation and the shop notification for a COMMITTED order. Each send is
@@ -31,6 +33,35 @@ export async function sendNewOrderEmails(data: OrderEmailData, notifyEmail: stri
       }
     }),
   );
+}
+
+/**
+ * Customer "shipped" email. Called only after a committed processing → shipped transition, which
+ * happens at most once per order (the state machine has no way back). As a second guard it skips
+ * when an `order-shipped` email is already logged as sent. Never throws.
+ */
+export async function sendOrderShippedEmail(data: ShippedEmailData) {
+  const template: Template = "order-shipped";
+  try {
+    const [already] = await db
+      .select({ id: schema.orderEvents.id })
+      .from(schema.orderEvents)
+      .where(
+        and(
+          eq(schema.orderEvents.orderId, data.id),
+          eq(schema.orderEvents.type, "email_sent"),
+          sql`JSON_UNQUOTE(JSON_EXTRACT(${schema.orderEvents.data}, '$.template')) = ${template}`,
+        ),
+      )
+      .limit(1);
+    if (already) return;
+    const { messageId } = await sendMail({ to: data.email, ...orderShippedEmail(data) });
+    await logEvent(data.id, "email_sent", { template, messageId });
+  } catch (err) {
+    const code = errorCode(err);
+    console.error(`[order ${data.orderNo}] email ${template} failed: ${code}`);
+    await logEvent(data.id, "email_failed", { template, error: code });
+  }
 }
 
 async function logEvent(orderId: string, type: "email_sent" | "email_failed", data: Record<string, unknown>) {

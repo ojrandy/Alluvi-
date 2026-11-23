@@ -126,7 +126,7 @@
   border: 1.5px solid var(--tj-line);
   border-radius: 50%;
   background: var(--tj-bg);
-  color: var(--tj-faint);
+  color: rgb(244 246 248 / 58%); /* 4.5:1+ on --tj-bg: these are buttons (WCAG 1.4.3) */
   font-family: var(--tj-mono);
   font-size: 12px;
   font-weight: 600;

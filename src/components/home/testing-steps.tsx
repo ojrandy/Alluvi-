@@ -245,7 +245,7 @@ export function TestingSteps() {
         {/* mobile: swipeable certificates */}
         <div ref={sliderRef} className={styles.mslider} role="list" onScroll={onSliderScroll}>
           {STEPS.map((s) => (
-            <article key={s.number} className={styles.mslide} role="listitem">
+            <div key={s.number} className={styles.mslide} role="listitem">
               <div className={styles.viewport}>
                 <VpBar step={s} />
                 <div className={styles.vpScreen}>
@@ -264,7 +264,7 @@ export function TestingSteps() {
                 <p className={styles.stepDesc}>{s.description}</p>
                 <ReportLink url={s.reportUrl} />
               </div>
-            </article>
+            </div>
           ))}
         </div>
         <div className={styles.dots} aria-hidden="true">
