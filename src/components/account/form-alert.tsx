@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const TONES = {
   error: { cls: "border-destructive/30 bg-destructive/10 text-foreground", Icon: AlertCircle, iconCls: "text-destructive" },
   success: { cls: "border-success/30 bg-success/10 text-foreground", Icon: CheckCircle2, iconCls: "text-success" },
-  info: { cls: "border-border bg-white/[0.03] text-muted-foreground", Icon: Info, iconCls: "text-brand" },
+  info: { cls: "border-border bg-foreground/[0.03] text-muted-foreground", Icon: Info, iconCls: "text-brand" },
 } as const;
 
 /** Inline status message for auth/account forms. Errors use role="alert" so they're announced. */

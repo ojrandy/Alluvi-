@@ -1,5 +1,6 @@
 import { ArrowUpRight, FlaskConical } from "lucide-react";
 import type { ProductSpecs } from "@/db/schema";
+import { LabReportLink } from "@/components/content/lab-report-link";
 
 /**
  * "Janoshik Third-Party Lab Analysis" block. Live copy and structure (tiles, compound table,
@@ -73,18 +74,15 @@ export function LabAnalysis({ specs, reportUrl }: { specs: ProductSpecs; reportU
         <div className="mt-6">
           <h3 className="eyebrow text-muted-foreground">Independent test reports</h3>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            {reports.map((r) => (
-              <li key={r.url}>
-                <a
+            {reports.map((r, i) => (
+              <li key={`${i}-${r.label}`}>
+                <LabReportLink
                   href={r.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="flex min-h-11 items-center justify-between gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium transition-colors hover:border-white/20 hover:bg-white/[0.04]"
                 >
                   {r.label}
                   <ArrowUpRight className="size-4 text-muted-foreground" aria-hidden="true" />
-                  <span className="sr-only">(opens in a new tab)</span>
-                </a>
+                </LabReportLink>
               </li>
             ))}
           </ul>
@@ -92,16 +90,13 @@ export function LabAnalysis({ specs, reportUrl }: { specs: ProductSpecs; reportU
       )}
 
       {reportUrl && (
-        <a
+        <LabReportLink
           href={reportUrl}
-          target="_blank"
-          rel="noopener noreferrer"
           className="mt-6 flex min-h-12 items-center justify-center gap-2 rounded-full bg-brand px-6 font-semibold text-brand-foreground transition-colors hover:bg-[color-mix(in_oklch,var(--brand),white_12%)]"
         >
           View Full Janoshik Report
           <ArrowUpRight className="size-4" aria-hidden="true" />
-          <span className="sr-only">(opens in a new tab)</span>
-        </a>
+        </LabReportLink>
       )}
     </section>
   );

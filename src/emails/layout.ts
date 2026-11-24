@@ -1,6 +1,5 @@
 import { formatGBP } from "@/lib/money";
 import { countryName } from "@/lib/constants";
-import type { BankDetails } from "@/db/schema";
 
 /** Data every order email needs. Built once in placeOrder from the committed order. */
 export type OrderEmailData = {
@@ -22,8 +21,13 @@ export type OrderEmailData = {
   shippingPence: number;
   totalPence: number;
   customerNote: string | null;
-  bankDetails: BankDetails | null;
+  /** ADR-021: the method the customer chose. Payment DETAILS are never in these emails. */
+  paymentMethod: string;
+  paymentMethodLabel: string;
 };
+
+/** Order fields every email helper needs (no payment fields). */
+export type OrderCore = Omit<OrderEmailData, "paymentMethod" | "paymentMethodLabel">;
 
 export const RUO_LINE = "For laboratory research use only. Not for human consumption.";
 
@@ -61,7 +65,7 @@ ${opts.body}
 export const p = (html: string) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;">${html}</p>`;
 export const h2 = (text: string) => `<h2 style="margin:24px 0 10px;font-size:16px;">${esc(text)}</h2>`;
 
-export function itemsTable(d: OrderEmailData): string {
+export function itemsTable(d: OrderCore): string {
   const rows = d.items
     .map(
       (i) => `<tr>
@@ -78,7 +82,7 @@ ${total(`Shipping (${d.shippingLabel})`, d.shippingPence === 0 ? "Free" : format
 ${total("Total", formatGBP(d.totalPence), true)}</table>`;
 }
 
-export function addressLines(d: OrderEmailData): string[] {
+export function addressLines(d: OrderCore): string[] {
   return [
     `${d.firstName} ${d.lastName}`,
     d.addressLine1,
@@ -89,7 +93,7 @@ export function addressLines(d: OrderEmailData): string[] {
   ].filter((l): l is string => !!l);
 }
 
-export function itemsText(d: OrderEmailData): string {
+export function itemsText(d: OrderCore): string {
   const lines = d.items.map((i) => `- ${i.name} x ${i.quantity}: ${formatGBP(i.lineTotalPence)}`);
   return [
     ...lines,
@@ -99,16 +103,30 @@ export function itemsText(d: OrderEmailData): string {
   ].join("\n");
 }
 
-export function bankRows(b: BankDetails): [string, string][] {
-  const rows: [string, string][] = [
-    ["Account name", b.accountName],
-    ["Bank", b.bankName],
-    ["Sort code", b.sortCode],
-    ["Account number", b.accountNumber],
-  ];
-  if (b.iban) rows.push(["IBAN", b.iban]);
-  return rows;
+/** Bordered key/value table (e.g. order number, amount, method). Values are escaped. */
+export function detailsTable(rows: [string, string][], highlight?: string): string {
+  const cell = (i: number) => (i < rows.length - 1 ? `border-bottom:1px solid ${C.border};` : "");
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${C.border};border-radius:8px;margin:0 0 14px;">
+${rows
+  .map(
+    ([k, v], i) => `<tr><td style="padding:10px 14px;font-size:14px;color:${C.muted};${cell(i)}">${esc(k)}</td>
+<td align="right" style="padding:10px 14px;font-size:14px;font-weight:600;${k === highlight ? `color:${C.brand};` : ""}${cell(i)}">${esc(v)}</td></tr>`,
+  )
+  .join("")}</table>`;
 }
+
+/** Admin-written plain text kept exactly as typed (line breaks preserved), escaped, in a soft panel. */
+export function preformatted(text: string): string {
+  return `<div style="margin:0 0 14px;padding:16px 18px;background:#fafafa;border:1px solid ${C.border};border-radius:8px;font-size:15px;line-height:1.65;white-space:pre-wrap;word-break:break-word;">${esc(text)}</div>`;
+}
+
+/** Anti-phishing notice: tells customers how to verify payment details before paying. */
+export function securityNote(trackUrl: string): string {
+  return `<div style="margin:20px 0 14px;padding:14px 16px;border-left:3px solid ${C.brand};background:#fff7ed;font-size:13px;line-height:1.6;"><strong>Stay safe:</strong> we only send payment details from this email address, and we never change them by phone, text or social media. If anything looks different, check it against your order at <a href="${esc(trackUrl)}" style="color:${C.brand};">${esc(trackUrl)}</a> before paying.</div>`;
+}
+
+export const SECURITY_NOTE_TEXT =
+  "Stay safe: we only send payment details from this email address, and we never change them by phone, text or social media. If anything looks different, check it against your order on our website before paying.";
 
 export const mutedColor = C.muted;
 export const borderColor = C.border;

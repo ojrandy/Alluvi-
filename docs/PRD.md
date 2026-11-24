@@ -49,7 +49,7 @@ bar (speed, SEO, polish, reliability).
 - **FR-5** `/checkout` — contact + shipping address + shipping option + mandatory RUO/18+/terms checkbox. Honeypot anti-spam.
 - **FR-6** Order placement: server recomputes all prices from DB; creates order atomically; emails customer + shop.
 - **FR-6a** Launch promotion: free shipping on every order for 60 days from launch (ADR-012), announced in the notice bar.
-- **FR-7** `/order-confirmation/[orderNo]` — summary + bank-transfer instructions with order number as reference.
+- **FR-7** `/order-confirmation/[orderNo]` — summary, chosen payment method and what happens next; once the admin has emailed the payment details they appear here too, with an "I've sent payment" button (ADR-021).
 - **FR-8** `/track-order` — lookup by order number + email, shows status + tracking number.
 - **FR-9** Static pages: `/about`, `/spot-a-fake`, `/our-location`, `/policies/*` (refund, shipping, privacy, terms-of-service, press-release).
 - **FR-10** SEO: per-page metadata, Open Graph, `sitemap.xml`, `robots.txt`, Product JSON-LD, canonical domain, 301s for legacy URLs.
@@ -66,7 +66,7 @@ bar (speed, SEO, polish, reliability).
 - **FR-13** Orders: table with search (order no / email / name), status filter, pagination, CSV export.
 - **FR-14** Order detail: items, customer, address, status change, tracking number, internal notes, timeline. Status → `shipped` emails the customer.
 - **FR-15** Products: list, create, edit, archive; price, compare-at price, stock, active flag, images, lab-report URL, description.
-- **FR-16** Settings: bank-transfer details, shipping options & fees, notification email.
+- **FR-16** Settings: payment methods offered at checkout + the details template for each (ADR-021), shipping options & fees, notification email.
 
 ## 6. Non-functional requirements
 
@@ -85,7 +85,7 @@ analytics dashboard charts · Telegram/WhatsApp order notifications · 3D produc
 ## 8. Decisions confirmed by client (2026-11-22)
 
 - Hosting: **Namecheap** (app + dashboard + MySQL + email), deployed from GitHub. See ADR-007 and ADR-010.
-- Payment: **bank transfer** only for now (ADR-004).
+- Payment: customer picks one of 25 methods at checkout; the admin emails the details per order (ADR-021, supersedes ADR-004).
 - Checkout: **guest checkout plus optional account creation** (ADR-005).
 
 ## 9. Open questions

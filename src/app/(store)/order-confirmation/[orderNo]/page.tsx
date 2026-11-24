@@ -11,7 +11,7 @@ import { canViewOrder } from "@/server/order-access";
 import { customerOwnsOrder } from "@/server/queries/customer-orders";
 import { ORDER_NO_PATTERN } from "@/server/order-number";
 import { getOrderByNo } from "@/server/queries/orders";
-import { getStoreSettings, usableBankDetails } from "@/server/settings";
+import { getStoreSettings } from "@/server/settings";
 
 export const metadata: Metadata = {
   title: "Order confirmation",
@@ -56,7 +56,6 @@ async function Confirmation({ params, searchParams }: PageProps<"/order-confirma
   const [order, settings, sp] = await Promise.all([getOrderByNo(orderNo), getStoreSettings(), searchParams]);
   if (!order) notFound();
   const account = typeof sp.account === "string" ? sp.account : null;
-  const bank = usableBankDetails(settings.bankDetails);
   const shippingLabel = settings.shippingOptions.find((o) => o.key === order.shippingMethod)?.label ?? order.shippingMethod;
 
   return (
@@ -81,7 +80,7 @@ async function Confirmation({ params, searchParams }: PageProps<"/order-confirma
         )}
       </header>
 
-      <OrderConfirmationDetails order={order} bank={bank} shippingLabel={shippingLabel} />
+      <OrderConfirmationDetails order={order} shippingLabel={shippingLabel} />
     </div>
   );
 }

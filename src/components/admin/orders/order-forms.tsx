@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { updateOrderNote, updateOrderStatus, updateOrderTracking, type OrderActionResult } from "@/server/actions/orders";
 
 const inputClass =
-  "h-10 w-full rounded-lg border border-input bg-white/[0.03] px-3 text-sm outline-none placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20";
+  "h-10 w-full rounded-lg border border-input bg-card px-3 text-sm outline-none placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20";
 
 function Result({ state }: { state: OrderActionResult | null }) {
   return (

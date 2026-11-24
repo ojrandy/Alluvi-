@@ -25,7 +25,7 @@ Alluvi's only official messaging channels are:
 
 Alluvi has no official presence on TikTok, Facebook, Instagram, or similar platforms, and no other Telegram or WhatsApp accounts. Any other page or individual claiming to be or represent Alluvi is unauthorised and often used by scammers to solicit payments. We report such activity under the Fraud Act 2006 (S. 2) and Trade Marks Act 1994 (S. 92), supported by the Online Safety Act 2023.
 
-Consumers should verify any communication directly through [Research@alluvi.org](mailto:Research@alluvi.org).
+Consumers should verify any communication directly through [info@alluvihealthcare.co](mailto:info@alluvihealthcare.co).
 
 ## 4. Regulatory Status – Lawful R&D Operations
 
@@ -46,14 +46,13 @@ Some online sellers have misused the Alluvi name or branding without consent. Su
 
 Official domains:
 
-- 🌐 www.alluvi.bz
-- 🌐 www.alluvi.org
+- 🌐 www.alluvihealthcare.co
 
 ## 6. About Research Peptides and Generic Compounds
 
 Peptides such as Retatrutide are chains of amino acids, long used in laboratory research contexts. These are not counterfeit medicines as defined by Human Medicines Regulations 2012 (Reg 269), because Alluvi does not imitate authorised brands nor make therapeutic claims. Independent laboratory testing confirms accurate composition and purity.
 
-[https://verify.janoshik.com/tests/163216-ALLUVI_RETATRUTIDE_40MG_KIT_TU3SQLQB9ZDQ](https://verify.janoshik.com/tests/163216-ALLUVI_RETATRUTIDE_40MG_KIT_TU3SQLQB9ZDQ)
+[Request the independent laboratory test report](/contact#certificates)
 
 The regulatory distinction was recognised in MHRA v Peptide Clinics UK (2018), which held that "research-only" products without clinical claims fall outside the definition of a medicinal product.
 
@@ -95,10 +94,10 @@ We remain fully committed to ethical science, compliance transparency, and consu
 
 For any related queries, please contact:
 
-Email: [research@alluvi.org](mailto:research@alluvi.org)
+Email: [info@alluvihealthcare.co](mailto:info@alluvihealthcare.co)
 
 Telegram: [@ukalluvi](https://t.me/ukalluvi)
 
 WhatsApp: [wa.me/message/3GOTNZ2THRYZE1](https://wa.me/message/3GOTNZ2THRYZE1)
 
-Website: [https://alluvi.org](https://alluvi.org)
+Website: [https://alluvihealthcare.co](https://alluvihealthcare.co)

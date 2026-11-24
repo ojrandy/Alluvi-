@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { cacheLife } from "next/cache";
-import { ArrowUpRight, FlaskConical, Landmark, Mail, MessageCircle, Send, ShieldCheck, Truck } from "lucide-react";
+import { ArrowUpRight, FlaskConical, Mail, MessageCircle, Send, ShieldCheck, Truck, Wallet } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
+import { LangToggle } from "@/components/i18n/lang-toggle";
+import { ptOf, T } from "@/components/i18n/t";
+import { cn } from "@/lib/utils";
 import { site, type NavLink } from "@/lib/site";
 
 const TRUST = [
   { icon: FlaskConical, label: "Janoshik third-party tested" },
   { icon: ShieldCheck, label: "UV authenticity mark" },
   { icon: Truck, label: "Tracked UK & EU dispatch" },
-  { icon: Landmark, label: "Secure bank transfer" },
+  { icon: Wallet, label: "25+ ways to pay" },
 ];
 
 export function SiteFooter() {
@@ -20,7 +23,7 @@ export function SiteFooter() {
           {TRUST.map(({ icon: Icon, label }) => (
             <li key={label} className="flex items-center gap-2.5 text-[0.8rem] text-muted-foreground">
               <Icon className="size-4 shrink-0 text-brand" aria-hidden="true" />
-              {label}
+              <T>{label}</T>
             </li>
           ))}
         </ul>
@@ -32,28 +35,22 @@ export function SiteFooter() {
             <Logo className="h-10" />
           </Link>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Alluvi Labs develops and evaluates premium peptides and supplements, produced exclusively for controlled
-            research and development purposes.
+            <T>
+              Alluvi Labs develops and evaluates premium peptides and supplements, produced exclusively for controlled research and development purposes.
+            </T>
           </p>
           <ul className="space-y-2 text-sm">
-            <li>
-              <a
-                href={`mailto:${site.contact.supportEmail}`}
-                className="inline-flex items-center gap-2 text-foreground/85 hover:text-brand"
-              >
-                <Mail className="size-4 text-muted-foreground" aria-hidden="true" />
-                {site.contact.supportEmail}
-              </a>
-            </li>
-            <li>
-              <a
-                href={`mailto:${site.contact.researchEmail}`}
-                className="inline-flex items-center gap-2 text-foreground/85 hover:text-brand"
-              >
-                <Mail className="size-4 text-muted-foreground" aria-hidden="true" />
-                {site.contact.researchEmail}
-              </a>
-            </li>
+            {[...new Set([site.contact.supportEmail, site.contact.researchEmail])].map((email) => (
+              <li key={email}>
+                <a
+                  href={`mailto:${email}`}
+                  className="inline-flex items-center gap-2 text-foreground/85 hover:text-brand"
+                >
+                  <Mail className="size-4 text-muted-foreground" aria-hidden="true" />
+                  {email}
+                </a>
+              </li>
+            ))}
             <li>
               <a
                 href={site.contact.telegramUrl}
@@ -63,7 +60,9 @@ export function SiteFooter() {
               >
                 <Send className="size-4 text-muted-foreground" aria-hidden="true" />
                 Telegram {site.contact.telegramHandle}
-                <span className="sr-only">(opens in a new tab)</span>
+                <span className="sr-only">
+                  <T>(opens in a new tab)</T>
+                </span>
               </a>
             </li>
             <li>
@@ -75,7 +74,9 @@ export function SiteFooter() {
               >
                 <MessageCircle className="size-4 text-muted-foreground" aria-hidden="true" />
                 WhatsApp
-                <span className="sr-only">(opens in a new tab)</span>
+                <span className="sr-only">
+                  <T>(opens in a new tab)</T>
+                </span>
               </a>
             </li>
           </ul>
@@ -84,7 +85,9 @@ export function SiteFooter() {
         <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
           {site.footer.columns.map((col) => (
             <div key={col.title}>
-              <h2 className="mb-4 text-xs font-bold tracking-[0.14em] text-foreground uppercase">{col.title}</h2>
+              <h2 className="mb-4 text-xs font-bold tracking-[0.14em] text-foreground uppercase">
+                <T>{col.title}</T>
+              </h2>
               <ul className="space-y-2.5">
                 {col.links.map((l) => (
                   <li key={l.href + l.label}>
@@ -99,7 +102,9 @@ export function SiteFooter() {
 
       <div className="border-t border-border">
         <div className="container-page flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
-          <p className="text-[0.7rem] font-semibold tracking-[0.08em] text-brand">{site.footer.disclaimer}</p>
+          <p className="text-[0.7rem] font-semibold tracking-[0.08em] text-brand">
+            <T>{site.footer.disclaimer}</T>
+          </p>
           <p className="text-xs text-muted-foreground">
             <Copyright />
           </p>
@@ -112,17 +117,20 @@ export function SiteFooter() {
 function FooterLink({ link }: { link: NavLink }) {
   const cls =
     "inline-flex min-h-6 items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground";
+  if (link.langToggle) return <LangToggle className={cn(cls, "cursor-pointer")} />;
   if (link.external)
     return (
       <a href={link.href} target="_blank" rel="noopener noreferrer" className={cls}>
-        {link.label}
+        <T>{link.label}</T>
         <ArrowUpRight className="size-3 opacity-60" aria-hidden="true" />
-        <span className="sr-only">(opens in a new tab)</span>
+        <span className="sr-only">
+                  <T>(opens in a new tab)</T>
+                </span>
       </a>
     );
   return (
     <Link href={link.href} className={cls}>
-      {link.label}
+      <T>{link.label}</T>
     </Link>
   );
 }
@@ -131,5 +139,6 @@ function FooterLink({ link }: { link: NavLink }) {
 async function Copyright() {
   "use cache";
   cacheLife("days");
-  return <>{site.footer.copyright.replace("{year}", String(new Date().getFullYear()))}</>;
+  const year = String(new Date().getFullYear());
+  return <T pt={ptOf(site.footer.copyright).replace("{year}", year)}>{site.footer.copyright.replace("{year}", year)}</T>;
 }

@@ -25,7 +25,7 @@ async function NewProduct() {
   return (
     <div className="mt-3 flex flex-col gap-6">
       <header>
-        <h2 className="text-2xl font-semibold tracking-tight">New product</h2>
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] sm:text-[1.75rem]">New product</h1>
         <p className="mt-1 text-sm text-muted-foreground">It goes to the end of the shop. You can reorder it from the product list.</p>
       </header>
       <ProductForm initial={EMPTY_PRODUCT_FORM} picker={picker} />

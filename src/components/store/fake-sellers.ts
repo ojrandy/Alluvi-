@@ -9,7 +9,7 @@ export const FAKE_SELLER_FLAGS: Record<FakeSeller["country"], string> = {
 
 export const FAKE_SELLERS: FakeSeller[] = [
   { country: "United Kingdom", name: "Alluvi UK Wholesale", channel: "Instagram", handle: "@alluvi.uk.wholesale", note: "Impersonates Alluvi branding — not an authorised reseller. Products reported as relabelled." },
-  { country: "United Kingdom", name: "Alluvi London Peptides", channel: "Standalone website", handle: "alluvi-london-peptides.co.uk", note: "Cloned product photography from alluvi.org. No verifiable lab testing or COA." },
+  { country: "United Kingdom", name: "Alluvi London Peptides", channel: "Standalone website", handle: "alluvi-london-peptides.co.uk", note: "Cloned official Alluvi product photography. No verifiable lab testing or COA." },
   { country: "United Kingdom", name: "AlluviStore UK", channel: "Telegram", handle: "@alluvistore_uk", note: "Sells unverified vials under the Alluvi name. No connection to the official brand." },
   { country: "United Kingdom", name: "Alluvi Research Supplies", channel: "eBay", handle: "alluvi-research-supplies", note: "Listings flagged for counterfeit packaging and missing batch identifiers." },
   { country: "Brazil", name: "Alluvi Brasil Oficial", channel: "Instagram", handle: "@alluvi.brasil.oficial", note: "Falsely claims to be the official Brazilian distributor. Alluvi has no Brazilian distributor." },

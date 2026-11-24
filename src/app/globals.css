@@ -26,6 +26,20 @@
   --color-surface-raised: var(--surface-raised);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  /* brand as text: equals --brand on the dark storefront, a darker AA-safe orange in the light admin */
+  --color-brand-ink: var(--brand-ink);
+
+  /* admin console (light SaaS theme, see [data-admin-ui] below) */
+  --color-kpi-violet: var(--kpi-violet);
+  --color-kpi-sky: var(--kpi-sky);
+  --color-kpi-mint: var(--kpi-mint);
+  --color-kpi-peach: var(--kpi-peach);
+  --color-kpi-violet-ink: var(--kpi-violet-ink);
+  --color-kpi-sky-ink: var(--kpi-sky-ink);
+  --color-kpi-mint-ink: var(--kpi-mint-ink);
+  --color-kpi-peach-ink: var(--kpi-peach-ink);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
 
   /* shadcn semantic tokens */
   --color-sidebar-ring: var(--sidebar-ring);
@@ -93,7 +107,21 @@
   --brand: #ff8200;
   --brand-foreground: #0a0a0a;
   --brand-soft: oklch(0.74 0.19 55 / 14%);
+  --brand-ink: var(--brand);
   --teal: #8ec9cc;
+
+  /* admin-only tokens; harmless defaults for the dark storefront */
+  --kpi-violet: #1b1830;
+  --kpi-sky: #131d2b;
+  --kpi-mint: #12241c;
+  --kpi-peach: #2a1a0c;
+  --kpi-violet-ink: #b7acff;
+  --kpi-sky-ink: #8fbaff;
+  --kpi-mint-ink: #7fdcae;
+  --kpi-peach-ink: #ffb36b;
+  --ink: #ececee;
+  --ink-foreground: #0a0a0a;
+  --card-shadow: none;
 
   /* semantic */
   --primary: var(--brand);
@@ -131,6 +159,78 @@
   /* layout */
   --announcement-height: 2.25rem;
   --header-height: 4.5rem;
+}
+
+/*
+ * Admin console theme (ADR-019). The storefront brand is dark-only; the back office is a light,
+ * data-dense SaaS surface. Scoped with :root:has() rather than a wrapper class so that portalled
+ * UI (dialogs, dropdowns, sheets, toasts render into <body>) picks up the same tokens.
+ */
+:root:has([data-admin-ui]) {
+  color-scheme: light;
+
+  --background: #f4f5f7;
+  --foreground: #0f1218;
+  --surface: #f8f9fb;
+  --surface-raised: #eef0f3;
+  --card: #ffffff;
+  --card-foreground: #0f1218;
+  --popover: #ffffff;
+  --popover-foreground: #0f1218;
+
+  --brand: #ff8200;
+  --brand-foreground: #1a1006;
+  --brand-soft: #fff1e3;
+  --brand-ink: #b45309; /* 5.0:1 on white */
+  --teal: #0f766e;
+
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-foreground);
+  --secondary: #f1f2f5;
+  --secondary-foreground: #0f1218;
+  --muted: #f1f2f5;
+  --muted-foreground: #5d6472; /* 5.9:1 on white */
+  --accent: #f1f2f5;
+  --accent-foreground: #0f1218;
+  --destructive: #dc2626;
+  --success: #15803d;
+  --warning: #b45309;
+  --border: #e7e9ee;
+  --input: #dcdfe5;
+  --ring: #ff8200;
+
+  --chart-1: #ff8200;
+  --chart-2: #8b7cf6;
+  --chart-3: #22b07d;
+  --chart-4: #4f8ff7;
+  --chart-5: #c4c9d2;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #4a5160;
+  --sidebar-primary: var(--brand);
+  --sidebar-primary-foreground: var(--brand-foreground);
+  --sidebar-accent: #f3f4f7;
+  --sidebar-accent-foreground: #0f1218;
+  --sidebar-border: #eceef2;
+  --sidebar-ring: var(--brand);
+
+  --kpi-violet: #ece9ff;
+  --kpi-sky: #e0edff;
+  --kpi-mint: #dcf5e8;
+  --kpi-peach: #ffead6;
+  --kpi-violet-ink: #5b4bc4;
+  --kpi-sky-ink: #2563c9;
+  --kpi-mint-ink: #15784b;
+  --kpi-peach-ink: #b45309;
+  --ink: #111318;
+  --ink-foreground: #ffffff;
+
+  --card-shadow: 0 1px 2px 0 rgb(16 24 40 / 0.04), 0 1px 3px 0 rgb(16 24 40 / 0.03);
+}
+
+/* Card elevation that follows the active theme (no shadow on the dark storefront). */
+@utility shadow-card {
+  box-shadow: var(--card-shadow);
 }
 
 @layer base {
@@ -341,4 +441,11 @@
     border-color: var(--border);
     margin-block: 2.5em;
   }
+}
+
+/* Language switch (ADR-018): <T> renders both languages; hide the inactive one. Unlayered + !important
+   so no utility can re-show it. Default (no data-lang) is English. */
+html:not([data-lang="pt"]) [data-l="pt"],
+html[data-lang="pt"] [data-l="en"] {
+  display: none !important;
 }

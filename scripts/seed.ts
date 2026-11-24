@@ -16,7 +16,8 @@ import mysql from "mysql2/promise";
 import { drizzle } from "drizzle-orm/mysql2";
 import { eq, inArray } from "drizzle-orm";
 import * as schema from "../src/db/schema";
-import type { BankDetails, ProductSpecs, ShippingOption } from "../src/db/schema";
+import type { PaymentMethodConfig, ProductSpecs, ShippingOption } from "../src/db/schema";
+import { defaultTemplate, PAYMENT_METHODS } from "../src/lib/payment-methods";
 
 loadEnv({ path: ".env.local", override: false });
 
@@ -43,15 +44,9 @@ type ProductContent = {
 };
 
 const DEFAULT_SETTINGS: Record<string, unknown> = {
-  // Placeholders: the client must fill these in /admin/settings before launch (DEPLOYMENT checklist).
-  bank_details: {
-    accountName: "TO BE CONFIGURED",
-    bankName: "TO BE CONFIGURED",
-    sortCode: "00-00-00",
-    accountNumber: "00000000",
-    iban: null,
-    instructions: "Use your order number as the payment reference. Orders are dispatched once payment has cleared.",
-  } satisfies BankDetails,
+  // ADR-021: every catalogue method enabled, with a details template the admin completes in
+  // /admin/settings (the [[ … ]] parts). Sending is blocked while any [[ … ]] remains.
+  payment_methods: PAYMENT_METHODS.map((m) => ({ key: m.key, enabled: true, template: defaultTemplate(m.key) })) satisfies PaymentMethodConfig[],
   // Labels/descriptions follow the live shipping policy. Prices are placeholders (0) until the client confirms them.
   shipping_options: [
     {
@@ -76,7 +71,7 @@ const DEFAULT_SETTINGS: Record<string, unknown> = {
     endsAt: new Date(Date.now() + FREE_SHIPPING_DAYS * 24 * 60 * 60 * 1000).toISOString(),
     label: "Free shipping on every order for our first 60 days",
   },
-  notify_email: process.env.ORDER_NOTIFY_EMAIL ?? "orders@alluvi.store",
+  notify_email: process.env.ORDER_NOTIFY_EMAIL ?? "info@alluvihealthcare.co",
   settings_needs_review: true,
 };
 

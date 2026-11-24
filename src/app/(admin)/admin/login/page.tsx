@@ -11,14 +11,14 @@ export const metadata: Metadata = { title: "Sign in" };
 
 export default function AdminLoginPage() {
   return (
-    <div className="bg-grid relative grid flex-1 place-items-center px-4 py-16">
+    <div className="relative grid flex-1 place-items-center bg-[radial-gradient(60rem_30rem_at_50%_-10%,var(--brand-soft),transparent)] px-4 py-16">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
           <Logo className="h-9" />
-          <p className="eyebrow mt-6">Management console</p>
+          <p className="eyebrow mt-6 text-brand-ink">Management console</p>
           <h1 className="text-h2 mt-2">Sign in</h1>
         </div>
-        <div className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-7">
+        <div className="rounded-3xl border border-border bg-card p-6 shadow-[0_1px_2px_rgb(16_24_40/0.04),0_12px_32px_-12px_rgb(16_24_40/0.12)] sm:p-7">
           {/* useSearchParams (?next=) and the session check are request data: keep them out of the static shell. */}
           <Suspense fallback={<Skeleton className="h-64 w-full rounded-2xl" />}>
             <RedirectIfSignedIn />

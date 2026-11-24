@@ -30,7 +30,7 @@ We are unable to accept returns for:
 
 ## Reporting Issues
 
-If your order arrives damaged, incorrect, or defective, please contact our support team at [support@alluvi.org](mailto:support@alluvi.org) within 48 hours of delivery. Include your order number, description of the issue, and supporting photos.
+If your order arrives damaged, incorrect, or defective, please contact our support team at [info@alluvihealthcare.co](mailto:info@alluvihealthcare.co) within 48 hours of delivery. Include your order number, description of the issue, and supporting photos.
 
 ## Return Approval
 
@@ -45,10 +45,10 @@ Approved refunds will be processed to your original payment method within 5–10
 If you haven't received your refund after 10 business days:
 
 - First, check your bank.
-- Then contact us at [support@alluvi.org](mailto:support@alluvi.org) for assistance.
+- Then contact us at [info@alluvihealthcare.co](mailto:info@alluvihealthcare.co) for assistance.
 
 For any data-related queries, please contact:
 
-Email: [research@alluvi.org](mailto:research@alluvi.org)
+Email: [info@alluvihealthcare.co](mailto:info@alluvihealthcare.co)
 
-Website: [https://alluvi.org](https://alluvi.org)
+Website: [https://alluvihealthcare.co](https://alluvihealthcare.co)

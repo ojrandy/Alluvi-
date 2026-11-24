@@ -21,7 +21,7 @@
 **Decision:** nodemailer with client SMTP. Order is committed before sending; failures logged to `order_events`.
 **Consequences:** Deliverability depends on SPF/DKIM/DMARC — must be configured at launch.
 
-## ADR-004 — Bank transfer only in v1
+## ADR-004 — Bank transfer only in v1 (superseded by ADR-021)
 **Status:** Accepted (client confirmed 2026-11-22)
 **Context:** Live site uses Klyme (open banking). Mainstream processors (Stripe, PayPal) prohibit this product category.
 **Decision:** v1 = bank transfer with order number as reference; admin marks `paid`. Klyme in v2.
@@ -72,6 +72,7 @@ Avoid MySQL-8-only features so MariaDB 10.x also works. Drizzle must use `mode: 
 **Status:** Accepted (2026-11-22). **alluvi.store** is canonical. Verified redirect chain: `alluvi.org` → `alluvi.bz` → `alluvi.store` (all 301), and all three served the same build.
 **Context:** Site served at `alluvi.store`, sitemap canonical is `alluvi.bz`.
 **Decision:** Pick one as `NEXT_PUBLIC_SITE_URL`; 301 the other at DNS/host level.
+**Amended 2026-11-24 (client):** canonical domain is now **alluvihealthcare.co** and the single public contact email is **info@alluvihealthcare.co**. All storefront copy (announcement marquee, policies, press release, Spot a Fake, product-slider watermark) names only this domain. Production must set `NEXT_PUBLIC_SITE_URL=https://alluvihealthcare.co`; the old domains should 301 to it. Product photos still carry the old `www.ALLUVI.org` watermark baked into the pixels until the client supplies clean originals.
 
 ## ADR-009 — 3D is progressive enhancement only
 **Status:** Accepted
@@ -144,3 +145,46 @@ scroll-progress keyframes) and CSS. No GSAP dependency (~70KB). Deliberate devia
 - **Delete = archive when ordered.** A product referenced by any `order_items` row is set `is_active = false`; only never-ordered products are deleted (their uploaded files are removed after the response).
 - **Slug changes return a redirect suggestion** (`{ source: "/product/old", destination: "/product/new" }`, also logged as `[admin-products] slug changed`) to add to `next.config.ts`. No redirects table in v1.
 - **Cache Components keeps previous routes mounted (hidden `<Activity>`).** The create form resets itself when hidden after a create, and the edit form takes fresh server values when the product's `updated_at` changes and it has no unsaved edits. Without this, revisiting an edit page could silently re-activate a product that was hidden from the list.
+
+## ADR-018: "Alluvi Brazil" = in-place EN ⇄ pt-BR switch
+**Status:** Accepted (2026-11-24, client chose the "proper PT toggle" option over Google Translate and a full /pt-br/ site)
+- **Why not alluvibrazil.org:** the Brazil app is still under construction, so the nav/footer "Alluvi Brazil" item now switches this site to Brazilian Portuguese instead of linking out. In Portuguese the item reads "English" and switches back.
+- **Mechanism (no new dependency, pages stay static):** `<T>` (`src/components/i18n/t.tsx`) renders the English source and its pt-BR translation from `src/lib/i18n/pt.ts` (a dictionary keyed by the English string). A tiny pre-paint script in the root layout (`LANG_BOOT_SCRIPT`) reads `?lang=pt|en` or the `alluvi_lang` cookie and sets `<html data-lang="pt" lang="pt-BR">`; CSS in `globals.css` hides the inactive language. No cookie is read on the server, so Cache Components/PPR prerendering is unchanged and there is no flash of English. Attribute text (aria-label, alt) uses `useT()`; `toggleLang()` reads the live `<html>` state, not React state.
+- **Rejected:** Google Translate widget (third-party script against the "no third-party APIs" rule, known React DOM conflicts that can break cart/checkout, unreviewed machine translation of compliance text); next-intl with `/pt-br/` routes (correct long term, several days plus legal review; revisit when the Brazil app is ready).
+- **Scope:** header, mobile menu, footer, notices, home page, cart, product-card buttons, checkout (labels, validation and server messages, country names via `Intl.DisplayNames`), contact page and every research-use disclaimer. **Stays English:** product names and descriptions, policy pages, emails, `/admin`. A missing dictionary key falls back to English.
+- **Copy note:** translations keep RUO wording faithful. Where the English source uses human-use phrasing ("Don't put your health at risk…", "precision dosing devices"), the pt-BR text omits it (CONVENTIONS: no dosing or human-use language). Have a native speaker review `pt.ts` before promoting the Brazilian version.
+- **Trade-off:** pages ship both languages in the HTML (hidden spans, `lang="pt-BR"` on the Portuguese ones), a few KB more per page.
+
+## ADR-019: Light SaaS theme for the admin console
+**Date:** 2026-11-24 · **Status:** Accepted
+
+**Context:** The client asked for the admin to look like a professional SaaS dashboard (references: light canvas, white cards, pastel KPI tiles, pill navigation). The storefront brand is dark-only.
+
+**Decision:** The admin gets its own light token set in `globals.css`, applied by `:root:has([data-admin-ui])`. The attribute sits on the `(admin)` group layout, so `/admin/**` (login included) is light and the storefront is untouched. `:root:has()` rather than a wrapper class because dialogs, dropdowns, sheets and toasts portal into `<body>`. New tokens: `brand-ink` (brand as AA-safe text; equals `brand` on the storefront), `kpi-*` / `kpi-*-ink` (pastel tiles), `ink` (dark accent card), `shadow-card`. Shared primitives live in `src/components/admin/ui.tsx`. No new dependency.
+
+**Consequences:** Shared components must not hardcode `white/x` or `black/x` (use `foreground/x` or tokens); `button`, `form-alert`, `form-field`, `skeleton` and `order-status-badge` were converted (no visible change on the dark storefront). Dashboard range/metric switches are client state over a 180-day series (no request). Product list mutations are optimistic (`useOptimistic`) and report through toasts.
+
+## ADR-020: Janoshik links point to the contact page until our certificates exist
+
+**Context:** The recovered verify.janoshik.com links are for alluvi.store batches; a visitor who opens one sees the old domain. The client requires every such link to go to Contact Us until the new links are supplied.
+
+**Decision:** `labLink()` in `src/lib/lab-links.ts` maps any `*.janoshik.com` URL to `/contact#certificates` at render time (product page, lab-analysis panel, home sections, Markdown). Stored URLs in `content/` and the DB stay as data; nothing links to them.
+
+**Consequences:** Admin-entered Janoshik links are redirected too until the rule is removed. When real certificates arrive: store their URLs and delete the host check in `labLink()`.
+
+## ADR-021: Customer chooses a payment method; the admin emails the details per order
+**Date:** 2026-11-24 · **Status:** Accepted (client decision) · supersedes ADR-004
+
+**Context:** The client does not want bank or wallet details published on the site or in automated emails (security, and accounts in this niche get frozen and must be swapped quickly). Customers in the UK, US and elsewhere want to pay in different ways.
+
+**Decision:**
+- Checkout offers a grouped dropdown (icon, then name) of **25 methods + "Other"** from a code catalogue, `src/lib/payment-methods.ts`: UK/US/SEPA/SWIFT bank transfer; PayPal, Zelle, Cash App, Venmo, Apple Cash, Revolut, Wise, Monzo, N26, Payoneer; Western Union, MoneyGram, Remitly; BTC, ETH, USDT, USDC, LTC, SOL, XRP, Binance Pay. The client approved PayPal, Zelle and the others. Keys are stored on orders and are never renamed. The `bank_transfer` key = UK bank transfer (existing orders).
+- `settings.payment_methods` = `[{key, enabled, template}]`, edited in /admin/settings. The template holds the **full** payment details (client choice: speed over not storing them). It is admin-only and only ever sent inside the email for one order.
+- `placeOrder` accepts only an **enabled** key; it stores the key plus a label snapshot. Neither the confirmation page nor the automated emails contain payment details; the customer is promised the details "within 2 business hours".
+- The admin sends details from /admin/orders/[id]: the template is prefilled with `{{first_name}} {{order_no}} {{amount}} {{method}} {{pay_by}}` (amount from the stored server-computed total). Sending is blocked while any `[[ … ]]` placeholder remains. The email is sent **first**; the order records `payment_instructions(_sent_at)` only once SMTP accepted it. The sent text also shows on the customer's (access-gated) order page, so a customer can check an email against the site (anti-phishing). Each customer email carries a "we never change details by phone/social" notice.
+- The customer can press "I've sent payment" (+ optional reference). This is gated like the order page and rate limited (5/10 min/IP). It notifies the shop but is not proof of payment; the admin marks the order paid.
+- Payment stage is derived, not a new status: `needs_details → awaiting_payment → customer_reported`, or `overdue` 5 days after details were sent (`PAYMENT_DUE_DAYS`). Admin can send a reminder. Orders list has stage chips; the dashboard card counts details still to send.
+- Email only (no WhatsApp/Telegram automation).
+- **New dependency `simple-icons` (16.36.0, CC0):** the brand marks for the dropdown. Named imports + `sideEffects:false` tree-shake to the ~19 icons used (one ~20 KB client chunk, verified). Brands it lacks (Remitly, USDC) use neutral lucide glyphs.
+
+**Consequences:** The `bank_details` setting and its card are removed (migration 0001 deletes the row; it only held placeholders). The response promise and due period are constants in `payment-methods.ts`. A method switched off after a customer loaded checkout is rejected with a field error and the list refreshes. Being able to accept PayPal/Zelle/etc. for this product category is the client's own business and compliance decision (see the PROJECT_TRACKER risk).

@@ -256,7 +256,7 @@ export function ProductForm({
                 </span>
               </label>
               {editing && isActive && savedSlug && (
-                <a href={`/product/${savedSlug}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:underline">
+                <a href={`/product/${savedSlug}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-medium text-brand-ink hover:underline">
                   View in shop <ExternalLink className="size-3" aria-hidden="true" />
                   <span className="sr-only">(opens in a new tab)</span>
                 </a>
@@ -429,7 +429,7 @@ function DescriptionSection({ uid }: { uid: string }) {
           <FieldError id={`${uid}-desc-error`} message={err} />
         </div>
         {tab === "preview" && (
-          <div className="min-h-64 rounded-lg border border-border bg-white/[0.02] px-4 py-3">
+          <div className="min-h-64 rounded-lg border border-border bg-surface px-4 py-3">
             {description.trim() ? (
               <Markdown source={description} className="text-sm text-muted-foreground" />
             ) : (
@@ -591,7 +591,7 @@ function Rows({
       {!hideTitle && <h3 className="text-sm font-medium">{title}</h3>}
       {children.length === 0 ? <p className="text-xs text-muted-foreground">{empty}</p> : <ul className="space-y-2">{children}</ul>}
       {error && <p className="text-xs text-destructive">{error}</p>}
-      <Button type="button" variant="ghost" onClick={onAdd} className="h-8 px-2 text-brand hover:text-brand">
+      <Button type="button" variant="ghost" onClick={onAdd} className="h-8 px-2 text-brand-ink hover:text-brand-ink">
         <Plus aria-hidden="true" />
         {addLabel}
       </Button>
@@ -631,7 +631,7 @@ function RedirectSuggestion({ from, to }: { from: string; to: string }) {
         The URL changed, so <strong>{from}</strong> now shows “not found”. Ask your developer to add this line to the redirects in <code>next.config.ts</code>:
       </p>
       <div className="flex items-center gap-2">
-        <code className="min-w-0 flex-1 overflow-x-auto rounded-md bg-black/40 px-2.5 py-1.5 text-xs whitespace-nowrap text-foreground">{line}</code>
+        <code className="min-w-0 flex-1 overflow-x-auto rounded-md bg-muted px-2.5 py-1.5 text-xs whitespace-nowrap text-foreground">{line}</code>
         <Button
           type="button"
           variant="outline"

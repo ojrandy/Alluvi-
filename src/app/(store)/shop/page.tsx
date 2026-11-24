@@ -5,6 +5,7 @@ import { ProductCard } from "@/components/store/product-card";
 import { ProductGridSkeleton } from "@/components/store/product-grid-skeleton";
 import { cn } from "@/lib/utils";
 import { getProductCards, type ProductCard as ProductCardData } from "@/server/queries/products";
+import { T } from "@/components/i18n/t";
 
 export const metadata: Metadata = {
   title: { absolute: "Professional Research Solutions | Alluvi Shop" },
@@ -44,7 +45,7 @@ export default function ShopPage({ searchParams }: PageProps<"/shop">) {
       </Suspense>
 
       <p className="mt-14 text-center text-sm text-muted-foreground">
-        For laboratory research use only. Not for human consumption.
+        <T>For laboratory research use only. Not for human consumption.</T>
       </p>
     </div>
   );

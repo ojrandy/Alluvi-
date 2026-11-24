@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type Variants } from "motion/react";
 import { cn } from "@/lib/utils";
+import { T } from "@/components/i18n/t";
+import { useT } from "@/lib/i18n/client";
 import styles from "./app-coming-soon.module.css";
 
 /** IX2 "Fade In & Move On Scroll" (a-12): opacity 0 → 1, y 25px → 0, 1s ease, 0.1s delay. */
@@ -39,6 +41,7 @@ function Phone({ alt }: { alt: string }) {
 export function AppComingSoon() {
   const pinRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const t = useT();
   const { scrollYProgress } = useScroll({ target: pinRef, offset: ["start start", "end end"] });
   // White covers the full viewport by 85% of the pinned range (IX2 a-29 keyframes 0% → 85%).
   const clipPath = useTransform(scrollYProgress, [0, 0.85], ["inset(100% 0 0 0)", "inset(0% 0 0 0)"]);
@@ -48,16 +51,16 @@ export function AppComingSoon() {
     <section id="App-coming-soon" className={styles.section} aria-labelledby="app-title">
       <div className={styles.head}>
         <motion.h2 id="app-title" className={styles.title} variants={fadeMove} {...reveal}>
-          The Alluvi research and development App is Coming Soon
+          <T>The Alluvi research and development App is Coming Soon</T>
         </motion.h2>
         <motion.p className={styles.lede} variants={fadeMove} {...reveal}>
-          Start your free trial soon and see how easy it is to track, manage, and optimize your time.
+          <T>Start your free trial soon and see how easy it is to track, manage, and optimize your time.</T>
         </motion.p>
         <motion.div className={styles.badges} variants={fadeMove} {...reveal}>
           {/* The app is not released yet, so the store badges are not links. */}
           <Image
             src="/images/App-Store-badge.svg"
-            alt="Download on the App Store (coming soon)"
+            alt={t("Download on the App Store (coming soon)")}
             width={242}
             height={69}
             className={styles.badge}
@@ -65,7 +68,7 @@ export function AppComingSoon() {
           />
           <Image
             src="/images/Mobile-App-Store-Badge.svg"
-            alt="Get it on Google Play (coming soon)"
+            alt={t("Get it on Google Play (coming soon)")}
             width={242}
             height={69}
             className={styles.badge}
@@ -77,7 +80,7 @@ export function AppComingSoon() {
       <div ref={pinRef} className={styles.pin}>
         <div className={styles.pinInner}>
           <div className={styles.layer}>
-            <Phone alt="Alluvi research app home screen, dark mode" />
+            <Phone alt={t("Alluvi research app home screen, dark mode")} />
           </div>
           <motion.div
             className={cn(styles.layer, styles.light)}

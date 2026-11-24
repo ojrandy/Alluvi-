@@ -4,6 +4,17 @@ import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import { ArrowLeft, ExternalLink, Mail, Phone, UserRound } from "lucide-react";
 import { OrderNoteForm, OrderStatusForm, OrderTrackingForm } from "@/components/admin/orders/order-forms";
+import { MarkPaidForm, PaymentDetailsForm, PaymentReminderForm } from "@/components/admin/orders/payment-forms";
+import { PaymentMethodIcon } from "@/components/payment/payment-method-icon";
+import {
+  defaultTemplate,
+  fillTemplate,
+  payByDate,
+  paymentStage,
+  PAYMENT_RESPONSE_PROMISE,
+  PAYMENT_STAGE_LABEL,
+  type PaymentStage,
+} from "@/lib/payment-methods";
 import { OrderStatusBadge } from "@/components/orders/order-status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { OrderEvent, OrderStatus } from "@/db/schema";
@@ -45,26 +56,32 @@ async function OrderDetail({ params }: Pick<PageProps<"/admin/orders/[id]">, "pa
   if (!order) notFound();
 
   const units = order.items.reduce((n, i) => n + i.quantity, 0);
+  const awaitingPayment = order.status === "pending_payment";
+  const paymentCard = (
+    <PaymentCard order={order} template={settings.paymentMethods.find((m) => m.key === order.paymentMethod)?.template ?? defaultTemplate(order.paymentMethod)} />
+  );
 
   return (
     <div className="mt-3 flex flex-col gap-6">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="text-2xl font-semibold tracking-tight tabular-nums">{order.orderNo}</h2>
+            <h1 className="text-2xl font-semibold tracking-[-0.02em] tabular-nums sm:text-[1.75rem]">{order.orderNo}</h1>
             <OrderStatusBadge status={order.status} />
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
             Placed <time dateTime={order.createdAt.toISOString()}>{formatLondonDateTime(order.createdAt)}</time> · {units}{" "}
-            {units === 1 ? "item" : "items"} · {paymentMethodLabel(order.paymentMethod)}
+            {units === 1 ? "item" : "items"} · {order.paymentMethodLabel ?? paymentMethodLabel(order.paymentMethod)}
           </p>
         </div>
-        <p className="text-2xl font-semibold tracking-tight tabular-nums sm:text-right">{formatGBP(order.totalPence)}</p>
+        <p className="text-2xl font-semibold tracking-[-0.02em] tabular-nums sm:text-right sm:text-[1.75rem]">{formatGBP(order.totalPence)}</p>
       </header>
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        {/* Side column first in the DOM on phones: status is the thing the admin came to change. */}
+        {/* Phones: side column (status) first, except while awaiting payment, when the main column with the Payment card leads. */}
         <div className="flex flex-col gap-6 lg:order-2">
+          {/* While awaiting payment, payment is THE task: it gets the wide column (below) instead. */}
+          {!awaitingPayment && paymentCard}
           <Card title="Status">
             <OrderStatusForm orderId={order.id} status={order.status} trackingNumber={order.trackingNumber} />
           </Card>
@@ -76,7 +93,7 @@ async function OrderDetail({ params }: Pick<PageProps<"/admin/orders/[id]">, "pa
                   href={royalMailTrackingUrl(order.trackingNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:underline"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-brand-ink hover:underline"
                 >
                   Royal Mail <ExternalLink className="size-3" aria-hidden="true" />
                   <span className="sr-only">(opens in a new tab)</span>
@@ -92,7 +109,8 @@ async function OrderDetail({ params }: Pick<PageProps<"/admin/orders/[id]">, "pa
           </Card>
         </div>
 
-        <div className="flex min-w-0 flex-col gap-6 lg:order-1">
+        <div className={cn("flex min-w-0 flex-col gap-6 lg:order-1", awaitingPayment && "order-first")}>
+          {awaitingPayment && paymentCard}
           <ItemsCard order={order} shippingLabel={settings.shippingOptions.find((s) => s.key === order.shippingMethod)?.label ?? order.shippingMethod} />
           {order.customerNote && (
             <Card title="Customer note">
@@ -108,6 +126,88 @@ async function OrderDetail({ params }: Pick<PageProps<"/admin/orders/[id]">, "pa
   );
 }
 
+// ---------- payment (ADR-021) ----------
+
+const STAGE_TONE: Record<PaymentStage, string> = {
+  needs_details: "bg-brand/15 text-brand-ink",
+  awaiting_payment: "bg-foreground/[0.06] text-muted-foreground",
+  customer_reported: "bg-success/15 text-success",
+  overdue: "bg-destructive/10 text-destructive",
+};
+
+function PaymentCard({ order, template }: { order: AdminOrderDetail; template: string }) {
+  const method = order.paymentMethodLabel ?? paymentMethodLabel(order.paymentMethod);
+  const stage = paymentStage(order);
+  const sentAt = order.paymentInstructionsSentAt;
+  const prefill = fillTemplate(template, {
+    first_name: order.firstName,
+    order_no: order.orderNo,
+    amount: formatGBP(order.totalPence),
+    method,
+    pay_by: formatLondonDateTime(payByDate(new Date())),
+  });
+
+  return (
+    <Card
+      title="Payment"
+      description={stage === "needs_details" ? `Promised to the customer ${PAYMENT_RESPONSE_PROMISE} of ordering.` : undefined}
+      action={stage ? <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold whitespace-nowrap", STAGE_TONE[stage])}>{PAYMENT_STAGE_LABEL[stage]}</span> : null}
+    >
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <PaymentMethodIcon method={order.paymentMethod} className="size-9" />
+          <div className="min-w-0">
+            <p className="truncate font-medium">{method}</p>
+            <p className="text-xs text-muted-foreground tabular-nums">
+              {formatGBP(order.totalPence)} · ref {order.orderNo}
+            </p>
+          </div>
+        </div>
+
+        {sentAt && (
+          <details className="group rounded-xl border border-border">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2.5 text-sm">
+              <span>
+                Details sent <time dateTime={sentAt.toISOString()}>{formatLondonDateTime(sentAt)}</time>
+              </span>
+              <span className="text-xs text-brand-ink group-open:hidden">Show</span>
+              <span className="hidden text-xs text-brand-ink group-open:inline">Hide</span>
+            </summary>
+            <p className="border-t border-border px-3 py-3 text-[13px] leading-relaxed break-words whitespace-pre-wrap text-muted-foreground">{order.paymentInstructions}</p>
+          </details>
+        )}
+
+        {order.customerReportedPaidAt && (
+          <div className="rounded-xl border border-success/30 bg-success/10 px-3 py-2.5 text-sm">
+            <p className="font-medium">Customer says they paid</p>
+            <p className="text-xs text-muted-foreground">
+              {formatLondonDateTime(order.customerReportedPaidAt)} · reference {order.customerPaymentRef ?? "not given"}. Check the money has arrived before marking paid.
+            </p>
+          </div>
+        )}
+
+        {order.status === "pending_payment" ? (
+          <div className="space-y-3">
+            {sentAt && <MarkPaidForm orderId={order.id} />}
+            {sentAt && !order.customerReportedPaidAt && (
+              <PaymentReminderForm orderId={order.id} lastReminder={order.paymentReminderSentAt ? formatLondonDateTime(order.paymentReminderSentAt) : null} />
+            )}
+            <PaymentDetailsForm
+              orderId={order.id}
+              initialMessage={order.paymentInstructions ?? prefill}
+              customerEmail={order.email}
+              methodLabel={method}
+              resend={!!sentAt}
+            />
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">{order.status === "cancelled" ? "Order cancelled." : "Payment received."}</p>
+        )}
+      </div>
+    </Card>
+  );
+}
+
 // ---------- items ----------
 
 function ItemsCard({ order, shippingLabel }: { order: AdminOrderDetail; shippingLabel: string }) {
@@ -118,7 +218,7 @@ function ItemsCard({ order, shippingLabel }: { order: AdminOrderDetail; shipping
           <li key={i.id} className="flex items-start justify-between gap-4 px-5 py-3.5">
             <div className="min-w-0">
               {i.productId ? (
-                <Link href={`/product/${i.productSlug}`} target="_blank" className="font-medium hover:text-brand">
+                <Link href={`/product/${i.productSlug}`} target="_blank" className="font-medium hover:text-brand-ink">
                   {i.productName}
                 </Link>
               ) : (
@@ -198,6 +298,9 @@ const TEMPLATE_LABEL: Record<string, string> = {
   "order-received": "order confirmation to customer",
   "admin-new-order": "new-order notification to shop",
   "order-shipped": "shipped email to customer",
+  "payment-instructions": "payment details to customer",
+  "payment-reminder": "payment reminder to customer",
+  "admin-payment-reported": "“payment reported” notification to shop",
 };
 
 const statusLabel = (v: unknown) => (typeof v === "string" && v in ORDER_STATUS_LABEL ? ORDER_STATUS_LABEL[v as OrderStatus] : String(v));
@@ -223,6 +326,16 @@ function describe(e: OrderEvent): { title: string; detail?: string; tone?: "erro
       if (d.field === "tracking_number") return { title: d.to ? `Tracking number set to ${String(d.to)}` : "Tracking number removed" };
       if (d.field === "internal_note") return { title: d.cleared ? "Internal note cleared" : "Internal note updated" };
       return { title: "Note" };
+    case "payment_instructions_sent":
+      return { title: d.resend ? "Updated payment details emailed to customer" : "Payment details emailed to customer", tone: "brand" };
+    case "payment_reminder_sent":
+      return { title: "Payment reminder emailed to customer" };
+    case "customer_reported_paid":
+      return {
+        title: "Customer reported payment sent",
+        detail: typeof d.reference === "string" ? `Reference ${d.reference}` : "No reference given",
+        tone: "brand",
+      };
     case "customer_linked":
       return { title: "Linked to a customer account", detail: d.via === "verified_email" ? "After the customer verified this email" : undefined };
     default:
@@ -264,17 +377,17 @@ function Timeline({ events }: { events: OrderEvent[] }) {
 function Card({ title, description, action, flush, children }: { title: string; description?: string; action?: ReactNode; flush?: boolean; children: ReactNode }) {
   const headingId = `card-${title.toLowerCase().replace(/\W+/g, "-")}`;
   return (
-    <section aria-labelledby={headingId} className="rounded-2xl border border-border bg-card">
-      <div className="flex items-start justify-between gap-4 px-5 pt-5">
+    <section aria-labelledby={headingId} className="rounded-[1.25rem] border border-border bg-card shadow-card">
+      <div className="flex items-start justify-between gap-4 px-5 pt-5 sm:px-6">
         <div className="min-w-0">
-          <h3 id={headingId} className="text-base font-semibold tracking-tight">
+          <h2 id={headingId} className="text-[15px] font-semibold tracking-[-0.01em]">
             {title}
-          </h3>
+          </h2>
           {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}
         </div>
         {action}
       </div>
-      <div className={flush ? "pt-3" : "p-5 pt-4"}>{children}</div>
+      <div className={flush ? "pt-3" : "p-5 pt-4 sm:px-6 sm:pb-6"}>{children}</div>
     </section>
   );
 }

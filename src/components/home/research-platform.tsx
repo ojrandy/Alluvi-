@@ -1,13 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { T } from "@/components/i18n/t";
 import styles from "./research-platform.module.css";
 
 function Pill({ children }: { children: string }) {
   return (
     <span className={styles.pill}>
       <i className={styles.pillDot} aria-hidden="true" />
-      {children}
+      <T>{children}</T>
     </span>
   );
 }
@@ -22,24 +23,27 @@ export function ResearchPlatform() {
           <header className={styles.head}>
             <span className={styles.eyebrow}>
               <i className={styles.eyebrowDot} aria-hidden="true" />
-              More than peptides.
+              <T>More than peptides.</T>
             </span>
             <h2 id="platform-title" className={styles.title}>
-              A Complete Research Platform.
+              <T>A Complete Research Platform.</T>
             </h2>
             <p className={styles.desc}>
-              From research-grade compounds to structured data collection and nutritional analysis – Alluvi provides an
-              integrated system designed for controlled research and development programs.
+              <T>
+                From research-grade compounds to structured data collection and nutritional analysis – Alluvi provides an integrated system designed for controlled research and development programs.
+              </T>
               <br />
-              Not for human or veterinary consumption.
+              <T>Not for human or veterinary consumption.</T>
             </p>
           </header>
 
           <article className={cn(styles.card, styles.big)}>
             <div className={styles.caption}>
-              <h3 className={styles.cardTitle}>Smart Tracking</h3>
+              <h3 className={styles.cardTitle}>
+                <T>Smart Tracking</T>
+              </h3>
               <p className={styles.cardDesc}>
-                Log every research observation with structured data capture built for controlled R&amp;D programs.
+                <T>Log every research observation with structured data capture built for controlled R&amp;D programs.</T>
               </p>
             </div>
             <div className={styles.visual}>
@@ -62,8 +66,12 @@ export function ResearchPlatform() {
 
           <article className={cn(styles.card, styles.a, styles.media)}>
             <div className={styles.caption}>
-              <h3 className={styles.cardTitle}>Consistency Is Key</h3>
-              <p className={styles.cardDesc}>Stay on track with monthly research supply boxes.</p>
+              <h3 className={styles.cardTitle}>
+                <T>Consistency Is Key</T>
+              </h3>
+              <p className={styles.cardDesc}>
+                <T>Stay on track with monthly research supply boxes.</T>
+              </p>
             </div>
             <div className={styles.visual}>
               <Image
@@ -80,10 +88,13 @@ export function ResearchPlatform() {
 
           <article className={cn(styles.card, styles.b, styles.media)}>
             <div className={styles.caption}>
-              <h3 className={styles.cardTitle}>Precision Pens</h3>
+              <h3 className={styles.cardTitle}>
+                <T>Precision Pens</T>
+              </h3>
               <p className={styles.cardDesc}>
-                Pre-filled Retatrutide systems – sleek, pre-measured, and designed for evaluation in controlled
-                research settings only.
+                <T>
+                  Pre-filled Retatrutide systems – sleek, pre-measured, and designed for evaluation in controlled research settings only.
+                </T>
               </p>
             </div>
             <div className={styles.visual}>
@@ -101,16 +112,17 @@ export function ResearchPlatform() {
 
           <div className={styles.footer}>
             <p className={styles.footerSub}>
-              From compound
+              <T>From compound</T>
               <br />
-              to data.
+              <T>to data.</T>
             </p>
             <p className={styles.footerDesc}>
-              Research-grade compounds, structured data capture, scheduled supply, and precision dosing devices — one
-              connected system for controlled R&amp;D programs.
+              <T>
+                Research-grade compounds, structured data capture, scheduled supply, and precision dosing devices — one connected system for controlled R&amp;D programs.
+              </T>
             </p>
             <Link href="/shop" className={styles.cta}>
-              Shop research peptides
+              <T>Shop research peptides</T>
               <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path
                   d="M2 8h11M9 3.5 13.5 8 9 12.5"
@@ -124,7 +136,7 @@ export function ResearchPlatform() {
           </div>
         </div>
         <p className={styles.disclaimer}>
-          For laboratory research and development use only — not for human or veterinary consumption.
+          <T>For laboratory research and development use only — not for human or veterinary consumption.</T>
         </p>
       </div>
     </section>

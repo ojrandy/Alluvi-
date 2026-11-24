@@ -32,7 +32,7 @@ async function EditProduct({ params, searchParams }: Pick<PageProps<"/admin/prod
   return (
     <div className="mt-3 flex flex-col gap-6">
       <header className="min-w-0">
-        <h2 className="truncate text-2xl font-semibold tracking-tight">{product.name}</h2>
+        <h1 className="truncate text-2xl font-semibold tracking-[-0.02em] sm:text-[1.75rem]">{product.name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {product.isActive ? "Visible in the shop" : product.orderCount > 0 ? "Archived (hidden from the shop)" : "Hidden from the shop"} · in {product.orderCount}{" "}
           {product.orderCount === 1 ? "order" : "orders"} · last saved <time dateTime={product.updatedAt.toISOString()}>{formatLondonDateTime(product.updatedAt)}</time>

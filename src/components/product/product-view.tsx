@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, ChevronLeft, FlaskConical, ShieldAlert } from "lucide-react";
 import { Markdown } from "@/components/content/markdown";
+import { LabReportLink } from "@/components/content/lab-report-link";
 import { AddToCartPanel } from "@/components/store/add-to-cart";
 import { ProductCard } from "@/components/store/product-card";
 import { site } from "@/lib/site";
@@ -8,6 +9,7 @@ import { formatPriceLabel } from "@/lib/money";
 import type { ProductCard as ProductCardData, ProductDetail } from "@/server/queries/products";
 import { LabAnalysis } from "./lab-analysis";
 import { ProductGallery } from "./product-gallery";
+import { T } from "@/components/i18n/t";
 
 const LOW_STOCK = 5;
 
@@ -35,7 +37,9 @@ export function ProductView({ product: p, related, shortName }: Props) {
         className="mt-4 mb-6 flex gap-3 rounded-2xl border border-warning/30 bg-warning/[0.06] p-3.5 text-xs leading-relaxed text-foreground/85 sm:p-4 sm:text-sm md:mb-12"
       >
         <ShieldAlert className="mt-0.5 size-5 shrink-0 text-warning" aria-hidden="true" />
-        <p>{disclaimer}</p>
+        <p>
+          <T>{disclaimer}</T>
+        </p>
       </aside>
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
@@ -80,21 +84,18 @@ export function ProductView({ product: p, related, shortName }: Props) {
           </div>
 
           {p.labReportUrl && (
-            <a
+            <LabReportLink
               href={p.labReportUrl}
-              target="_blank"
-              rel="noopener noreferrer"
               className="mt-6 inline-flex min-h-11 items-center gap-2 self-start font-semibold text-teal underline-offset-4 hover:underline"
             >
               <FlaskConical className="size-4" aria-hidden="true" />
               View Janoshik Analytical Report
               <ArrowUpRight className="size-4" aria-hidden="true" />
-              <span className="sr-only">(opens in a new tab)</span>
-            </a>
+            </LabReportLink>
           )}
 
           <p className="mt-6 text-xs text-muted-foreground">
-            For laboratory research use only. Not for human consumption.
+            <T>For laboratory research use only. Not for human consumption.</T>
           </p>
         </div>
       </div>

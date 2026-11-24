@@ -17,8 +17,5 @@ export const ORDER_STATUS_PATH = ["pending_payment", "paid", "processing", "ship
 export const royalMailTrackingUrl = (trackingNumber: string) =>
   `https://www.royalmail.com/track-your-item#/tracking-results/${encodeURIComponent(trackingNumber.replace(/\s+/g, ""))}`;
 
-const PAYMENT_METHOD_LABEL: Record<string, string> = { bank_transfer: "Bank transfer" };
-
-/** "bank_transfer" → "Bank transfer"; unknown keys are humanised rather than hidden. */
-export const paymentMethodLabel = (key: string) =>
-  PAYMENT_METHOD_LABEL[key] ?? key.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+/** Catalogue name for a stored key (src/lib/payment-methods.ts); unknown keys are humanised, not hidden. */
+export { paymentMethodName as paymentMethodLabel } from "./payment-methods";

@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import type { OrderStatus } from "@/db/schema";
 import { formatGBP } from "@/lib/money";
 import { cn } from "@/lib/utils";
+import { AdminAvatar } from "../ui";
 
 /** One row, pre-formatted on the server (dates in UK time) so server and client render the same text. */
 export type OrdersTableRow = {
@@ -43,7 +44,7 @@ const columns = col.columns([
         {/* Stretched link: the whole row is clickable, but it is still one focusable link. */}
         <Link
           href={`/admin/orders/${row.original.id}`}
-          className="font-medium tabular-nums outline-none after:absolute after:inset-0 hover:text-brand focus-visible:text-brand focus-visible:after:ring-2 focus-visible:after:ring-ring focus-visible:after:ring-inset"
+          className="font-semibold tabular-nums outline-none after:absolute after:inset-0 hover:text-brand-ink focus-visible:text-brand-ink focus-visible:after:ring-2 focus-visible:after:ring-ring focus-visible:after:ring-inset"
         >
           {row.original.orderNo}
         </Link>
@@ -61,12 +62,15 @@ const columns = col.columns([
   }),
   col.accessor("customerName", {
     header: "Customer",
-    meta: { className: `${SM} max-w-[16rem]` },
+    meta: { className: `${SM} max-w-[18rem]` },
     cell: ({ row }) => (
-      <>
-        <p className="truncate">{row.original.customerName}</p>
-        <p className="truncate text-xs text-muted-foreground">{row.original.email}</p>
-      </>
+      <div className="flex min-w-0 items-center gap-3">
+        <AdminAvatar name={row.original.customerName || row.original.email} />
+        <div className="min-w-0">
+          <p className="truncate font-medium">{row.original.customerName}</p>
+          <p className="truncate text-xs text-muted-foreground">{row.original.email}</p>
+        </div>
+      </div>
     ),
   }),
   col.accessor("itemCount", {
@@ -107,9 +111,9 @@ export function OrdersTable({ rows }: { rows: OrdersTableRow[] }) {
     <Table>
       <TableHeader>
         {table.getHeaderGroups().map((group) => (
-          <TableRow key={group.id} className="hover:bg-transparent">
+          <TableRow key={group.id} className="bg-surface hover:bg-surface">
             {group.headers.map((header) => (
-              <TableHead key={header.id} className={cn(header.column.columnDef.meta?.className, "font-medium")}>
+              <TableHead key={header.id} className={cn(header.column.columnDef.meta?.className, "h-10 text-xs font-medium text-muted-foreground")}>
                 <table.FlexRender header={header} />
               </TableHead>
             ))}
@@ -118,9 +122,9 @@ export function OrdersTable({ rows }: { rows: OrdersTableRow[] }) {
       </TableHeader>
       <TableBody>
         {table.getRowModel().rows.map((row) => (
-          <TableRow key={row.id} className="relative">
+          <TableRow key={row.id} className="relative hover:bg-surface">
             {row.getAllCells().map((cell) => (
-              <TableCell key={cell.id} className={cell.column.columnDef.meta?.className}>
+              <TableCell key={cell.id} className={cn("py-3", cell.column.columnDef.meta?.className)}>
                 <table.FlexRender cell={cell} />
               </TableCell>
             ))}

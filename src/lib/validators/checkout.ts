@@ -46,6 +46,8 @@ const customerFields = z.object({
   postcode: text(20, "Postcode"),
   country: z.enum(COUNTRY_CODES, "Select a country"),
   shippingMethod: z.string().trim().min(1, "Choose a shipping option").max(50),
+  // Shape only here; placeOrder checks it against the methods enabled in /admin/settings (ADR-021).
+  paymentMethod: z.string().trim().min(1, "Choose how you'd like to pay").max(30, "Choose how you'd like to pay"),
   customerNote: optionalText(1000),
   ruoAccepted: z.literal(true, "You must confirm research use, age and terms to continue"),
   // Honeypot: real users never see or fill this field.

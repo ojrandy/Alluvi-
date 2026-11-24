@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { T } from "@/components/i18n/t";
+import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 import { MAX_QTY_PER_LINE, useCart, useCartHydrated } from "@/stores/cart";
 import { QuantityStepper } from "./quantity-stepper";
@@ -33,6 +35,7 @@ export function AddToCartButton({ product, className }: { product: CartProductSn
   const { remaining, inCart } = useRemaining(product);
   const soldOut = product.stock <= 0;
   const disabled = soldOut || remaining === 0;
+  const t = useT();
 
   return (
     <Button
@@ -42,16 +45,20 @@ export function AddToCartButton({ product, className }: { product: CartProductSn
       disabled={disabled}
       onClick={() => addLine(product, 1)}
       className={cn("w-full", className)}
-      aria-label={soldOut ? `${product.name} is out of stock` : `Add ${product.name} to cart`}
+      aria-label={
+        soldOut
+          ? t(`${product.name} is out of stock`, `${product.name} está esgotado`)
+          : t(`Add ${product.name} to cart`, `Adicionar ${product.name} ao carrinho`)
+      }
     >
       {soldOut ? (
-        "Out of stock"
+        <T>Out of stock</T>
       ) : remaining === 0 && inCart > 0 ? (
-        "Max in cart"
+        <T>Max in cart</T>
       ) : (
         <>
           <ShoppingBag data-icon="inline-start" aria-hidden="true" />
-          Add to cart
+          <T>Add to cart</T>
         </>
       )}
     </Button>
@@ -68,7 +75,7 @@ export function AddToCartPanel({ product }: { product: CartProductSnapshot }) {
   if (soldOut) {
     return (
       <Button type="button" variant="glass" size="xl" disabled className="w-full sm:w-auto sm:min-w-56">
-        Out of stock
+        <T>Out of stock</T>
       </Button>
     );
   }
@@ -88,10 +95,10 @@ export function AddToCartPanel({ product }: { product: CartProductSnapshot }) {
         className="flex-1 sm:max-w-72"
       >
         <ShoppingBag data-icon="inline-start" aria-hidden="true" />
-        {remaining === 0 ? "Maximum quantity in cart" : "Add to cart"}
+        {remaining === 0 ? <T>Maximum quantity in cart</T> : <T>Add to cart</T>}
       </Button>
       {inCart > 0 && remaining > 0 && (
-        <p className="text-sm text-muted-foreground sm:sr-only">{inCart} already in your cart</p>
+        <p className="text-sm text-muted-foreground sm:sr-only"><T pt={`${inCart} já no seu carrinho`}>{`${inCart} already in your cart`}</T></p>
       )}
     </div>
   );

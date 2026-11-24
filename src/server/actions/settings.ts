@@ -3,10 +3,10 @@
 import { refresh, updateTag } from "next/cache";
 import { z } from "zod";
 import { db, schema } from "@/db";
-import type { BankDetails, ShippingOption } from "@/db/schema";
+import type { PaymentMethodConfig, ShippingOption } from "@/db/schema";
 import { firstFieldErrors, type ActionResult } from "@/lib/action-result";
 import { addDays, londonMidnight } from "@/lib/london-day";
-import { bankFormSchema, notifyFormSchema, promoFormSchema, shippingFormSchema } from "@/lib/validators/admin-settings";
+import { notifyFormSchema, paymentMethodsFormSchema, promoFormSchema, shippingFormSchema } from "@/lib/validators/admin-settings";
 import { requireAdmin } from "../auth";
 import { dbErrorCode } from "../db-errors";
 import { getStoreSettings, type FreeShippingPromo } from "../settings";
@@ -38,12 +38,13 @@ function invalid(error: z.ZodError): SettingsResult {
   return { ok: false, error: "Check the highlighted fields.", fieldErrors: firstFieldErrors(error.issues) };
 }
 
-export async function saveBankDetails(input: unknown): Promise<SettingsResult> {
-  const parsed = bankFormSchema.safeParse(input);
+/** ADR-021: which methods checkout offers + the details template the admin sends for each. */
+export async function savePaymentMethods(input: unknown): Promise<SettingsResult> {
+  const parsed = paymentMethodsFormSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
   await requireAdmin();
-  const value: BankDetails = parsed.data;
-  return save("bank_details", value, "Bank details");
+  const value: PaymentMethodConfig[] = parsed.data.methods.map((m) => ({ key: m.key, enabled: m.enabled, template: m.template }));
+  return save("payment_methods", value, "Payment methods");
 }
 
 export async function saveShippingOptions(input: unknown): Promise<SettingsResult> {

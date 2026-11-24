@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPriceLabel } from "@/lib/money";
+import { T } from "@/components/i18n/t";
 import { cn } from "@/lib/utils";
 import type { ProductCard as ProductCardData } from "@/server/queries/products";
 import { AddToCartButton } from "./add-to-cart";
@@ -45,7 +46,7 @@ export function ProductCard({ product: p, priority = false, headingLevel: H = "h
           )}
           {!p.inStock && (
             <span className="rounded-full bg-black/70 px-2.5 py-1 text-[0.65rem] font-bold tracking-wider text-foreground uppercase backdrop-blur">
-              Out of stock
+              <T>Out of stock</T>
             </span>
           )}
         </div>
@@ -61,12 +62,16 @@ export function ProductCard({ product: p, priority = false, headingLevel: H = "h
         <p className="flex items-baseline gap-2 text-base font-medium">
           {p.compareAtPence && p.compareAtPence > p.pricePence && (
             <s className="text-sm text-muted-foreground">
-              <span className="sr-only">Was </span>
+              <span className="sr-only">
+                <T>Was</T>{" "}
+              </span>
               {formatPriceLabel(p.compareAtPence)}
             </s>
           )}
           <span>
-            {p.compareAtPence && p.compareAtPence > p.pricePence && <span className="sr-only">Now </span>}
+            {p.compareAtPence && p.compareAtPence > p.pricePence && <span className="sr-only">
+                <T>Now</T>{" "}
+              </span>}
             {formatPriceLabel(p.pricePence)}
           </span>
         </p>

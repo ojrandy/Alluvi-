@@ -29,7 +29,7 @@ In production the app refuses to place orders without them (IP hashing and the o
 `NEXT_PUBLIC_SITE_URL` is used in account email links (verify / reset), so it must be the public https origin at **build** time.
 
 **Pre-launch checklist (checkout, D1-8):**
-- Set real bank details in `settings.bank_details` (/admin/settings once D2-5 ships). While the seeded `TO BE CONFIGURED` / `00000000` placeholders are present, customers are told the bank details will be emailed instead of seeing fake ones.
+- Run `npm run db:migrate` (0001 adds the payment columns and removes the old `bank_details` setting), then `npm run db:seed` (inserts `payment_methods` if missing). In /admin/settings → Payment methods, turn off any method the client will not accept and replace every `[[ … ]]` in the templates of the ones they keep with the real details (ADR-021).
 - Confirm shipping prices in `settings.shipping_options` (seeded at £0; the launch free-shipping promo hides them for 60 days anyway, ADR-012).
 - `settings.notify_email` (fallback `ORDER_NOTIFY_EMAIL`) receives the new-order emails.
 - Policy copy lives in `content/pages/*.md` (regenerate from the scrape with `npm run content:pages`); it ships with the standalone bundle via `outputFileTracingIncludes` in next.config.ts.
@@ -92,7 +92,7 @@ on the server will fail or get the account throttled.
 - [ ] Admin login works; repeated wrong passwords are rate-limited.
 - [ ] Lighthouse mobile ≥ 90 on home, shop, product.
 - [ ] `robots.txt` allows crawling; `sitemap.xml` uses the canonical domain; Search Console resubmitted.
-- [ ] Bank details in Settings verified by the client.
+- [ ] Payment methods + details templates in Settings verified by the client (no `[[ … ]]` left in enabled methods); a test order's "send payment details" email received.
 - [ ] cPanel *Backup* (or JetBackup) confirmed for files + database.
 
 ## Operations

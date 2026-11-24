@@ -1,72 +1,137 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ChevronDown, ChevronUp, FileText } from "lucide-react";
+import { T } from "@/components/i18n/t";
+import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
+import { site } from "@/lib/site";
+import { LAB_LINK_PLACEHOLDER, labLink } from "@/lib/lab-links";
 import styles from "./testing-steps.module.css";
 
-/** Copy verbatim from the live "Quality Assurance Protocol" section. */
-const STEPS = [
+/**
+ * A Janoshik certificate issued for alluvihealthcare.co: the report image (put it in
+ * public/images/) and its verify.janoshik.com link.
+ */
+type Report = { image: string; alt: string; url: string };
+type Step = { number: string; title: string; description: string; report: Report | null };
+
+/**
+ * Copy verbatim from the live "Quality Assurance Protocol" section.
+ * `report: null` shows the "certificate pending" card. Our Janoshik certificates are requested and
+ * not yet issued. When they arrive, fill each step, e.g.
+ *   report: { image: "/images/coa-reta40.png", alt: "Janoshik certificate of analysis — Retatrutide 40mg", url: "https://verify.janoshik.com/tests/…" },
+ */
+const STEPS: Step[] = [
   {
     number: "01",
     title: "Batch Production",
     description:
       "Research peptides are synthesised under controlled laboratory conditions, with weekly internal documented formulation testing.",
-    image: "/images/reta40jn-239742.png",
-    alt: "Janoshik certificate of analysis — Alluvi Retatrutide 40mg",
-    reportUrl: "https://verify.janoshik.com/tests/239742-ALLUVI_RETATRUTIDE_40MG_KIT_EM6LUXF19LHZ",
+    report: null,
   },
   {
     number: "02",
     title: "Third-Party Lab Testing",
     description:
       "Alluvi randomly selects a batch of pens from thousands to be sent to Janoshik, a globally recognised laboratory, for fully independent verification. Janoshik then randomly selects one pen for testing.",
-    image: "/images/tirz40jn-239744.png",
-    alt: "Janoshik certificate of analysis — Alluvi Tirzepatide",
-    reportUrl: "https://verify.janoshik.com/tests/239744-ALLUVI_TIRZEPATIDE_40MG_KIT_S7637Z45SNLZ",
+    report: null,
   },
   {
     number: "03",
     title: "Purity & Potency Analysis",
     description: "Analytical testing confirms purity percentage and potency before any batch is approved for release.",
-    image: "/images/reta20jn-239743.png",
-    alt: "Janoshik certificate of analysis — Alluvi Retatrutide 20mg",
-    reportUrl: "https://verify.janoshik.com/tests/239743-ALLUVI_RETATRUTIDE_20MG_KIT_1IUIK66E23KN",
+    report: null,
   },
   {
     number: "04",
     title: "Weekly Internal QC",
     description:
       "Weekly internal quality-control testing checks consistency and traceability across all research products.",
-    image: "/images/glowjn.png",
-    alt: "Janoshik certificate of analysis — Alluvi Glow",
-    reportUrl: "https://verify.janoshik.com/tests/163217-ALLUVI_GLOW_70MG_KIT_DCL3AJSE4JQP",
+    report: null,
   },
   {
     number: "05",
     title: "Verified & Released",
     description:
       "A certificate of analysis is recorded and released to the public, strictly for research and development use.",
-    image: "/images/bpcjn.png",
-    alt: "Janoshik certificate of analysis — Alluvi BPC-157 & TB-500",
-    reportUrl: "https://verify.janoshik.com/tests/163218-ALLUVI_BPC157_TB500_40MG_KIT_EAI125ZEF8TB",
+    report: null,
   },
-] as const;
-
-type Step = (typeof STEPS)[number];
+];
 
 const AUTOPLAY_MS = 5500;
 const ANALYZE_MS = 2000;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-function ReportLink({ url }: { url: string }) {
+function ReportLink({ report }: { report: Report | null }) {
+  if (!report || labLink(report.url) === LAB_LINK_PLACEHOLDER) {
+    return (
+      <Link href="/contact#certificates" className={styles.reportLink}>
+        <FileText className="size-4" aria-hidden="true" />
+        <T>Request Certificate of Analysis</T>
+      </Link>
+    );
+  }
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer" className={styles.reportLink}>
+    <a href={report.url} target="_blank" rel="noopener noreferrer" className={styles.reportLink}>
       <FileText className="size-4" aria-hidden="true" />
-      View Janoshik Analytical Report
+      <T>View Janoshik Analytical Report</T>
+      <span className="sr-only">
+        {" "}
+        <T>(opens in a new tab)</T>
+      </span>
     </a>
+  );
+}
+
+/** Stand-in for a certificate that the lab has not issued yet. Never shows a report we do not hold. */
+function PendingCert({ step }: { step: Step }) {
+  return (
+    <div className={styles.pending}>
+      <span className={styles.pendingIcon} aria-hidden="true">
+        <FileText />
+      </span>
+      <p className={styles.pendingKicker}>
+        <T>Certificate of Analysis</T>
+      </p>
+      <p className={styles.pendingDomain}>{site.canonicalDomain}</p>
+      <p className={styles.pendingText}>
+        <T>
+          Independent Janoshik verification for this batch is in progress. The certificate and its verification link will be published here once issued.
+        </T>
+      </p>
+      <dl className={styles.pendingMeta}>
+        <div>
+          <dt>
+            <T>Document</T>
+          </dt>
+          <dd>{step.number} / 05</dd>
+        </div>
+        <div>
+          <dt>
+            <T>Laboratory</T>
+          </dt>
+          <dd>Janoshik</dd>
+        </div>
+      </dl>
+      <span className={styles.pendingLines} aria-hidden="true">
+        <i />
+        <i />
+        <i />
+        <i />
+      </span>
+    </div>
+  );
+}
+
+function ReportView({ step, sizes }: { step: Step; sizes: string }) {
+  return step.report ? (
+    <Image src={step.report.image} alt={step.report.alt} fill sizes={sizes} />
+  ) : (
+    <PendingCert step={step} />
   );
 }
 
@@ -82,16 +147,23 @@ function Brackets() {
   );
 }
 
-function Status({ verified }: { verified: boolean }) {
+function Status({ verified, pending }: { verified: boolean; pending: boolean }) {
+  if (pending) {
+    return (
+      <div className={styles.status}>
+        <span className={styles.pulse} aria-hidden="true" /> <T>Pending</T>
+      </div>
+    );
+  }
   return (
     <div className={cn(styles.status, verified && styles.statusOk)}>
       {verified ? (
         <>
-          <span aria-hidden="true">✓</span> Verified
+          <span aria-hidden="true">✓</span> <T>Verified</T>
         </>
       ) : (
         <>
-          <span className={styles.pulse} aria-hidden="true" /> Analyzing
+          <span className={styles.pulse} aria-hidden="true" /> <T>Analyzing</T>
         </>
       )}
     </div>
@@ -101,7 +173,8 @@ function Status({ verified }: { verified: boolean }) {
 function VpBar({ step }: { step: Step }) {
   return (
     <div className={styles.vpBar}>
-      <span className={styles.vpId}>Janoshik · Certificate of Analysis</span>
+      <span className={styles.vpId}>{site.canonicalDomain} · <T>Certificate of Analysis</T>
+      </span>
       <span className={styles.vpDoc}>DOC {step.number} / 05</span>
     </div>
   );
@@ -109,6 +182,7 @@ function VpBar({ step }: { step: Step }) {
 
 export function TestingSteps() {
   const reduce = useReducedMotion();
+  const t = useT();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [verifiedFor, setVerifiedFor] = useState(-1);
@@ -158,18 +232,20 @@ export function TestingSteps() {
         <div className={styles.head}>
           <span className={styles.eyebrow}>
             <i className={styles.eyebrowTick} aria-hidden="true" />
-            Quality Assurance Protocol
+            <T>Quality Assurance Protocol</T>
           </span>
           <h2 id="qa-title" className={styles.heading}>
-            Independently verified.
+            <T>Independently verified.</T>
             <br />
-            <span className={styles.headingAccent}>Trusted through testing.</span>
+            <span className={styles.headingAccent}>
+              <T>Trusted through testing.</T>
+            </span>
           </h2>
         </div>
 
         {/* desktop / tablet: rail + animated panel + certificate */}
         <div className={styles.grid}>
-          <div className={styles.rail} role="group" aria-label="Protocol steps">
+          <div className={styles.rail} role="group" aria-label={t("Protocol steps")}>
             <div className={styles.railTrack} aria-hidden="true">
               <motion.div
                 className={styles.railFill}
@@ -183,7 +259,7 @@ export function TestingSteps() {
                 key={s.number}
                 type="button"
                 className={cn(styles.node, i === active && styles.nodeActive, i < active && styles.nodeDone)}
-                aria-label={`Step ${s.number}: ${s.title}`}
+                aria-label={`${t("Step")} ${s.number}: ${t(s.title)}`}
                 aria-current={i === active ? "step" : undefined}
                 onClick={() => setActive(i)}
               >
@@ -212,11 +288,15 @@ export function TestingSteps() {
                   {step.number}
                 </motion.span>
                 <span className={styles.stepIndex}>
-                  Step {step.number} <i>/ 05</i>
+                  <T>Step</T> {step.number} <i>/ 05</i>
                 </span>
-                <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p className={styles.stepDesc}>{step.description}</p>
-                <ReportLink url={step.reportUrl} />
+                <h3 className={styles.stepTitle}>
+                  <T>{step.title}</T>
+                </h3>
+                <p className={styles.stepDesc}>
+                  <T>{step.description}</T>
+                </p>
+                <ReportLink report={step.report} />
               </motion.div>
             </AnimatePresence>
           </div>
@@ -233,11 +313,11 @@ export function TestingSteps() {
                   transition={{ duration: reduce ? 0 : 0.6, ease: EASE }}
                   aria-hidden={i !== active}
                 >
-                  <Image src={s.image} alt={s.alt} fill sizes="(max-width: 1024px) 90vw, 450px" />
+                  <ReportView step={s} sizes="(max-width: 1024px) 90vw, 450px" />
                 </motion.div>
               ))}
               <Brackets />
-              <Status verified={verifiedFor === active} />
+              <Status verified={verifiedFor === active} pending={!step.report} />
             </div>
           </div>
         </div>
@@ -250,19 +330,23 @@ export function TestingSteps() {
                 <VpBar step={s} />
                 <div className={styles.vpScreen}>
                   <div className={styles.vpImg}>
-                    <Image src={s.image} alt={s.alt} fill sizes="90vw" />
+                    <ReportView step={s} sizes="90vw" />
                   </div>
                   <Brackets />
-                  <Status verified />
+                  <Status verified pending={!s.report} />
                 </div>
               </div>
               <div className={styles.mbody}>
                 <span className={styles.stepIndex}>
-                  Step {s.number} <i>/ 05</i>
+                  <T>Step</T> {s.number} <i>/ 05</i>
                 </span>
-                <h3 className={styles.stepTitle}>{s.title}</h3>
-                <p className={styles.stepDesc}>{s.description}</p>
-                <ReportLink url={s.reportUrl} />
+                <h3 className={styles.stepTitle}>
+                  <T>{s.title}</T>
+                </h3>
+                <p className={styles.stepDesc}>
+                  <T>{s.description}</T>
+                </p>
+                <ReportLink report={s.report} />
               </div>
             </div>
           ))}
@@ -275,10 +359,10 @@ export function TestingSteps() {
       </div>
 
       <div className={styles.nav}>
-        <button type="button" className={styles.navBtn} onClick={() => go(-1)} aria-label="Previous step">
+        <button type="button" className={styles.navBtn} onClick={() => go(-1)} aria-label={t("Previous step")}>
           <ChevronUp aria-hidden="true" />
         </button>
-        <button type="button" className={styles.navBtn} onClick={() => go(1)} aria-label="Next step">
+        <button type="button" className={styles.navBtn} onClick={() => go(1)} aria-label={t("Next step")}>
           <ChevronDown aria-hidden="true" />
         </button>
       </div>

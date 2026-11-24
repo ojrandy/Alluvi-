@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { ArrowUpRight, ScanSearch } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ScanSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FakeSellerWatchlist } from "@/components/store/fake-seller-watchlist";
 
 export const metadata: Metadata = {
   title: "Spot a Fake",
-  description: "Upload an image to check if the product is original Alluvi or fake.",
+  description: "Contact Alluvi with photos of your product to check if it is original or fake.",
   alternates: { canonical: "/spot-a-fake" },
 };
 
-const VERIFY_URL = "https://spotafakealluvi.com/";
-
 /**
- * /spot-a-fake: the live verify CTA, plus the counterfeit watchlist from the live /fake-sellers
+ * /spot-a-fake: the verify CTA (routes to /contact — the old external verifier domain was
+ * compromised and must never be linked), plus the counterfeit watchlist from the live /fake-sellers
  * page (that URL now 301s to #watchlist here, per CONTENT_INVENTORY).
  */
 export default function SpotAFakePage() {
@@ -24,13 +24,12 @@ export default function SpotAFakePage() {
         </span>
         <p className="eyebrow mt-6">Product verification</p>
         <h1 className="text-display mt-4">Spot a Fake</h1>
-        <p className="text-lead mt-5 max-w-md">Upload an image to check if the product is original Alluvi or fake</p>
+        <p className="text-lead mt-5 max-w-md">Contact us with photos of your product to check if it is original Alluvi or fake</p>
         <Button asChild variant="brand" size="xl" className="mt-9">
-          <a href={VERIFY_URL} target="_blank" rel="noopener noreferrer">
+          <Link href="/contact">
             Verify My Product
-            <ArrowUpRight data-icon="inline-end" aria-hidden="true" />
-            <span className="sr-only">(opens spotafakealluvi.com in a new tab)</span>
-          </a>
+            <ArrowRight data-icon="inline-end" aria-hidden="true" />
+          </Link>
         </Button>
       </section>
 
@@ -40,8 +39,8 @@ export default function SpotAFakePage() {
           <p className="text-lead mt-4">
             Public watchlist of unauthorised sellers reported for distributing counterfeit Alluvi products. Alluvi is sold
             exclusively through{" "}
-            <a href="https://alluvi.org/" target="_blank" rel="noopener noreferrer" className="text-brand underline underline-offset-4">
-              alluvi.org
+            <a href="https://alluvihealthcare.co/" target="_blank" rel="noopener noreferrer" className="text-brand underline underline-offset-4">
+              alluvihealthcare.co
             </a>
             . If a seller is listed below, do not buy from them.
           </p>

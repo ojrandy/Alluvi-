@@ -22,7 +22,7 @@ const buttonVariants = cva(
         brand:
           "rounded-full bg-brand font-semibold text-brand-foreground shadow-glow hover:bg-[color-mix(in_oklch,var(--brand),white_12%)]",
         glass:
-          "rounded-full border-border bg-white/[0.04] text-foreground hover:bg-white/[0.08] hover:text-foreground",
+          "rounded-full border-border bg-foreground/[0.04] text-foreground hover:bg-foreground/[0.08] hover:text-foreground",
       },
       size: {
         default:

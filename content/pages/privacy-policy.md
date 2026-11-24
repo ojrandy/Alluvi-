@@ -7,7 +7,7 @@ description: "Alluvi privacy policy. Learn how we collect, use, and protect your
 
 ## Introduction
 
-This Privacy Policy explains how Alluvi ("we", "us", "our") collects, uses, and protects your personal information when you visit or make a purchase from alluvi.org.
+This Privacy Policy explains how Alluvi ("we", "us", "our") collects, uses, and protects your personal information when you visit or make a purchase from alluvihealthcare.co.
 
 We are committed to safeguarding your privacy and complying with UK GDPR and Data Protection Act 2018.
 
@@ -61,7 +61,7 @@ You have the right to:
 - Object to certain processing activities
 - Withdraw consent at any time
 
-To exercise your rights, contact [support@alluvi.org](mailto:support@alluvi.org).
+To exercise your rights, contact [info@alluvihealthcare.co](mailto:info@alluvihealthcare.co).
 
 ## Cookies
 
@@ -79,6 +79,6 @@ We may update this Privacy Policy periodically. Any changes will be posted here 
 
 For any data-related queries, please contact:
 
-Email: [research@alluvi.org](mailto:research@alluvi.org)
+Email: [info@alluvihealthcare.co](mailto:info@alluvihealthcare.co)
 
-Website: [https://alluvi.org](https://alluvi.org)
+Website: [https://alluvihealthcare.co](https://alluvihealthcare.co)

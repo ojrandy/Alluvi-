@@ -1,3 +1,4 @@
+import { T } from "@/components/i18n/t";
 import { CartDrawer } from "@/components/store/cart-drawer";
 import { AnnouncementBar } from "@/components/store/announcement-bar";
 import { SiteFooter } from "@/components/store/site-footer";
@@ -10,7 +11,7 @@ export default function StoreLayout({ children }: LayoutProps<"/">) {
         href="#main"
         className="sr-only z-50 rounded-full bg-brand px-4 py-2 font-semibold text-brand-foreground focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
       >
-        Skip to content
+        <T>Skip to content</T>
       </a>
       <AnnouncementBar />
       <SiteHeader />

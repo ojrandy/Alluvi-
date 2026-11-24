@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { T } from "@/components/i18n/t";
 
 export const metadata: Metadata = {
   title: { absolute: "About Alluvi | Premium Research Peptides Supplier UK" },
@@ -111,7 +112,7 @@ export default function AboutPage() {
           ))}
         </ul>
         <p className="mt-12 text-center text-sm text-muted-foreground">
-          For laboratory research use only. Not for human consumption.
+          <T>For laboratory research use only. Not for human consumption.</T>
         </p>
       </section>
     </>

@@ -1,8 +1,8 @@
 import { royalMailTrackingUrl } from "@/lib/order-status";
 import { siteUrl } from "@/lib/site";
-import { addressLines, brandColor, emailShell, esc, h2, itemsTable, itemsText, p, RUO_LINE, type OrderEmailData } from "./layout";
+import { addressLines, brandColor, emailShell, esc, h2, itemsTable, itemsText, p, RUO_LINE, type OrderCore } from "./layout";
 
-export type ShippedEmailData = Omit<OrderEmailData, "bankDetails"> & { trackingNumber: string | null };
+export type ShippedEmailData = OrderCore & { trackingNumber: string | null };
 
 /** Customer "your order has shipped" email, sent once when an admin moves the order to `shipped`. */
 export function orderShippedEmail(d: ShippedEmailData) {
@@ -24,9 +24,9 @@ export function orderShippedEmail(d: ShippedEmailData) {
       p(`Order <strong>${esc(d.orderNo)}</strong> has been dispatched.`),
       tracking,
       h2("Order summary"),
-      itemsTable({ ...d, bankDetails: null }),
+      itemsTable(d),
       h2("Delivering to"),
-      p(addressLines({ ...d, bankDetails: null }).map(esc).join("<br>")),
+      p(addressLines(d).map(esc).join("<br>")),
     ].join("\n"),
   });
 
@@ -37,10 +37,10 @@ export function orderShippedEmail(d: ShippedEmailData) {
     ...(d.trackingNumber ? [`Tracking number: ${d.trackingNumber}`, `Track with Royal Mail: ${carrierUrl}`] : [`Track your order: ${trackUrl}`]),
     "",
     "ORDER SUMMARY",
-    itemsText({ ...d, bankDetails: null }),
+    itemsText(d),
     "",
     "DELIVERING TO",
-    ...addressLines({ ...d, bankDetails: null }),
+    ...addressLines(d),
     "",
     RUO_LINE,
   ].join("\n");

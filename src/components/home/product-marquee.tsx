@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatPriceLabel } from "@/lib/money";
 import type { ProductCard } from "@/server/queries/products";
+import { T } from "@/components/i18n/t";
 import styles from "./product-marquee.module.css";
 
 const COPIES = 3;
@@ -16,7 +17,7 @@ export function ProductMarquee({ products }: { products: ProductCard[] }) {
     <section className={styles.section} aria-labelledby="home-products-title">
       <header className={styles.header}>
         <h2 id="home-products-title" className={styles.title}>
-          Engineered for <br /> research precision.
+          <T>Engineered for</T> <br /> <T>research precision.</T>
         </h2>
       </header>
 
@@ -35,13 +36,15 @@ export function ProductMarquee({ products }: { products: ProductCard[] }) {
                       <Image src={p.image.url} alt={p.image.alt} fill sizes="360px" className={styles.image} />
                     )}
                     <span className={styles.watermark} aria-hidden="true">
-                      www.alluvi.org
+                      www.alluvihealthcare.co
                     </span>
                   </div>
                   <div className={styles.body}>
                     <h3 className={styles.name}>{p.name}</h3>
                     <p className={styles.price}>{formatPriceLabel(p.pricePence)}</p>
-                    {!p.inStock && <span className={styles.stock}>Out of stock</span>}
+                    {!p.inStock && <span className={styles.stock}>
+                        <T>Out of stock</T>
+                      </span>}
                   </div>
                 </Link>
               </li>
@@ -50,7 +53,9 @@ export function ProductMarquee({ products }: { products: ProductCard[] }) {
         </ul>
       </div>
 
-      <p className={styles.disclaimer}>For laboratory research use only. Not for human consumption.</p>
+      <p className={styles.disclaimer}>
+        <T>For laboratory research use only. Not for human consumption.</T>
+      </p>
     </section>
   );
 }

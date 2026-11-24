@@ -1,10 +1,10 @@
 import { formatGBP } from "@/lib/money";
+import { PAYMENT_RESPONSE_PROMISE } from "@/lib/payment-methods";
 import { siteUrl } from "@/lib/site";
 import {
   addressLines,
-  bankRows,
-  borderColor,
   brandColor,
+  detailsTable,
   emailShell,
   esc,
   h2,
@@ -12,34 +12,35 @@ import {
   itemsText,
   p,
   RUO_LINE,
+  SECURITY_NOTE_TEXT,
+  securityNote,
   type OrderEmailData,
 } from "./layout";
 
-/** Customer confirmation with bank-transfer instructions (order number is the payment reference). */
+/**
+ * Customer confirmation (ADR-021). Confirms the chosen payment method and sets expectations; the
+ * payment details themselves follow in a separate email the admin sends for this order.
+ */
 export function orderReceivedEmail(d: OrderEmailData) {
-  const subject = `Order ${d.orderNo} received: payment instructions`;
+  const subject = `Order ${d.orderNo} received`;
   const trackUrl = `${siteUrl}/track-order`;
-
-  const bank = d.bankDetails
-    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${borderColor};border-radius:8px;">
-${[...bankRows(d.bankDetails), ["Amount", formatGBP(d.totalPence)], ["Payment reference", d.orderNo]]
-  .map(
-    ([k, v], i, all) => `<tr><td style="padding:10px 14px;font-size:14px;color:#71717a;${i < all.length - 1 ? `border-bottom:1px solid ${borderColor};` : ""}">${esc(k)}</td>
-<td align="right" style="padding:10px 14px;font-size:14px;font-weight:600;${k === "Payment reference" ? `color:${brandColor};` : ""}${i < all.length - 1 ? `border-bottom:1px solid ${borderColor};` : ""}">${esc(v)}</td></tr>`,
-  )
-  .join("")}</table>
-<div style="height:14px"></div>
-${d.bankDetails.instructions ? p(esc(d.bankDetails.instructions)) : ""}`
-    : p("Our team will email you the bank details for this order shortly.");
+  const rows: [string, string][] = [
+    ["Order number", d.orderNo],
+    ["Amount", formatGBP(d.totalPence)],
+    ["Payment method", d.paymentMethodLabel],
+  ];
 
   const html = emailShell({
-    preheader: `Thanks for your order. Pay by bank transfer using reference ${d.orderNo}.`,
+    preheader: `Thanks for your order. We'll email payment details for ${d.paymentMethodLabel} ${PAYMENT_RESPONSE_PROMISE}.`,
     heading: `Thank you, ${d.firstName}. We've received your order.`,
     body: [
-      p(`Your order number is <strong>${esc(d.orderNo)}</strong>. Please pay by bank transfer and use your order number as the payment reference, so we can match your payment.`),
-      h2("Bank transfer details"),
-      bank,
-      p(`${d.bankDetails?.instructions ? "" : "We dispatch your order once your payment has cleared. "}You'll receive an email with tracking details when it ships.`),
+      detailsTable(rows, "Order number"),
+      h2("What happens next"),
+      p(
+        `You chose to pay by <strong>${esc(d.paymentMethodLabel)}</strong>. Our team will email the payment details for this order to this address ${esc(PAYMENT_RESPONSE_PROMISE)}. You don't need to do anything until then.`,
+      ),
+      p("Once your payment is confirmed we prepare your order and email you tracking details when it ships."),
+      securityNote(trackUrl),
       h2("Order summary"),
       itemsTable(d),
       h2("Delivery address"),
@@ -51,16 +52,13 @@ ${d.bankDetails.instructions ? p(esc(d.bankDetails.instructions)) : ""}`
   const text = [
     `Thank you, ${d.firstName}. We've received your order.`,
     "",
-    `Order number: ${d.orderNo}`,
-    "Please pay by bank transfer and use your order number as the payment reference.",
+    ...rows.map(([k, v]) => `${k}: ${v}`),
     "",
-    "BANK TRANSFER DETAILS",
-    ...(d.bankDetails
-      ? [...bankRows(d.bankDetails), ["Amount", formatGBP(d.totalPence)], ["Payment reference", d.orderNo]].map(([k, v]) => `${k}: ${v}`)
-      : ["Our team will email you the bank details for this order shortly."]),
-    ...(d.bankDetails?.instructions ? ["", d.bankDetails.instructions] : []),
+    "WHAT HAPPENS NEXT",
+    `You chose to pay by ${d.paymentMethodLabel}. Our team will email the payment details for this order to this address ${PAYMENT_RESPONSE_PROMISE}. You don't need to do anything until then.`,
+    "Once your payment is confirmed we prepare your order and email you tracking details when it ships.",
     "",
-    "We dispatch your order once your payment has cleared.",
+    SECURITY_NOTE_TEXT,
     "",
     "ORDER SUMMARY",
     itemsText(d),

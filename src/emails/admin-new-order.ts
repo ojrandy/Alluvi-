@@ -1,13 +1,14 @@
 import { formatLondonDateTime } from "@/lib/format";
 import { formatGBP } from "@/lib/money";
+import { PAYMENT_RESPONSE_PROMISE } from "@/lib/payment-methods";
 import { siteUrl } from "@/lib/site";
 import { addressLines, brandColor, emailShell, esc, h2, itemsTable, itemsText, p, type OrderEmailData } from "./layout";
 
-/** Shop notification with the full order and a link to the dashboard. */
+/** Shop notification: the full order, the chosen payment method, and a link to send payment details (ADR-021). */
 export function adminNewOrderEmail(d: OrderEmailData) {
   const adminUrl = `${siteUrl}/admin/orders/${d.id}`;
   const placed = formatLondonDateTime(d.createdAt);
-  const subject = `New order ${d.orderNo}: ${formatGBP(d.totalPence)} (awaiting bank transfer)`;
+  const subject = `New order ${d.orderNo}: ${formatGBP(d.totalPence)} · ${d.paymentMethodLabel} · send payment details`;
 
   const contact = [
     `<strong>${esc(`${d.firstName} ${d.lastName}`)}</strong>`,
@@ -21,8 +22,9 @@ export function adminNewOrderEmail(d: OrderEmailData) {
     preheader: `${d.orderNo}: ${formatGBP(d.totalPence)} from ${d.firstName} ${d.lastName}`,
     heading: `New order ${d.orderNo}`,
     body: [
-      p(`Placed ${esc(placed)} (UK time). Status: <strong>awaiting bank transfer</strong>. Mark it paid in the dashboard once the payment with reference <strong>${esc(d.orderNo)}</strong> arrives.`),
-      p(`<a href="${esc(adminUrl)}" style="display:inline-block;background:${brandColor};color:#0a0a0a;font-weight:700;text-decoration:none;padding:12px 20px;border-radius:999px;">Open order in dashboard</a>`),
+      p(`Placed ${esc(placed)} (UK time). Customer chose <strong>${esc(d.paymentMethodLabel)}</strong>.`),
+      p(`<strong>Action needed:</strong> send the ${esc(d.paymentMethodLabel)} payment details from the dashboard. We promised the customer ${esc(PAYMENT_RESPONSE_PROMISE)}. Mark the order paid once the money arrives.`),
+      p(`<a href="${esc(adminUrl)}" style="display:inline-block;background:${brandColor};color:#0a0a0a;font-weight:700;text-decoration:none;padding:12px 20px;border-radius:999px;">Send payment details</a>`),
       h2("Items"),
       itemsTable(d),
       h2("Customer"),
@@ -37,7 +39,8 @@ export function adminNewOrderEmail(d: OrderEmailData) {
   const text = [
     `New order ${d.orderNo}`,
     `Placed: ${placed} (UK time)`,
-    "Status: awaiting bank transfer",
+    `Payment method: ${d.paymentMethodLabel}`,
+    `ACTION NEEDED: send the payment details from the dashboard (promised ${PAYMENT_RESPONSE_PROMISE}).`,
     `Dashboard: ${adminUrl}`,
     "",
     "ITEMS",

@@ -79,13 +79,15 @@ export type ShippingOption = {
   freeOverPence?: number | null;
 };
 
-export type BankDetails = {
-  accountName: string;
-  bankName: string;
-  sortCode: string;
-  accountNumber: string;
-  iban?: string | null;
-  instructions?: string | null;
+/**
+ * Admin configuration for one payment method (ADR-021), stored as the `payment_methods` setting.
+ * The method itself (name, icon, group) lives in code: src/lib/payment-methods.ts.
+ * `template` holds the payment details the admin sends after an order; it is NEVER shown publicly.
+ */
+export type PaymentMethodConfig = {
+  key: string;
+  enabled: boolean;
+  template: string;
 };
 
 // ---------- enums ----------
@@ -107,6 +109,10 @@ export const ORDER_EVENT_TYPES = [
   "email_failed",
   "note",
   "customer_linked",
+  // ADR-021: payment details are sent per order by the admin
+  "payment_instructions_sent",
+  "payment_reminder_sent",
+  "customer_reported_paid",
 ] as const;
 
 export const CUSTOMER_TOKEN_TYPES = ["reset_password", "verify_email"] as const;
@@ -218,6 +224,14 @@ export const orders = mysqlTable(
     shippingPence: int("shipping_pence").notNull(),
     totalPence: int("total_pence").notNull(),
     paymentMethod: varchar("payment_method", { length: 30 }).notNull().default("bank_transfer"),
+    // ADR-021. Snapshot of the method name at checkout, so the order reads the same if it is renamed.
+    paymentMethodLabel: varchar("payment_method_label", { length: 80 }),
+    /** The exact payment details last emailed to the customer (plain text). */
+    paymentInstructions: text("payment_instructions"),
+    paymentInstructionsSentAt: datetime("payment_instructions_sent_at", { mode: "date" }),
+    paymentReminderSentAt: datetime("payment_reminder_sent_at", { mode: "date" }),
+    customerReportedPaidAt: datetime("customer_reported_paid_at", { mode: "date" }),
+    customerPaymentRef: varchar("customer_payment_ref", { length: 120 }),
     trackingNumber: varchar("tracking_number", { length: 100 }),
     customerNote: text("customer_note"),
     internalNote: text("internal_note"),

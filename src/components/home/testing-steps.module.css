@@ -244,11 +244,17 @@
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  gap: 12px;
+  white-space: nowrap;
 }
 .vpId {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--tj-faint);
 }
 .vpDoc {
+  flex-shrink: 0;
   color: var(--tj-accent);
 }
 .vpScreen {
@@ -582,5 +588,116 @@
 @media (prefers-reduced-motion: reduce) {
   .pulse {
     animation: none;
+  }
+}
+
+/* "certificate pending" card: shown until our Janoshik certificates are issued */
+.pending {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(28px, 9%, 48px) clamp(22px, 9%, 44px);
+  background:
+    linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
+  color: #1b1f27;
+  text-align: left;
+}
+.pendingIcon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgb(255 130 0 / 12%);
+  color: #c25e00;
+}
+.pendingIcon svg {
+  width: 22px;
+  height: 22px;
+}
+.pendingKicker {
+  margin-top: 22px;
+  color: #5b6271;
+  font-family: var(--tj-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.pendingDomain {
+  margin-top: 6px;
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.pendingText {
+  margin-top: 14px;
+  max-width: 34ch;
+  color: #4a5160;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.pendingMeta {
+  display: grid;
+  width: 100%;
+  margin-top: 26px;
+  border-top: 1px solid #dfe2e8;
+}
+.pendingMeta > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #dfe2e8;
+  font-size: 0.82rem;
+}
+.pendingMeta dt {
+  color: #5b6271;
+}
+.pendingMeta dd {
+  font-family: var(--tj-mono);
+  font-weight: 600;
+}
+.pendingLines {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  margin-top: auto;
+  padding-bottom: 44px;
+}
+.pendingLines i {
+  height: 8px;
+  border-radius: 4px;
+  background: #e5e7eb;
+}
+.pendingLines i:nth-child(2) {
+  width: 82%;
+}
+.pendingLines i:nth-child(3) {
+  width: 64%;
+}
+.pendingLines i:nth-child(4) {
+  width: 40%;
+}
+@media (max-width: 640px) {
+  .pending {
+    padding: 24px 22px;
+  }
+  .pendingKicker {
+    margin-top: 16px;
+  }
+  .pendingText {
+    font-size: 0.85rem;
+    line-height: 1.55;
+  }
+  .pendingMeta {
+    margin-top: 18px;
+  }
+  .pendingLines {
+    display: none;
   }
 }

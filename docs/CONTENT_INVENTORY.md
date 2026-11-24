@@ -7,7 +7,7 @@
 - Live site: Vite + React SPA, client-rendered (bundle `/assets/index-*.js`, lazy chunks).
 - Title: *"Alluvi - Premium Research Peptides for Laboratory R&D | UK Supplier"*.
 - Font: **Manrope** (200–800). Favicon: `/images/favicon.png`. OG image: `/images/Holding-iPhone_1Holding-iPhone.webp`.
-- Third parties on live site: GA4 (`G-HKE9YKMN6Q`), PostHog, Omnisend, Klyme widget, Janoshik verification links (`verify.janoshik.com/tests/...`), `spotafakealluvi.com`.
+- Third parties on live site: GA4 (`G-HKE9YKMN6Q`), PostHog, Omnisend, Klyme widget, Janoshik verification links (`verify.janoshik.com/tests/...`). (`spotafakealluvi.com` was compromised on 2026-11-24 — all links removed; "Verify" now routes to `/contact`.)
 - Currency GBP (e.g. `£219.99` found in bundle).
 
 ## D1-1 scrape results (2026-11-22)
@@ -48,10 +48,10 @@ related products, and 4 images (front, pen, open, UV).
    nationality and residence). The rebuild offers guest checkout plus optional accounts (ADR-005).
    Does the client still want DOB/nationality collected?
 4. **Resolved:** keep all of these links (client, 2026-11-22). Original note: **Third-party channels on the live site:** Telegram ordering (`@Sophie_alluvi_xxx`), "Contact Max"
-   via WhatsApp for wholesale, alluvibrazil.org, and spotafakealluvi.com (the "Verify" nav link).
+   via WhatsApp for wholesale, and alluvibrazil.org (the "Verify" nav link previously pointed to spotafakealluvi.com; that domain was compromised and it now routes to /contact).
    `/spot-a-fake` is only an "upload image" CTA that points to the external verifier.
-5. **Open (low):** Terms/Refund pages mention card/USDT. Keep verbatim for now; v1 checkout offers bank transfer only. **Payment wording:** the Terms say "card, bank transfer, or USDT" and the Refund policy mentions crypto.
-   The v1 rebuild takes bank transfer only, so those lines need updating.
+5. **Open (low):** Terms/Refund pages mention card/USDT. Keep verbatim for now. **Payment wording:** the Terms say "card, bank transfer, or USDT" and the Refund policy mentions crypto.
+   Since ADR-021 checkout offers bank transfer, payment apps, money transfer and crypto (incl. USDT), but **not card**. The client should update the Terms line (their legal copy; we don't rewrite it).
 6. **Live-site tracking:** the site calls `/api/user-orders/fingerprint/collect` (browser fingerprinting)
    and loads PostHog, GA and Omnisend. None of these will be carried over without a consent decision.
 7. ~~**Missing images.**~~ **Resolved:** Tirzepatide pen, open and UV images downloaded on retry.

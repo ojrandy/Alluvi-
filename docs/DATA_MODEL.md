@@ -72,7 +72,13 @@ Tokens are single-use and expire after 30 minutes. Only the hash is stored. Issu
 | address_line1, address_line2, city, postcode, country | text | country default `GB` |
 | shipping_method | text | key from settings |
 | subtotal_pence, shipping_pence, total_pence | integer | computed server-side |
-| payment_method | text default `bank_transfer` | |
+| payment_method | varchar(30) default `bank_transfer` | key from `src/lib/payment-methods.ts` chosen at checkout (ADR-021); `bank_transfer` = UK bank transfer |
+| payment_method_label | varchar(80) null | name snapshot at checkout |
+| payment_instructions | text null | exact payment details last emailed to the customer (shown on their gated order page) |
+| payment_instructions_sent_at | datetime null | set only after SMTP accepted the details email |
+| payment_reminder_sent_at | datetime null | last reminder; cleared when details are re-sent |
+| customer_reported_paid_at | datetime null | customer pressed "I've sent payment" (not proof) |
+| customer_payment_ref | varchar(120) null | optional reference the customer gave |
 | tracking_number | text null | |
 | customer_note | text null | |
 | internal_note | text null | admin-only |
@@ -83,14 +89,19 @@ Tokens are single-use and expire after 30 minutes. Only the hash is stored. Issu
 | id uuid PK | order_id FK (cascade) | product_id FK null (set null) | product_name text | product_slug text | unit_price_pence int | quantity int > 0 | line_total_pence int |
 
 ### `order_events`
-| id uuid PK | order_id FK (cascade) | type text (`created`,`status_changed`,`email_sent`,`email_failed`,`note`,`customer_linked`) | data jsonb | actor text (`system`/admin email) | created_at |
+| id uuid PK | order_id FK (cascade) | type text (`created`,`status_changed`,`email_sent`,`email_failed`,`note`,`customer_linked`,`payment_instructions_sent`,`payment_reminder_sent`,`customer_reported_paid`) | data jsonb | actor text (`system`/admin email/`customer`) | created_at |
 
 `status_changed` events **must** store `data: { from, to }` (order statuses). `/track-order` builds the customer timeline from them (`getOrderStatusChanges`); only the status and time are shown, never the actor or other data.
 
 Event `data` shapes written by the admin (D2-3, actor = admin email):
 - `status_changed`: `{ from, to, trackingNumber? (set when shipping), restocked?: [{productId, quantity}] (on cancel) }`
 - `note`: `{ field: "tracking_number", from, to }` or `{ field: "internal_note", cleared }` (the note text lives on the order only)
-- `email_sent` / `email_failed`: `{ template: "order-received" | "admin-new-order" | "order-shipped", messageId | error }`
+- `email_sent` / `email_failed`: `{ template: "order-received" | "admin-new-order" | "order-shipped" | "admin-payment-reported" | "payment-instructions" | "payment-reminder", messageId | error }`
+- `payment_instructions_sent`: `{ method, resend, messageId }` · `payment_reminder_sent`: `{ messageId }` (ADR-021)
+
+Written by the customer (actor `customer`): `customer_reported_paid`: `{ reference | null, repeat }`. `created` also records `paymentMethod`.
+
+**Payment stage** (ADR-021) is derived for `pending_payment` orders, never stored: `needs_details` (no details sent) → `awaiting_payment` (sent) → `customer_reported`; `overdue` = sent ≥ 5 days ago with no report. Same rule in `paymentStage()` (src/lib/payment-methods.ts) and `paymentStageWhere()` (src/server/queries/admin-orders.ts).
 
 ### `rate_limits`
 | key varchar(191) PK (e.g. `login:<ipHash>`) | count int | reset_at datetime |
@@ -98,7 +109,7 @@ Fixed-window counters stored in the DB, because Passenger can run several worker
 
 ### `settings`
 | key text PK | value jsonb | updated_at |
-Keys: `bank_details` `{accountName, sortCode, accountNumber, bankName}`,
+Keys: `payment_methods` `[{key, enabled, template}]` (ADR-021; templates hold the admin's real payment details, never shown publicly; methods missing from the array are enabled with the default template; `bank_details` was removed in migration 0001),
 `shipping_options` `[{key, label, description?, pricePence, freeOverPence?}]` (keys starting `uk_` are UK only), `notify_email` (falls back to `ORDER_NOTIFY_EMAIL`),
 `free_shipping_promo` `{label, startsAt, endsAt, enabled?}` (whole London days; `enabled:false` = off, row kept so a re-seed does not re-enable it).
 All edited in `/admin/settings` and read per request (`src/server/settings.ts`, never cached).
@@ -121,7 +132,11 @@ Computed in `src/server/queries/admin.ts` (never cached). Used by the `/admin` o
 - **Orders** = every order placed in the window, whatever its status (cancelled included).
 - **Revenue** = `SUM(total_pence)` of orders placed in the window with status `paid`, `processing`, `shipped` or `completed` (payment received). Pending and cancelled orders are excluded. It is attributed to the order date, not the payment date.
 - **Pending payments** = all orders currently `pending_payment`, any age (count + total).
-- The 30-day chart groups by UTC hour in SQL and folds hours into London days in JS. This avoids `CONVERT_TZ`, which needs MySQL time-zone tables that shared hosting often lacks.
+- **Previous period** (change indicators) = the same-length window immediately before: days -13…-7 for 7 days, -59…-30 for 30 days.
+- **Average order value (30 days)** = 30-day revenue ÷ paid orders placed in the window.
+- **Top products** = `SUM(line_total_pence)` of order lines from paid-status orders in the last 30 days, grouped by product slug (line snapshots, so renamed or deleted products still count).
+- **Low stock** = active products with stock ≤ 5.
+- The sales chart loads 180 days (90 shown + 90 for comparison); it groups by UTC hour in SQL and folds hours into London days in JS. This avoids `CONVERT_TZ`, which needs MySQL time-zone tables that shared hosting often lacks.
 
 Manual check (replace the bounds with London midnight expressed in UTC):
 ```sql

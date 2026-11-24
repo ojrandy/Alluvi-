@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { PackageSearch, ShieldCheck, Truck } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { T } from "@/components/i18n/t";
 
 /**
  * Shared frame for /login, /signup, /forgot-password, /reset-password and /verify-email: centred
@@ -44,7 +45,7 @@ export function AuthShell({
             Faster checkout
           </li>
         </ul>
-        <p className="mt-10 text-center text-sm text-muted-foreground">For laboratory research use only. Not for human consumption.</p>
+        <p className="mt-10 text-center text-sm text-muted-foreground"><T>For laboratory research use only. Not for human consumption.</T></p>
       </div>
     </div>
   );

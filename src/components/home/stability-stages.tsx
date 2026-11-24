@@ -2,15 +2,19 @@
 
 import { useRef, type ReactNode } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { T } from "@/components/i18n/t";
+import { LabReportLink } from "@/components/content/lab-report-link";
+// Report links point at the certificate-request placeholder until our own Janoshik links are issued.
+import { LAB_LINK_PLACEHOLDER } from "@/lib/lab-links";
 import styles from "./stability-stages.module.css";
 
 const STAGES = 2;
 
 function Ext({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-6 items-center">
+    <LabReportLink href={href} className="inline-flex min-h-6 items-center">
       {children}
-    </a>
+    </LabReportLink>
   );
 }
 
@@ -50,67 +54,99 @@ export function StabilityStages() {
             <div className={styles.grid}>
               <div className={styles.intro}>
                 <h2 id="stability-title" className={styles.title}>
-                  Alluvi Retatrutide 40mg Long Term Stability Test
+                  <T>Alluvi Retatrutide 40mg Long Term Stability Test</T>
                 </h2>
                 <p className={styles.copy}>
-                  <strong className={styles.subtitle}>56 Day Room Temperature, Purity and Degradation Test</strong>
+                  <strong className={styles.subtitle}>
+                    <T>56 Day Room Temperature, Purity and Degradation Test</T>
+                  </strong>
                   <br />
                   <br />
-                  Tracking the purity &amp; stability of a 40&nbsp;mg Retatrutide filled Alluvi pen across a full 56 day
-                  hold, with independent Janoshik verification at each checkpoint.
+                  <T>
+                    Tracking the purity &amp; stability of a 40 mg Retatrutide filled Alluvi pen across a full 56 day hold, with independent Janoshik verification at each checkpoint.
+                  </T>
                   <br />
                   <br />
-                  For laboratory research and development use only. Not for human or veterinary consumption.
+                  <T>For laboratory research and development use only. Not for human or veterinary consumption.</T>
                 </p>
               </div>
 
               <div className={styles.list}>
                 <Stage index={0} x={live}>
-                  <h3 className={styles.stageNo}>Stage 1</h3>
+                  <h3 className={styles.stageNo}>
+                    <T>Stage 1</T>
+                  </h3>
                   <p className={styles.copy}>
-                    Exactly 40&nbsp;mg Retatrutide 2.4ml filled into an Alluvi pen, held at room temperature for 22
-                    days.
+                    <T>
+                      Exactly 40 mg Retatrutide 2.4ml filled into an Alluvi pen, held at room temperature for 22 days.
+                    </T>
                     <br />
-                    <strong className={styles.white}>Sent to Janoshik for independent testing on day 28.</strong>
-                    <br />
-                    <br />
-                    <Key>Purity:</Key> 99.65%
-                    <br />
-                    <Key>Verified content:</Key> 38.40&nbsp;mg
-                    <br />
-                    <Key>Measured difference:</Key> 1.6&nbsp;mg / 4% change
+                    <strong className={styles.white}>
+                      <T>Sent to Janoshik for independent testing on day 28.</T>
+                    </strong>
                     <br />
                     <br />
-                    <Ext href="https://verify.janoshik.com/tests/239742-ALLUVI_RETATRUTIDE_40MG_KIT_EM6LUXF19LHZ">
-                      View Test Result
+                    <Key>
+                      <T>Purity:</T>
+                    </Key> 99.65%
+                    <br />
+                    <Key>
+                      <T>Verified content:</T>
+                    </Key> 38.40&nbsp;mg
+                    <br />
+                    <Key>
+                      <T>Measured difference:</T>
+                    </Key> 1.6&nbsp;mg / 4% <T>change</T>
+                    <br />
+                    <br />
+                    <Ext href={LAB_LINK_PLACEHOLDER}>
+                      <T>View Test Result</T>
                     </Ext>
                   </p>
                 </Stage>
                 <Stage index={1} x={live}>
-                  <h3 className={styles.stageNo}>Stage 2</h3>
+                  <h3 className={styles.stageNo}>
+                    <T>Stage 2</T>
+                  </h3>
                   <p className={styles.copy}>
-                    Further 33 day room temperature hold in Janoshik custody.
+                    <T>Further 33 day room temperature hold in Janoshik custody.</T>
                     <br />
                     <br />
-                    <Key>Result:</Key>
+                    <Key>
+                      <T>Result:</T>
+                    </Key>
                     <br />
-                    <Key>Purity:</Key> 98.32% / 38.37&nbsp;mg Retatrutide
+                    <Key>
+                      <T>Purity:</T>
+                    </Key> 98.32% / 38.37&nbsp;mg Retatrutide
                     <br />
-                    <Key>pH:</Key> 7.66
+                    <Key>
+                      <T>pH:</T>
+                    </Key> 7.66
                     <br />
-                    <Key>Total change:</Key> 0.03&nbsp;mg / 0.07% change
+                    <Key>
+                      <T>Total change:</T>
+                    </Key> 0.03&nbsp;mg / 0.07% <T>change</T>
                     <br />
-                    <Key>Purity change:</Key> 1.33%
+                    <Key>
+                      <T>Purity change:</T>
+                    </Key> 1.33%
                     <br />
                     <br />
-                    <Key>Total days room temp storage:</Key> 56 days
+                    <Key>
+                      <T>Total days room temp storage:</T>
+                    </Key> 56 <T>days</T>
                     <br />
                     <strong className={styles.white}>40mg&gt;38.37mg&gt;1.63mg/4.07%</strong>
                     <br />
                     <br />
-                    <Ext href="https://verify.janoshik.com/tests/165632_3JXHCZ6NJHGX">Link to Degradation test</Ext>
+                    <Ext href={LAB_LINK_PLACEHOLDER}>
+                      <T>Link to Degradation test</T>
+                    </Ext>
                     <br />
-                    <Ext href="https://verify.janoshik.com/tests/165637_1XWECMUZPLPE">Link to pH test</Ext>
+                    <Ext href={LAB_LINK_PLACEHOLDER}>
+                      <T>Link to pH test</T>
+                    </Ext>
                   </p>
                 </Stage>
               </div>

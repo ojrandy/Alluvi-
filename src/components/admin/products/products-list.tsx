@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useTransition } from "react";
-import { ArrowDown, ArrowUp, Archive, ExternalLink, ImageOff, Loader2, Pencil, Trash2 } from "lucide-react";
-import { FormAlert } from "@/components/account/form-alert";
+import { useOptimistic, useState, useTransition } from "react";
+import { ArrowDown, ArrowUp, Archive, ExternalLink, ImageOff, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,76 +21,96 @@ import { cn } from "@/lib/utils";
 import { deleteProduct, moveProduct, setProductActive } from "@/server/actions/products";
 import type { AdminProductRow } from "@/server/queries/admin-products";
 
-type Status = { tone: "success" | "error"; text: string } | null;
-
 const LOW_STOCK = 5;
 
+type Change =
+  | { type: "active"; id: string; isActive: boolean }
+  | { type: "move"; id: string; direction: "up" | "down" }
+  | { type: "remove"; id: string; archive: boolean };
+
+/** The same change the server will make, applied locally so the UI answers in the same frame. */
+function applyChange(rows: AdminProductRow[], c: Change): AdminProductRow[] {
+  switch (c.type) {
+    case "active":
+      return rows.map((r) => (r.id === c.id ? { ...r, isActive: c.isActive } : r));
+    case "move": {
+      const i = rows.findIndex((r) => r.id === c.id);
+      const j = c.direction === "up" ? i - 1 : i + 1;
+      if (i === -1 || j < 0 || j >= rows.length) return rows;
+      const next = [...rows];
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    }
+    case "remove":
+      return c.archive ? rows.map((r) => (r.id === c.id ? { ...r, isActive: false } : r)) : rows.filter((r) => r.id !== c.id);
+  }
+}
+
+type Result = { ok: true; data: { message: string } } | { ok: false; error: string };
+
 /**
- * /admin/products rows. Table from md up, stacked cards below (390px). Each mutation goes through a
- * Server Action that re-checks the admin session; the server's answer is announced in one live region.
+ * /admin/products rows. Table from lg up, stacked cards below. Every mutation is optimistic
+ * (useOptimistic): the row changes on click, the Server Action re-checks the admin session and
+ * calls refresh(), and the server's rows replace the optimistic ones when the transition settles.
+ * A rejected action simply settles back to the server's rows, and the reason is shown as a toast.
  */
 export function ProductsList({ rows }: { rows: AdminProductRow[] }) {
-  const [status, setStatus] = useState<Status>(null);
-  const [busy, setBusy] = useState<string | null>(null); // `${id}:${what}`
+  const [view, apply] = useOptimistic(rows, applyChange);
   const [, startTransition] = useTransition();
   const [confirm, setConfirm] = useState<AdminProductRow | null>(null);
 
-  const run = (key: string, fn: () => Promise<{ ok: true; data: { message: string } } | { ok: false; error: string }>) => {
-    setBusy(key);
+  const run = (change: Change, fn: () => Promise<Result>) => {
     startTransition(async () => {
-      const res = await fn();
-      setStatus(res.ok ? { tone: "success", text: res.data.message } : { tone: "error", text: res.error });
-      setBusy(null);
+      apply(change);
+      try {
+        const res = await fn();
+        if (res.ok) toast.success(res.data.message);
+        else toast.error(res.error);
+      } catch {
+        toast.error("Couldn't reach the server. Check your connection and try again.");
+      }
     });
   };
 
   const actions = {
-    toggle: (p: AdminProductRow) => run(`${p.id}:active`, () => setProductActive({ id: p.id, isActive: !p.isActive })),
-    move: (p: AdminProductRow, direction: "up" | "down") => run(`${p.id}:${direction}`, () => moveProduct({ id: p.id, direction })),
-    remove: (p: AdminProductRow) => run(`${p.id}:delete`, () => deleteProduct({ id: p.id })),
+    toggle: (p: AdminProductRow) => run({ type: "active", id: p.id, isActive: !p.isActive }, () => setProductActive({ id: p.id, isActive: !p.isActive })),
+    move: (p: AdminProductRow, direction: "up" | "down") => run({ type: "move", id: p.id, direction }, () => moveProduct({ id: p.id, direction })),
+    remove: (p: AdminProductRow) => run({ type: "remove", id: p.id, archive: p.orderCount > 0 }, () => deleteProduct({ id: p.id })),
   };
 
   return (
     <>
-      <div aria-live="polite" className="px-4 empty:hidden sm:px-5 [&:not(:empty)]:pt-4">
-        {status && (
-          <FormAlert tone={status.tone} className="py-2.5">
-            {status.text}
-          </FormAlert>
-        )}
-      </div>
-
       {/* lg+: table (the sidebar leaves too little room at md) */}
       <div className="hidden overflow-x-auto lg:block">
         <table className="w-full text-sm">
           <caption className="sr-only">Products, in shop order</caption>
           <thead>
-            <tr className="border-b border-border text-left text-xs font-medium text-muted-foreground">
-              <th scope="col" className="w-20 py-3 pl-5 font-medium">
-                Order
+            <tr className="border-b border-border bg-surface text-left text-xs text-muted-foreground">
+              <th scope="col" className="w-24 py-2.5 pl-5 font-medium">
+                Position
               </th>
-              <th scope="col" className="py-3 pr-4 font-medium">
+              <th scope="col" className="py-2.5 pr-4 font-medium">
                 Product
               </th>
-              <th scope="col" className="py-3 pr-4 text-right font-medium">
+              <th scope="col" className="py-2.5 pr-4 text-right font-medium">
                 Price
               </th>
-              <th scope="col" className="py-3 pr-4 text-right font-medium">
+              <th scope="col" className="py-2.5 pr-4 text-right font-medium">
                 Stock
               </th>
-              <th scope="col" className="py-3 pr-4 font-medium">
+              <th scope="col" className="py-2.5 pr-4 font-medium">
                 In shop
               </th>
-              <th scope="col" className="py-3 pr-5 text-right font-medium">
+              <th scope="col" className="py-2.5 pr-5 text-right font-medium">
                 <span className="sr-only">Actions</span>
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {rows.map((p, i) => (
-              <tr key={p.id} className={cn("transition-colors hover:bg-white/[0.02]", !p.isActive && "text-muted-foreground")}>
+            {view.map((p, i) => (
+              <tr key={p.id} className={cn("transition-colors hover:bg-surface", !p.isActive && "text-muted-foreground")}>
                 <td className="py-3 pl-5">
-                  <MoveButtons p={p} first={i === 0} last={i === rows.length - 1} busy={busy} onMove={actions.move} />
+                  <MoveButtons p={p} first={i === 0} last={i === view.length - 1} onMove={actions.move} />
                 </td>
                 <td className="py-3 pr-4">
                   <ProductCell p={p} />
@@ -102,10 +122,10 @@ export function ProductsList({ rows }: { rows: AdminProductRow[] }) {
                   <Stock stock={p.stock} />
                 </td>
                 <td className="py-3 pr-4">
-                  <ActiveSwitch p={p} busy={busy === `${p.id}:active`} onToggle={actions.toggle} />
+                  <ActiveSwitch p={p} onToggle={actions.toggle} />
                 </td>
                 <td className="py-3 pr-5">
-                  <RowActions p={p} busy={busy === `${p.id}:delete`} onDelete={() => setConfirm(p)} />
+                  <RowActions p={p} onDelete={() => setConfirm(p)} />
                 </td>
               </tr>
             ))}
@@ -115,7 +135,7 @@ export function ProductsList({ rows }: { rows: AdminProductRow[] }) {
 
       {/* phones: cards */}
       <ul className="divide-y divide-border lg:hidden">
-        {rows.map((p, i) => (
+        {view.map((p, i) => (
           <li key={p.id} className="space-y-3 px-4 py-4">
             <ProductCell p={p} />
             <div className="flex items-center justify-between gap-3 text-sm">
@@ -123,10 +143,10 @@ export function ProductsList({ rows }: { rows: AdminProductRow[] }) {
               <Stock stock={p.stock} labelled />
             </div>
             <div className="flex items-center justify-between gap-2">
-              <ActiveSwitch p={p} busy={busy === `${p.id}:active`} onToggle={actions.toggle} />
+              <ActiveSwitch p={p} onToggle={actions.toggle} />
               <div className="flex items-center gap-1">
-                <MoveButtons p={p} first={i === 0} last={i === rows.length - 1} busy={busy} onMove={actions.move} />
-                <RowActions p={p} busy={busy === `${p.id}:delete`} onDelete={() => setConfirm(p)} />
+                <MoveButtons p={p} first={i === 0} last={i === view.length - 1} onMove={actions.move} />
+                <RowActions p={p} onDelete={() => setConfirm(p)} />
               </div>
             </div>
           </li>
@@ -162,15 +182,15 @@ export function ProductsList({ rows }: { rows: AdminProductRow[] }) {
 function ProductCell({ p }: { p: AdminProductRow }) {
   return (
     <div className="flex min-w-0 items-center gap-3">
-      <div className="relative size-12 shrink-0 overflow-hidden rounded-lg border border-border bg-surface-raised">
+      <div className="relative size-12 shrink-0 overflow-hidden rounded-xl border border-border bg-surface-raised">
         {p.image ? (
-          <Image src={p.image.url} alt="" fill sizes="48px" className={cn("object-cover", !p.isActive && "opacity-50")} />
+          <Image src={p.image.url} alt="" fill sizes="48px" className={cn("object-cover transition-opacity", !p.isActive && "opacity-50")} />
         ) : (
           <ImageOff className="absolute inset-0 m-auto size-4 text-muted-foreground" aria-hidden="true" />
         )}
       </div>
       <div className="min-w-0">
-        <Link href={`/admin/products/${p.id}`} className="block truncate font-medium text-foreground hover:text-brand">
+        <Link href={`/admin/products/${p.id}`} className="block truncate font-semibold text-foreground hover:text-brand-ink">
           {p.name}
         </Link>
         <p className="truncate text-xs text-muted-foreground">
@@ -186,7 +206,7 @@ function ProductCell({ p }: { p: AdminProductRow }) {
 function Price({ p }: { p: AdminProductRow }) {
   return (
     <span className="tabular-nums">
-      <span className="font-medium text-foreground">{formatGBP(p.pricePence)}</span>
+      <span className="font-semibold text-foreground">{formatGBP(p.pricePence)}</span>
       {p.compareAtPence && (
         <s className="ml-1.5 text-xs text-muted-foreground">
           <span className="sr-only">was </span>
@@ -198,40 +218,51 @@ function Price({ p }: { p: AdminProductRow }) {
 }
 
 function Stock({ stock, labelled }: { stock: number; labelled?: boolean }) {
-  const tone = stock === 0 ? "text-destructive" : stock <= LOW_STOCK ? "text-warning" : "text-foreground";
+  if (stock === 0 || stock <= LOW_STOCK) {
+    return (
+      <span
+        className={cn(
+          "inline-flex h-6 items-center rounded-full px-2.5 text-xs font-semibold tabular-nums",
+          stock === 0 ? "bg-destructive/10 text-destructive" : "bg-warning/10 text-warning",
+        )}
+      >
+        {stock === 0 ? "Out of stock" : `${stock} left`}
+      </span>
+    );
+  }
   return (
-    <span className={cn("text-sm font-medium tabular-nums", tone)}>
-      {stock === 0 ? "Out of stock" : stock <= LOW_STOCK ? `${stock} left` : `${stock.toLocaleString("en-GB")}${labelled ? " in stock" : ""}`}
+    <span className="text-sm font-medium text-foreground tabular-nums">
+      {stock.toLocaleString("en-GB")}
+      {labelled ? " in stock" : ""}
     </span>
   );
 }
 
-function ActiveSwitch({ p, busy, onToggle }: { p: AdminProductRow; busy: boolean; onToggle: (p: AdminProductRow) => void }) {
+function ActiveSwitch({ p, onToggle }: { p: AdminProductRow; onToggle: (p: AdminProductRow) => void }) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={p.isActive}
       aria-label={`Show “${p.name}” in the shop`}
-      disabled={busy}
       onClick={() => onToggle(p)}
-      className="group inline-flex items-center gap-2 rounded-full text-xs font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
+      className="group inline-flex items-center gap-2 rounded-full text-xs font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <span
         aria-hidden="true"
         className={cn(
-          "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border transition-colors",
-          p.isActive ? "border-brand bg-brand" : "border-border bg-white/[0.06]",
+          "relative inline-flex h-[22px] w-10 shrink-0 items-center rounded-full transition-colors duration-150",
+          p.isActive ? "bg-brand" : "bg-input",
         )}
       >
         <span
           className={cn(
-            "absolute size-3.5 rounded-full transition-transform motion-reduce:transition-none",
-            p.isActive ? "translate-x-[18px] bg-brand-foreground" : "translate-x-[2px] bg-muted-foreground",
+            "absolute size-[18px] rounded-full bg-card shadow-[0_1px_2px_rgb(16_24_40/0.2)] transition-transform duration-150 motion-reduce:transition-none",
+            p.isActive ? "translate-x-5" : "translate-x-0.5",
           )}
         />
       </span>
-      <span className={p.isActive ? "text-foreground" : "text-muted-foreground"}>{busy ? "Saving…" : p.isActive ? "Visible" : "Hidden"}</span>
+      <span className={cn("w-12 text-left", p.isActive ? "text-foreground" : "text-muted-foreground")}>{p.isActive ? "Visible" : "Hidden"}</span>
     </button>
   );
 }
@@ -240,34 +271,30 @@ function MoveButtons({
   p,
   first,
   last,
-  busy,
   onMove,
 }: {
   p: AdminProductRow;
   first: boolean;
   last: boolean;
-  busy: string | null;
   onMove: (p: AdminProductRow, d: "up" | "down") => void;
 }) {
-  // One reorder at a time: each move renumbers the whole list.
-  const anyBusy = !!busy && (busy.endsWith(":up") || busy.endsWith(":down"));
+  // Moves are queued: Server Actions run one at a time, each swapping with the current neighbour.
   return (
     <div className="flex items-center gap-0.5">
       {(["up", "down"] as const).map((d) => {
         const Icon = d === "up" ? ArrowUp : ArrowDown;
-        const pending = busy === `${p.id}:${d}`;
         return (
           <Button
             key={d}
             type="button"
             variant="ghost"
             size="icon"
-            disabled={(d === "up" ? first : last) || anyBusy}
+            disabled={d === "up" ? first : last}
             onClick={() => onMove(p, d)}
             aria-label={`Move “${p.name}” ${d}`}
-            className="size-8 text-muted-foreground"
+            className="size-8 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
           >
-            {pending ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Icon aria-hidden="true" />}
+            <Icon aria-hidden="true" />
           </Button>
         );
       })}
@@ -275,41 +302,25 @@ function MoveButtons({
   );
 }
 
-function RowActions({ p, busy, onDelete }: { p: AdminProductRow; busy: boolean; onDelete: () => void }) {
+function RowActions({ p, onDelete }: { p: AdminProductRow; onDelete: () => void }) {
   const archiveOnly = p.orderCount > 0;
+  const iconBtn =
+    "grid size-8 place-items-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring";
   return (
     <div className="flex items-center justify-end gap-0.5">
       {p.isActive && (
-        <a
-          href={`/product/${p.slug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`View “${p.name}” in the shop (opens in a new tab)`}
-          className="grid size-8 place-items-center rounded-lg text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-        >
+        <a href={`/product/${p.slug}`} target="_blank" rel="noopener noreferrer" aria-label={`View “${p.name}” in the shop (opens in a new tab)`} className={iconBtn}>
           <ExternalLink className="size-4" aria-hidden="true" />
         </a>
       )}
-      <Link
-        href={`/admin/products/${p.id}`}
-        aria-label={`Edit “${p.name}”`}
-        className="grid size-8 place-items-center rounded-lg text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-      >
+      <Link href={`/admin/products/${p.id}`} aria-label={`Edit “${p.name}”`} className={iconBtn}>
         <Pencil className="size-4" aria-hidden="true" />
       </Link>
       {/* An already-archived product with orders has nothing left to do here. */}
       {!(archiveOnly && !p.isActive) && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          disabled={busy}
-          onClick={onDelete}
-          aria-label={archiveOnly ? `Archive “${p.name}”` : `Delete “${p.name}”`}
-          className="size-8 text-muted-foreground hover:text-destructive"
-        >
-          {busy ? <Loader2 className="animate-spin" aria-hidden="true" /> : archiveOnly ? <Archive aria-hidden="true" /> : <Trash2 aria-hidden="true" />}
-        </Button>
+        <button type="button" onClick={onDelete} aria-label={archiveOnly ? `Archive “${p.name}”` : `Delete “${p.name}”`} className={cn(iconBtn, "hover:bg-destructive/10 hover:text-destructive")}>
+          {archiveOnly ? <Archive className="size-4" aria-hidden="true" /> : <Trash2 className="size-4" aria-hidden="true" />}
+        </button>
       )}
     </div>
   );

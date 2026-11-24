@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PAYMENT_METHOD_KEYS } from "@/lib/payment-methods";
 import { penceToPounds, poundsToPence } from "./admin-products";
 
 /**
@@ -29,28 +30,28 @@ const money = (label: string, required: boolean) =>
     return p;
   });
 
-// ---------- bank details ----------
+// ---------- payment methods (ADR-021) ----------
 
-export const bankFormSchema = z.object({
-  accountName: text(120, "account name"),
-  bankName: text(120, "bank name"),
-  sortCode: z
+const paymentMethodRow = z.object({
+  key: z.enum(PAYMENT_METHOD_KEYS as [string, ...string[]], "Unknown payment method"),
+  enabled: z.boolean(),
+  template: z
     .string()
-    .transform((v) => v.replace(/[\s-]/g, ""))
-    .pipe(z.string().regex(/^\d{6}$/, "A sort code is 6 digits, e.g. 12-34-56"))
-    .transform((v) => `${v.slice(0, 2)}-${v.slice(2, 4)}-${v.slice(4)}`),
-  accountNumber: z
-    .string()
-    .transform((v) => v.replace(/\s/g, ""))
-    .pipe(z.string().regex(/^\d{8}$/, "A UK account number is 8 digits")),
-  iban: z
-    .string()
-    .transform((v) => v.replace(/\s/g, "").toUpperCase())
-    .pipe(z.string().regex(/^$|^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/, "Check the IBAN"))
-    .transform((v) => (v === "" ? null : v)),
-  instructions: optionalText(500),
+    .transform((v) => v.replace(/\r\n/g, "\n").trim())
+    .pipe(z.string().min(10, "Write the payment details for this method").max(3000, "Keep this under 3,000 characters")),
 });
-export type BankFormInput = z.input<typeof bankFormSchema>;
+
+export const paymentMethodsFormSchema = z
+  .object({ methods: z.array(paymentMethodRow).min(1).max(PAYMENT_METHOD_KEYS.length) })
+  .superRefine((v, ctx) => {
+    if (!v.methods.some((m) => m.enabled)) ctx.addIssue({ code: "custom", path: ["methods"], message: "Keep at least one payment method on" });
+    const seen = new Set<string>();
+    v.methods.forEach((m, i) => {
+      if (seen.has(m.key)) ctx.addIssue({ code: "custom", path: ["methods", i, "key"], message: "Duplicate method" });
+      seen.add(m.key);
+    });
+  });
+export type PaymentMethodRowInput = z.input<typeof paymentMethodRow>;
 
 // ---------- shipping options ----------
 

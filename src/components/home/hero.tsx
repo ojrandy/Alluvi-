@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
+import { T } from "@/components/i18n/t";
+import { useT } from "@/lib/i18n/client";
 import styles from "./hero.module.css";
 
 /**
@@ -16,6 +18,7 @@ import styles from "./hero.module.css";
 export function HomeHero() {
   const demoRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const t = useT();
 
   const { scrollYProgress } = useScroll({ target: demoRef, offset: ["start end", "end start"] });
   // IX2 "smoothing: 50": a light spring so the scrub trails the wheel slightly, like the live site.
@@ -34,31 +37,33 @@ export function HomeHero() {
     <section className={styles.hero} aria-labelledby="home-hero-title">
       <div className={styles.intro}>
         <h1 id="home-hero-title" className={styles.heading}>
-          <strong>Advancing discovery through </strong>
-          <span className={styles.headingAccent}>Alluvi</span> research
+          <strong>
+            <T>Advancing discovery through</T>{" "}
+          </strong>
+          <span className={styles.headingAccent}>Alluvi</span> <T>research</T>
         </h1>
         <p className={styles.lede}>
-          Alluvi Labs develops and evaluates
+          <T>Alluvi Labs develops and evaluates</T>
           <br />
-          premium peptides and supplements
+          <T>premium peptides and supplements</T>
           <br />
           <br />
-          All products are produced exclusively
+          <T>All products are produced exclusively</T>
           <br />
-          for controlled research and development purposes, guided by science.
+          <T>for controlled research and development purposes, guided by science.</T>
           <br />
-          Not for human or veterinary consumption.
+          <T>Not for human or veterinary consumption.</T>
           <br />
           <br />
           <span className={styles.ctaRow}>
             <Link href="/shop" className={styles.ctaLink}>
-              Browse Research Peptides
+              <T>Browse Research Peptides</T>
             </Link>
             <span className={styles.ctaSep} aria-hidden="true">
               |
             </span>
             <Link href="/about" className={styles.ctaLink}>
-              Learn About Alluvi
+              <T>Learn About Alluvi</T>
             </Link>
           </span>
         </p>
@@ -82,7 +87,7 @@ export function HomeHero() {
               <div className={styles.phoneHolder}>
                 <Image
                   src="/images/Holding-iPhone_1-p-1600.png"
-                  alt="Alluvi research app on iPhone"
+                  alt={t("Alluvi research app on iPhone")}
                   width={1600}
                   height={2168}
                   sizes="66vh"

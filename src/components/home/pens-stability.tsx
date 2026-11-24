@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { useInView } from "motion/react";
 import { cn } from "@/lib/utils";
+import { T } from "@/components/i18n/t";
 import styles from "./pens-stability.module.css";
 
 /** "What Makes Alluvi Pens Better?" — copy verbatim from the live site. Reveals once 20% in view. */
@@ -17,34 +18,42 @@ export function PensStability() {
       <div className={styles.inner}>
         <span className={styles.kicker}>
           <i className={styles.kickerDot} aria-hidden="true" />
-          Stability Record — RT·56
+          <T>Stability Record — RT·56</T>
         </span>
         <h2 id="pens-title" className={styles.heading}>
-          What Makes Alluvi Pens Better?
+          <T>What Makes Alluvi Pens Better?</T>
         </h2>
         <p className={styles.lead}>
-          Alluvi peptides from Alluvi Labs creates its own solution process designed to keep Alluvi APIs in the right
-          environment from start to finish.
+          <T>
+            Alluvi peptides from Alluvi Labs creates its own solution process designed to keep Alluvi APIs in the right environment from start to finish.
+          </T>
         </p>
         <p className={styles.body}>
-          That means stronger support for purity, target pH, and consistent peptide content, once in an Alluvi pen,
-          under the harshest storage conditions.
+          <T>
+            That means stronger support for purity, target pH, and consistent peptide content, once in an Alluvi pen, under the harshest storage conditions.
+          </T>
         </p>
         <p className={styles.statement}>
-          While others say 28 days in the fridge then throw it away,{" "}
-          <span className={styles.em}>Alluvi put it to the test.</span>
+          <T>While others say 28 days in the fridge then throw it away,</T>{" "}
+          <span className={styles.em}>
+            <T>Alluvi put it to the test.</T>
+          </span>
         </p>
         <div className={styles.record}>
           <div className={styles.recordHead}>
-            <span>Room-temperature hold</span>
-            <span>Janoshik · Independent</span>
+            <span>
+              <T>Room-temperature hold</T>
+            </span>
+            <span>
+              <T>Janoshik · Independent</T>
+            </span>
           </div>
           <div className={styles.figure}>
             <span className={styles.num}>56</span>
             <span className={styles.numCap}>
-              Days held at
+              <T>Days held at</T>
               <br />
-              room temperature
+              <T>room temperature</T>
             </span>
           </div>
           <div className={styles.barWrap} aria-hidden="true">
@@ -54,32 +63,46 @@ export function PensStability() {
               <span className={cn(styles.node, styles.nodeEnd)} />
             </div>
             <div className={styles.barCaps}>
-              <span>Day 0</span>
-              <span>Day 56</span>
+              <span>
+                <T>Day 0</T>
+              </span>
+              <span>
+                <T>Day 56</T>
+              </span>
             </div>
           </div>
           <p className={styles.recordText}>
-            A 40 mg Retatrutide Alluvi pen was held at room temperature for 56 days and independently tested through
-            Janoshik.
+            <T>
+              A 40 mg Retatrutide Alluvi pen was held at room temperature for 56 days and independently tested through Janoshik.
+            </T>
           </p>
           <dl className={styles.readouts}>
             <div className={styles.readout}>
-              <dt className={styles.readoutK}>Purity</dt>
-              <dd className={styles.readoutV}>Strong</dd>
+              <dt className={styles.readoutK}>
+                <T>Purity</T>
+              </dt>
+              <dd className={styles.readoutV}>
+                <T>Strong</T>
+              </dd>
             </div>
             <div className={styles.readout}>
-              <dt className={styles.readoutK}>Content</dt>
-              <dd className={styles.readoutV}>Stable</dd>
+              <dt className={styles.readoutK}>
+                <T>Content</T>
+              </dt>
+              <dd className={styles.readoutV}>
+                <T>Stable</T>
+              </dd>
             </div>
             <div className={styles.readout}>
               <dt className={styles.readoutK}>pH</dt>
-              <dd className={styles.readoutV}>Within range</dd>
+              <dd className={styles.readoutV}>
+                <T>Within range</T>
+              </dd>
             </div>
           </dl>
         </div>
         <p className={styles.close}>
-          This is why vials and Temu version peptide brands don&apos;t come close. Don&apos;t put your health at risk to
-          save some quid.
+          <T>{"This is why vials and Temu version peptide brands don't come close. Don't put your health at risk to save some quid."}</T>
         </p>
       </div>
     </section>

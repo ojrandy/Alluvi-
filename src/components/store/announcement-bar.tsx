@@ -1,4 +1,5 @@
 import { site, type Announcement } from "@/lib/site";
+import { T } from "@/components/i18n/t";
 import { cn } from "@/lib/utils";
 
 /**
@@ -16,7 +17,7 @@ export function AnnouncementBar() {
       <ul className="sr-only">
         {items.map((a) => (
           <li key={a.label}>
-            {a.label}: {a.text}
+            <T>{a.label}</T>: <T>{a.text}</T>
           </li>
         ))}
       </ul>
@@ -46,9 +47,11 @@ function Notice({ item }: { item: Announcement }) {
           item.tone === "promo" ? "bg-brand-foreground text-brand" : "bg-black/10",
         )}
       >
-        {item.label}
+        <T>{item.label}</T>
       </span>
-      <span>{item.text}</span>
+      <span>
+        <T>{item.text}</T>
+      </span>
       <span className="pl-4 opacity-40">|</span>
     </p>
   );

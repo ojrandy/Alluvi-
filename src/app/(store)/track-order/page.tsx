@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { TrackOrder } from "@/components/track-order/track-order";
 import { Skeleton } from "@/components/ui/skeleton";
+import { T } from "@/components/i18n/t";
 
 export const metadata: Metadata = {
   title: "Track your order",
@@ -26,7 +27,7 @@ export default function TrackOrderPage() {
         <TrackOrder />
       </Suspense>
       <p className="mt-14 text-center text-sm text-muted-foreground">
-        For laboratory research use only. Not for human consumption.
+        <T>For laboratory research use only. Not for human consumption.</T>
       </p>
     </div>
   );

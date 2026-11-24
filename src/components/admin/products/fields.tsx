@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 /** Admin form controls: same look as the order forms (D2-3), with aria-invalid styling. */
 export const inputClass =
-  "h-10 w-full min-w-0 rounded-lg border border-input bg-white/[0.03] px-3 text-sm outline-none placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20";
+  "h-10 w-full min-w-0 rounded-lg border border-input bg-card px-3 text-sm outline-none placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20";
 
 export const textareaClass = cn(inputClass, "h-auto min-h-24 resize-y py-2 leading-relaxed");
 
@@ -77,17 +77,17 @@ export function Section({
 }) {
   const headingId = `section-${title.toLowerCase().replace(/\W+/g, "-")}`;
   return (
-    <section aria-labelledby={headingId} className={cn("rounded-2xl border border-border bg-card", className)}>
-      <div className="flex items-start justify-between gap-4 px-5 pt-5">
+    <section aria-labelledby={headingId} className={cn("rounded-[1.25rem] border border-border bg-card shadow-card", className)}>
+      <div className="flex items-start justify-between gap-4 px-5 pt-5 sm:px-6">
         <div className="min-w-0">
-          <h2 id={headingId} className="text-base font-semibold tracking-tight">
+          <h2 id={headingId} className="text-[15px] font-semibold tracking-[-0.01em]">
             {title}
           </h2>
           {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}
         </div>
         {action}
       </div>
-      <div className="space-y-4 p-5 pt-4">{children}</div>
+      <div className="space-y-4 p-5 pt-4 sm:px-6 sm:pb-6">{children}</div>
     </section>
   );
 }

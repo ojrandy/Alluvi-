@@ -4,6 +4,7 @@ import { LogOut } from "lucide-react";
 import { AccountNav, AccountNavList } from "@/components/account/account-nav";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/server/actions/account-auth";
+import { T } from "@/components/i18n/t";
 
 export const metadata: Metadata = {
   title: { default: "My account", template: "%s · My account | Alluvi" },
@@ -35,7 +36,7 @@ export default function AccountLayout({ children }: LayoutProps<"/account">) {
         </div>
       </header>
       <div className="pt-8 md:pt-10">{children}</div>
-      <p className="mt-16 text-center text-sm text-muted-foreground">For laboratory research use only. Not for human consumption.</p>
+      <p className="mt-16 text-center text-sm text-muted-foreground"><T>For laboratory research use only. Not for human consumption.</T></p>
     </div>
   );
 }

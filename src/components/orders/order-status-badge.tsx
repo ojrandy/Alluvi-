@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 
 const TONE: Record<OrderStatus, string> = {
   pending_payment: "bg-warning/15 text-warning",
-  paid: "bg-brand-soft text-brand",
-  processing: "bg-brand-soft text-brand",
+  paid: "bg-brand-soft text-brand-ink",
+  processing: "bg-brand-soft text-brand-ink",
   shipped: "bg-success/15 text-success",
-  completed: "bg-white/[0.07] text-foreground/80",
+  completed: "bg-foreground/[0.07] text-foreground/80",
   cancelled: "bg-destructive/15 text-destructive",
 };
 

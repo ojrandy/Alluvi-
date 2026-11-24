@@ -5,9 +5,10 @@ import { adminNewOrderEmail } from "@/emails/admin-new-order";
 import type { OrderEmailData } from "@/emails/layout";
 import { orderReceivedEmail } from "@/emails/order-received";
 import { orderShippedEmail, type ShippedEmailData } from "@/emails/order-shipped";
+import { adminPaymentReportedEmail, type PaymentReportedEmailData } from "@/emails/admin-payment-reported";
 import { sendMail } from "./mail";
 
-type Template = "order-received" | "admin-new-order" | "order-shipped";
+type Template = "order-received" | "admin-new-order" | "order-shipped" | "admin-payment-reported";
 
 /**
  * Send the customer confirmation and the shop notification for a COMMITTED order. Each send is
@@ -64,6 +65,20 @@ export async function sendOrderShippedEmail(data: ShippedEmailData) {
   }
 }
 
+/** Shop notification when a customer presses "I've sent payment" (ADR-021). Never throws. */
+export async function sendPaymentReportedEmail(data: PaymentReportedEmailData, notifyEmail: string | null) {
+  const template: Template = "admin-payment-reported";
+  try {
+    if (!notifyEmail) throw Object.assign(new Error("No recipient configured"), { code: "NO_RECIPIENT" });
+    const { messageId } = await sendMail({ to: notifyEmail, ...adminPaymentReportedEmail(data) });
+    await logEvent(data.id, "email_sent", { template, messageId });
+  } catch (err) {
+    const code = errorCode(err);
+    console.error(`[order ${data.orderNo}] email ${template} failed: ${code}`);
+    await logEvent(data.id, "email_failed", { template, error: code });
+  }
+}
+
 async function logEvent(orderId: string, type: "email_sent" | "email_failed", data: Record<string, unknown>) {
   try {
     await db.insert(schema.orderEvents).values({ orderId, type, data, actor: "system" });
@@ -72,7 +87,7 @@ async function logEvent(orderId: string, type: "email_sent" | "email_failed", da
   }
 }
 
-function errorCode(err: unknown): string {
+export function errorCode(err: unknown): string {
   const e = err as { code?: unknown; responseCode?: unknown; message?: unknown };
   if (typeof e?.code === "string") return e.code;
   if (typeof e?.responseCode === "number") return `SMTP_${e.responseCode}`;

@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, gte, inArray, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, lt, lte, or, sql, type SQL } from "drizzle-orm";
 import { db, schema } from "@/db";
 import type { OrderStatus } from "@/db/schema";
 import { addDays, londonDayKey, londonMidnight } from "@/lib/london-day";
@@ -14,6 +14,8 @@ import { addDays, londonDayKey, londonMidnight } from "@/lib/london-day";
  * - Revenue = SUM(total_pence) of orders placed in the window whose payment has been received
  *   (status paid, processing, shipped or completed). Pending and cancelled orders are excluded.
  * - Pending payments = every order currently `pending_payment`, regardless of age.
+ * - "Previous" figures cover the same-length window immediately before (days -13…-7 for 7 days,
+ *   -59…-30 for 30 days), so the dashboard can show a like-for-like change.
  */
 
 export const REVENUE_STATUSES = ["paid", "processing", "shipped", "completed"] as const satisfies readonly OrderStatus[];
@@ -28,7 +30,9 @@ function windows(now = new Date()) {
     today,
     todayStart: londonMidnight(today),
     start7: londonMidnight(addDays(today, -6)),
+    start14: londonMidnight(addDays(today, -13)),
     start30: londonMidnight(addDays(today, -29)),
+    start60: londonMidnight(addDays(today, -59)),
   };
 }
 
@@ -39,11 +43,30 @@ export type OverviewKpis = {
   revenue30dPence: number;
   pendingCount: number;
   pendingPence: number;
+  /** Same-length windows immediately before, for the change indicators. */
+  ordersPrev7d: number;
+  revenuePrev7dPence: number;
+  revenuePrev30dPence: number;
+  /** Paid orders placed in the last 30 days (average order value = revenue30dPence / this). */
+  paidOrders30d: number;
+};
+
+const EMPTY_KPIS: OverviewKpis = {
+  ordersToday: 0,
+  orders7d: 0,
+  revenue7dPence: 0,
+  revenue30dPence: 0,
+  pendingCount: 0,
+  pendingPence: 0,
+  ordersPrev7d: 0,
+  revenuePrev7dPence: 0,
+  revenuePrev30dPence: 0,
+  paidOrders30d: 0,
 };
 
 /** All KPI figures in one conditional-aggregate query (uses orders_created_idx / orders_status_idx). */
 export async function getOverviewKpis(): Promise<OverviewKpis> {
-  const { todayStart, start7, start30 } = windows();
+  const { todayStart, start7, start14, start30, start60 } = windows();
   const count = (cond: SQL | undefined) => sql<number>`COALESCE(SUM(CASE WHEN ${cond} THEN 1 ELSE 0 END), 0)`.mapWith(Number);
   const pence = (cond: SQL | undefined) =>
     sql<number>`COALESCE(SUM(CASE WHEN ${cond} THEN ${o.totalPence} ELSE 0 END), 0)`.mapWith(Number);
@@ -57,11 +80,15 @@ export async function getOverviewKpis(): Promise<OverviewKpis> {
       revenue30dPence: pence(and(gte(o.createdAt, start30), isRevenue)),
       pendingCount: count(pending),
       pendingPence: pence(pending),
+      ordersPrev7d: count(and(gte(o.createdAt, start14), lt(o.createdAt, start7))),
+      revenuePrev7dPence: pence(and(gte(o.createdAt, start14), lt(o.createdAt, start7), isRevenue)),
+      revenuePrev30dPence: pence(and(gte(o.createdAt, start60), lt(o.createdAt, start30), isRevenue)),
+      paidOrders30d: count(and(gte(o.createdAt, start30), isRevenue)),
     })
     .from(o)
-    .where(or(gte(o.createdAt, start30), pending));
+    .where(or(gte(o.createdAt, start60), pending));
 
-  return row ?? { ordersToday: 0, orders7d: 0, revenue7dPence: 0, revenue30dPence: 0, pendingCount: 0, pendingPence: 0 };
+  return row ?? EMPTY_KPIS;
 }
 
 export type RevenuePoint = { day: string; revenuePence: number; orders: number };
@@ -143,4 +170,41 @@ export async function getLatestOrders(limit = 10): Promise<LatestOrder[]> {
     customerName: `${firstName} ${lastName}`.trim(),
     itemCount: byOrder.get(r.id) ?? 0,
   }));
+}
+
+// ---------- dashboard side panels ----------
+
+export type TopProduct = { name: string; slug: string; units: number; revenuePence: number };
+
+/** Best sellers by revenue over the last `days` days (paid orders; line snapshots, so renamed products still count). */
+export async function getTopProducts(days = 30, limit = 5): Promise<TopProduct[]> {
+  const { today } = windows();
+  const items = schema.orderItems;
+  const revenue = sql<number>`SUM(${items.lineTotalPence})`.mapWith(Number);
+  return db
+    .select({
+      name: sql<string>`MAX(${items.productName})`,
+      slug: items.productSlug,
+      units: sql<number>`SUM(${items.quantity})`.mapWith(Number),
+      revenuePence: revenue,
+    })
+    .from(items)
+    .innerJoin(o, eq(items.orderId, o.id))
+    .where(and(gte(o.createdAt, londonMidnight(addDays(today, -(days - 1)))), isRevenue))
+    .groupBy(items.productSlug)
+    .orderBy(desc(revenue))
+    .limit(limit);
+}
+
+export type LowStockProduct = { id: string; name: string; stock: number };
+
+/** Active products at or below `threshold` units, emptiest first. */
+export async function getLowStockProducts(threshold = 5, limit = 5): Promise<LowStockProduct[]> {
+  const p = schema.products;
+  return db
+    .select({ id: p.id, name: p.name, stock: p.stock })
+    .from(p)
+    .where(and(eq(p.isActive, true), lte(p.stock, threshold)))
+    .orderBy(asc(p.stock), asc(p.name))
+    .limit(limit);
 }

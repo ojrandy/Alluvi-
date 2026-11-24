@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ORDER_STATUSES } from "@/db/schema";
+import { PAYMENT_STAGES } from "@/lib/payment-methods";
 
 export const ADMIN_ORDERS_PAGE_SIZE = 20;
 
@@ -13,6 +14,8 @@ const first = (v: unknown) => (Array.isArray(v) ? v[0] : v);
 export const adminOrderFiltersSchema = z.object({
   q: z.preprocess(first, z.string().trim().max(100).catch("")).default(""),
   status: z.preprocess(first, z.enum(ORDER_STATUSES).optional().catch(undefined)),
+  // ADR-021 payment stage of `pending_payment` orders (implies that status).
+  pay: z.preprocess(first, z.enum(PAYMENT_STAGES).optional().catch(undefined)),
   page: z.preprocess(first, z.coerce.number().int().min(1).max(10_000).catch(1)).default(1),
 });
 
@@ -28,6 +31,7 @@ export function adminOrdersQuery(f: Partial<AdminOrderFilters>): string {
   const sp = new URLSearchParams();
   if (f.q) sp.set("q", f.q);
   if (f.status) sp.set("status", f.status);
+  if (f.pay) sp.set("pay", f.pay);
   if (f.page && f.page > 1) sp.set("page", String(f.page));
   const s = sp.toString();
   return s ? `?${s}` : "";

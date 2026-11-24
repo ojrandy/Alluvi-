@@ -9,7 +9,7 @@ You are using the official website of Alluvi ("we", "us", "our"). By using this 
 
 ## General
 
-These Terms govern your use of alluvi.org. We may update these Terms from time to time without notice. Continued use of the website constitutes acceptance of the current Terms.
+These Terms govern your use of alluvihealthcare.co. We may update these Terms from time to time without notice. Continued use of the website constitutes acceptance of the current Terms.
 
 ## Age Requirement
 
@@ -17,7 +17,7 @@ By accessing this site, you confirm that you are at least 18 years old and are l
 
 ## Product Use
 
-Products sold on alluvi.org are supplied strictly for research and development purposes under controlled conditions. They are not to be used for diagnosis, treatment, or prevention of any disease or medical condition.
+Products sold on alluvihealthcare.co are supplied strictly for research and development purposes under controlled conditions. They are not to be used for diagnosis, treatment, or prevention of any disease or medical condition.
 
 ## Orders & Payment
 
@@ -45,7 +45,7 @@ If you create an account on our website, you are responsible for maintaining the
 
 ## Intellectual Property
 
-All trademarks, logos, and content displayed on alluvi.org are owned or licensed by Alluvi. You may not reproduce, distribute, or commercially exploit any content without prior written consent.
+All trademarks, logos, and content displayed on alluvihealthcare.co are owned or licensed by Alluvi. You may not reproduce, distribute, or commercially exploit any content without prior written consent.
 
 ## Governing Law
 
@@ -55,6 +55,6 @@ These Terms are governed by and construed in accordance with the laws of England
 
 For any data-related queries, please contact:
 
-Email: [research@alluvi.org](mailto:research@alluvi.org)
+Email: [info@alluvihealthcare.co](mailto:info@alluvihealthcare.co)
 
-Website: [https://alluvi.org](https://alluvi.org)
+Website: [https://alluvihealthcare.co](https://alluvihealthcare.co)

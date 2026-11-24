@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LangToggle } from "@/components/i18n/lang-toggle";
+import { T } from "@/components/i18n/t";
 import type { NavLink } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -24,21 +26,26 @@ export function NavList({ links, pathname }: { links: NavLink[]; pathname: strin
   return (
     <ul className="flex items-center">
       {links.map((l) => {
-        const active = !l.external && isActivePath(pathname, l.href);
+        const active = !l.external && !l.langToggle && isActivePath(pathname, l.href);
         const cls = cn(
           "inline-flex h-8 items-center rounded-full px-2.5 text-sm font-medium whitespace-nowrap text-[#8d91aa] transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-ring",
           active && "bg-white/10 text-white",
         );
         return (
           <li key={l.href} className={ALWAYS_VISIBLE.has(l.href) ? undefined : "hidden md:block"}>
-            {l.external ? (
+            {l.langToggle ? (
+              <LangToggle className={cn(cls, "cursor-pointer")} />
+            ) : l.external ? (
               <a href={l.href} target="_blank" rel="noopener noreferrer" className={cls}>
-                {l.label}
-                <span className="sr-only"> (opens in a new tab)</span>
+                <T>{l.label}</T>
+                <span className="sr-only">
+                  {" "}
+                  <T>(opens in a new tab)</T>
+                </span>
               </a>
             ) : (
               <Link href={l.href} className={cls} aria-current={active ? "page" : undefined}>
-                {l.label}
+                <T>{l.label}</T>
               </Link>
             )}
           </li>

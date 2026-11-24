@@ -1,7 +1,8 @@
 import "server-only";
-import { and, asc, count, desc, eq, inArray, like, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, inArray, isNotNull, isNull, like, lte, or, sql, type SQL } from "drizzle-orm";
 import { db, schema } from "@/db";
 import type { Order, OrderEvent, OrderItem, OrderStatus } from "@/db/schema";
+import { PAYMENT_DUE_DAYS, PAYMENT_STAGES, type PaymentStage } from "@/lib/payment-methods";
 import { ADMIN_ORDERS_PAGE_SIZE, type AdminOrderFilters } from "@/lib/validators/admin-orders";
 
 /**
@@ -15,9 +16,41 @@ const items = schema.orderItems;
 /** Escape LIKE wildcards so a search for "50%" or "a_b" matches literally. */
 const likeEscape = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
 
-function whereFor(f: Pick<AdminOrderFilters, "q" | "status">): SQL | undefined {
+/**
+ * SQL for a payment stage (ADR-021). Mirrors `paymentStage()` in src/lib/payment-methods.ts: every
+ * stage implies `pending_payment`; "overdue" = details sent PAYMENT_DUE_DAYS ago, no report yet.
+ */
+export function paymentStageWhere(stage: PaymentStage, now = new Date()): SQL {
+  const cutoff = new Date(now.getTime() - PAYMENT_DUE_DAYS * 86_400_000);
+  const pending = eq(o.status, "pending_payment");
+  switch (stage) {
+    case "needs_details":
+      return and(pending, isNull(o.paymentInstructionsSentAt))!;
+    case "customer_reported":
+      return and(pending, isNotNull(o.paymentInstructionsSentAt), isNotNull(o.customerReportedPaidAt))!;
+    case "overdue":
+      return and(pending, isNull(o.customerReportedPaidAt), lte(o.paymentInstructionsSentAt, cutoff))!;
+    case "awaiting_payment":
+      return and(pending, isNull(o.customerReportedPaidAt), gt(o.paymentInstructionsSentAt, cutoff))!;
+  }
+}
+
+/** Orders per payment stage for the current search (feeds the payment chips). */
+export async function countOrdersByPaymentStage(q: string): Promise<Record<PaymentStage, number>> {
+  const out = {} as Record<PaymentStage, number>;
+  await Promise.all(
+    PAYMENT_STAGES.map(async (stage) => {
+      const [{ n }] = await db.select({ n: count() }).from(o).where(and(whereFor({ q }), paymentStageWhere(stage)));
+      out[stage] = n;
+    }),
+  );
+  return out;
+}
+
+function whereFor(f: Pick<AdminOrderFilters, "q" | "status"> & { pay?: PaymentStage }): SQL | undefined {
   const conds: (SQL | undefined)[] = [];
   if (f.status) conds.push(eq(o.status, f.status));
+  if (f.pay) conds.push(paymentStageWhere(f.pay));
   if (f.q) {
     const term = `%${likeEscape(f.q)}%`;
     conds.push(
@@ -111,7 +144,7 @@ export const EXPORT_MAX_ROWS = 10_000;
 export type ExportOrder = Order & { items: Pick<OrderItem, "productName" | "quantity">[] };
 
 /** Every order matching the filters (ignores pagination), newest first, with item lines. */
-export async function listOrdersForExport(f: Pick<AdminOrderFilters, "q" | "status">): Promise<{ orders: ExportOrder[]; truncated: boolean }> {
+export async function listOrdersForExport(f: Pick<AdminOrderFilters, "q" | "status" | "pay">): Promise<{ orders: ExportOrder[]; truncated: boolean }> {
   const rows = await db
     .select()
     .from(o)

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { labLink } from "@/lib/lab-links";
 
 /**
  * Minimal, safe Markdown → React renderer for our own content (product descriptions, policy
@@ -96,7 +97,7 @@ function stripMarks(text: string) {
 }
 
 function safeHref(url: string): string | null {
-  const u = url.trim();
+  const u = labLink(url.trim());
   if (/^(https?:|mailto:|tel:)/i.test(u)) return u;
   if (u.startsWith("/") && !u.startsWith("//")) return u;
   if (u.startsWith("#")) return u;

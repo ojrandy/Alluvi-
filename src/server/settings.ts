@@ -1,19 +1,21 @@
 import "server-only";
 import { inArray } from "drizzle-orm";
 import { db, schema, type DbExecutor } from "@/db";
-import type { BankDetails, ShippingOption } from "@/db/schema";
+import type { PaymentMethodConfig, ShippingOption } from "@/db/schema";
+import { resolvePaymentMethods, type CheckoutPaymentMethod, type ResolvedPaymentMethod } from "@/lib/payment-methods";
 
 /** `enabled: false` (set from /admin/settings) keeps the row so a re-seed cannot bring the promo back. */
 export type FreeShippingPromo = { startsAt: string; endsAt: string; label: string; enabled?: boolean };
 
 export type StoreSettings = {
   shippingOptions: ShippingOption[];
-  bankDetails: BankDetails | null;
+  /** Every catalogue method with the admin's enabled flag + details template (ADR-021). Server-only data. */
+  paymentMethods: ResolvedPaymentMethod[];
   freeShippingPromo: FreeShippingPromo | null;
   notifyEmail: string | null;
 };
 
-const KEYS = ["shipping_options", "bank_details", "free_shipping_promo", "notify_email"] as const;
+const KEYS = ["shipping_options", "payment_methods", "free_shipping_promo", "notify_email"] as const;
 
 /**
  * Store settings (seeded, editable in /admin/settings). Read per request on the money path, not
@@ -29,7 +31,7 @@ export async function getStoreSettings(executor: DbExecutor = db): Promise<Store
   const shipping = map.get("shipping_options");
   return {
     shippingOptions: Array.isArray(shipping) ? (shipping as ShippingOption[]) : [],
-    bankDetails: (map.get("bank_details") as BankDetails | undefined) ?? null,
+    paymentMethods: resolvePaymentMethods(Array.isArray(map.get("payment_methods")) ? (map.get("payment_methods") as PaymentMethodConfig[]) : null),
     freeShippingPromo: (map.get("free_shipping_promo") as FreeShippingPromo | undefined) ?? null,
     notifyEmail: typeof map.get("notify_email") === "string" ? (map.get("notify_email") as string) : null,
   };
@@ -45,9 +47,7 @@ export function isPromoActive(promo: FreeShippingPromo | null, now = new Date())
   return t >= start && t <= end;
 }
 
-/** Seeded placeholder bank details must never be shown to customers as real payment details. */
-export function usableBankDetails(b: BankDetails | null): BankDetails | null {
-  if (!b) return null;
-  const placeholder = /TO BE CONFIGURED/i.test(`${b.accountName} ${b.bankName}`) || /^0+$/.test(b.accountNumber.replace(/\D/g, ""));
-  return placeholder ? null : b;
+/** Enabled methods for the checkout dropdown: names only, never the details templates. */
+export function checkoutPaymentMethods(s: StoreSettings): CheckoutPaymentMethod[] {
+  return s.paymentMethods.filter((m) => m.enabled).map(({ key, label, group, hint }) => ({ key, label, group, hint }));
 }

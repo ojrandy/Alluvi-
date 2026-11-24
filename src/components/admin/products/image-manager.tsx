@@ -93,11 +93,11 @@ export function ImageManager({ productName }: { productName: string }) {
             const altId = `${id}-alt-${i}`;
             const fe = errs?.[i];
             return (
-              <li key={f.id} className="flex gap-3 rounded-xl border border-border bg-white/[0.02] p-2.5">
+              <li key={f.id} className="flex gap-3 rounded-xl border border-border bg-surface p-2.5">
                 <div className="relative size-16 shrink-0 overflow-hidden rounded-lg border border-border bg-surface-raised sm:size-20">
                   <Image src={f.url} alt="" fill sizes="80px" className="object-cover" />
                   {i === 0 && (
-                    <span className="absolute top-1 left-1 inline-flex items-center gap-0.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-brand">
+                    <span className="absolute top-1 left-1 inline-flex items-center gap-0.5 rounded-full bg-ink/85 px-1.5 py-0.5 text-[10px] font-medium text-ink-foreground">
                       <Star className="size-2.5 fill-current" aria-hidden="true" />
                       Main
                     </span>
@@ -159,7 +159,7 @@ export function ImageManager({ productName }: { productName: string }) {
           full && "opacity-50",
         )}
       >
-        {uploading > 0 ? <Loader2 className="size-5 animate-spin text-brand" aria-hidden="true" /> : <UploadCloud className="size-5 text-muted-foreground" aria-hidden="true" />}
+        {uploading > 0 ? <Loader2 className="size-5 animate-spin text-brand-ink" aria-hidden="true" /> : <UploadCloud className="size-5 text-muted-foreground" aria-hidden="true" />}
         <p className="text-sm text-muted-foreground" aria-live="polite">
           {uploading > 0 ? `Uploading ${uploading} ${uploading === 1 ? "image" : "images"}…` : full ? `${MAX_IMAGES} images max.` : "Drop images here, or"}
         </p>

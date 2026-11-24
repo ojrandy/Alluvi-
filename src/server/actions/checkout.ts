@@ -16,7 +16,7 @@ import { isOrderNoCollision, newOrderNo } from "../order-number";
 import { computeTotals, type LineIssue, type Totals } from "../pricing";
 import { rateLimit } from "../rate-limit";
 import { getIpHash } from "../request";
-import { getStoreSettings, usableBankDetails } from "../settings";
+import { getStoreSettings } from "../settings";
 import { z } from "zod";
 
 const MAX_ATTEMPTS = 5;
@@ -59,6 +59,14 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
   // bcrypt is slow on purpose; hash before the transaction so row locks are held briefly.
   const passwordHash = wantsAccount ? await hashPassword(v.password!) : null;
   const postcode = v.country === "GB" ? normalizeUkPostcode(v.postcode) : v.postcode.trim().toUpperCase();
+
+  // ADR-021: only a method the admin has enabled. A stale page or a forged key gets a field error.
+  const settings = await getStoreSettings();
+  const payment = settings.paymentMethods.find((m) => m.key === v.paymentMethod && m.enabled);
+  if (!payment) {
+    const error = "That payment method is no longer available. Please choose another.";
+    return { ok: false, error, fieldErrors: { paymentMethod: error } };
+  }
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     const orderId = crypto.randomUUID();
@@ -111,7 +119,8 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
           subtotalPence: t.subtotalPence,
           shippingPence: t.shippingPence,
           totalPence: t.totalPence,
-          paymentMethod: "bank_transfer",
+          paymentMethod: payment.key,
+          paymentMethodLabel: payment.label,
           customerNote: v.customerNote ?? null,
           ruoAcceptedAt: new Date(),
           ipHash,
@@ -142,7 +151,7 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
         await tx.insert(schema.orderEvents).values({
           orderId,
           type: "created",
-          data: { totalPence: t.totalPence, items: t.lines.length, accountCreated, linkedToCustomer: !!customerId },
+          data: { totalPence: t.totalPence, items: t.lines.length, paymentMethod: payment.key, accountCreated, linkedToCustomer: !!customerId },
           actor: "system",
         });
         return { totals: t, customerId, accountCreated };
@@ -160,14 +169,9 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
       }
       revalidateTag("products", "max");
 
-      const emailData = toEmailData(orderId, orderNo, v, postcode, result.totals);
-      after(async () => {
-        const settings = await getStoreSettings();
-        await sendNewOrderEmails(
-          { ...emailData, bankDetails: usableBankDetails(settings.bankDetails) },
-          settings.notifyEmail ?? process.env.ORDER_NOTIFY_EMAIL ?? null,
-        );
-      });
+      // No payment details in either email: the admin sends them per order (ADR-021).
+      const emailData = toEmailData(orderId, orderNo, v, postcode, result.totals, payment);
+      after(() => sendNewOrderEmails(emailData, settings.notifyEmail ?? process.env.ORDER_NOTIFY_EMAIL ?? null));
 
       return { ok: true, data: { orderNo, accountCreated: result.accountCreated, accountRequested: !!v.createAccount && !session } };
     } catch (err) {
@@ -196,9 +200,12 @@ function toEmailData(
   v: z.output<typeof checkoutSchema>,
   postcode: string,
   t: Totals,
-): Omit<OrderEmailData, "bankDetails"> {
+  payment: { key: string; label: string },
+): OrderEmailData {
   return {
     id,
+    paymentMethod: payment.key,
+    paymentMethodLabel: payment.label,
     orderNo,
     createdAt: new Date(),
     email: v.email,

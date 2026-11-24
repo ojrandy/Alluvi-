@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CheckoutForm, type CheckoutAccount } from "@/components/checkout/checkout-form";
+import { T } from "@/components/i18n/t";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCurrentCustomer } from "@/server/customer-auth";
-import { getStoreSettings, isPromoActive } from "@/server/settings";
+import { checkoutPaymentMethods, getStoreSettings, isPromoActive } from "@/server/settings";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -15,14 +16,18 @@ export default function CheckoutPage() {
   return (
     <div className="container-page pt-10 pb-20 md:pt-16 md:pb-28">
       <header className="mb-10">
-        <p className="eyebrow">Secure checkout</p>
-        <h1 className="text-h1 mt-3">Checkout</h1>
+        <p className="eyebrow">
+          <T>Secure checkout</T>
+        </p>
+        <h1 className="text-h1 mt-3">
+          <T>Checkout</T>
+        </h1>
       </header>
       <Suspense fallback={<CheckoutSkeleton />}>
         <CheckoutData />
       </Suspense>
       <p className="mt-14 text-center text-sm text-muted-foreground">
-        For laboratory research use only. Not for human consumption.
+        <T>For laboratory research use only. Not for human consumption.</T>
       </p>
     </div>
   );
@@ -47,7 +52,7 @@ async function CheckoutData() {
         country: a?.country ?? "GB",
       }
     : null;
-  return <CheckoutForm shippingOptions={settings.shippingOptions} promoLabel={promo} account={account} />;
+  return <CheckoutForm shippingOptions={settings.shippingOptions} paymentMethods={checkoutPaymentMethods(settings)} promoLabel={promo} account={account} />;
 }
 
 function CheckoutSkeleton() {

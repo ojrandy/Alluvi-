@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
+import { LANG_BOOT_SCRIPT } from "@/lib/i18n/config";
 import { site, siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -40,7 +41,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-GB" className={`${manrope.variable} h-full antialiased`}>
+    // suppressHydrationWarning: LANG_BOOT_SCRIPT may set data-lang/lang on <html> before hydration.
+    <html lang="en-GB" className={`${manrope.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: LANG_BOOT_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );

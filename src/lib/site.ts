@@ -1,6 +1,7 @@
 import siteJson from "../../content/site.json";
 
-export type NavLink = { label: string; href: string; external?: boolean };
+/** `langToggle`: renders the EN ⇄ pt-BR switch (ADR-018); `href` is the no-JS fallback. */
+export type NavLink = { label: string; href: string; external?: boolean; langToggle?: boolean };
 export type Announcement = { label: string; text: string; tone: "promo" | "warning" | "info" };
 
 type SiteContent = {

@@ -5,11 +5,13 @@ import { Plus, Trash2 } from "lucide-react";
 import { Field, inputClass, textareaClass } from "@/components/admin/products/fields";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { BankFormInput, ShippingRowInput } from "@/lib/validators/admin-settings";
+import { PaymentMethodIcon } from "@/components/payment/payment-method-icon";
+import { getPaymentMethodDef, PAYMENT_DUE_DAYS, PAYMENT_GROUP_LABEL, UNFILLED_MARKER, type PaymentMethodGroup } from "@/lib/payment-methods";
+import type { PaymentMethodRowInput, ShippingRowInput } from "@/lib/validators/admin-settings";
 import {
-  saveBankDetails,
   saveFreeShippingPromo,
   saveNotifyEmail,
+  savePaymentMethods,
   saveShippingOptions,
   type SettingsResult,
 } from "@/server/actions/settings";
@@ -17,8 +19,7 @@ import {
 type PromoState = { enabled: boolean; label: string; startDay: string; endDay: string };
 
 type Props = {
-  bank: BankFormInput & { iban: string; instructions: string };
-  bankIsPlaceholder: boolean;
+  paymentMethods: PaymentMethodRowInput[];
   shipping: ShippingRowInput[];
   promo: PromoState;
   notifyEmail: string;
@@ -64,17 +65,17 @@ function Card({
 }) {
   const id = useId();
   return (
-    <section aria-labelledby={id} className="rounded-2xl border border-border bg-card">
+    <section aria-labelledby={id} className="rounded-[1.25rem] border border-border bg-card shadow-card">
       <form onSubmit={onSubmit} noValidate>
         <header className="border-b border-border px-5 py-4 sm:px-6">
-          <h2 id={id} className="text-base font-semibold">
+          <h2 id={id} className="text-[15px] font-semibold tracking-[-0.01em]">
             {title}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         </header>
         <div className="flex flex-col gap-4 px-5 py-5 sm:px-6">{children}</div>
         <footer className="flex flex-wrap items-center justify-end gap-3 border-t border-border px-5 py-3 sm:px-6">
-          <p aria-live="polite" className={cn("mr-auto text-sm empty:hidden", save.notice?.ok ? "text-emerald-400" : "text-destructive")}>
+          <p aria-live="polite" className={cn("mr-auto text-sm empty:hidden", save.notice?.ok ? "text-success" : "text-destructive")}>
             {save.notice?.text}
           </p>
           <Button type="submit" disabled={save.pending} className="h-10 px-4">
@@ -93,7 +94,7 @@ function aria(id: string, error?: string) {
 export function SettingsForms(props: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <BankCard initial={props.bank} placeholder={props.bankIsPlaceholder} />
+      <PaymentMethodsCard initial={props.paymentMethods} />
       <ShippingCard initial={props.shipping} />
       <PromoCard initial={props.promo} />
       <NotifyCard initial={props.notifyEmail} envFallback={props.envNotifyFallback} />
@@ -101,46 +102,135 @@ export function SettingsForms(props: Props) {
   );
 }
 
-function BankCard({ initial, placeholder }: { initial: Props["bank"]; placeholder: boolean }) {
-  const [v, setV] = useState(initial);
-  const save = useSave(saveBankDetails);
-  const set = (k: keyof typeof v) => (e: { target: { value: string } }) => setV((s) => ({ ...s, [k]: e.target.value }));
+const GROUP_ORDER: PaymentMethodGroup[] = ["bank", "app", "transfer", "crypto", "other"];
+
+/**
+ * ADR-021: which methods checkout offers, and the details template sent for each. Templates are
+ * admin-only: customers only ever see them inside the email sent for their own order.
+ */
+function PaymentMethodsCard({ initial }: { initial: PaymentMethodRowInput[] }) {
+  const [rows, setRows] = useState(initial);
+  const [open, setOpen] = useState<string | null>(null);
+  const save = useSave(savePaymentMethods);
   const e = save.errors;
+  const enabledCount = rows.filter((r) => r.enabled).length;
+  const update = (key: string, patch: Partial<PaymentMethodRowInput>) => setRows((r) => r.map((row) => (row.key === key ? { ...row, ...patch } : row)));
+  const setAll = (enabled: boolean) => setRows((r) => r.map((row) => ({ ...row, enabled })));
+
   return (
     <Card
-      title="Bank transfer"
+      title="Payment methods"
       description={
-        placeholder ? (
-          <span className="text-amber-400">
-            These are still the seeded placeholders, so customers are not shown any bank details yet. Enter the real account.
-          </span>
-        ) : (
-          "Shown on the order confirmation page and in the customer's order email."
-        )
+        <>
+          Customers pick one at checkout. After each order you email that method&apos;s details from the order page. Write your real details here once
+          (replace every <code className="text-foreground">[[ … ]]</code>) and sending takes one click. These are never shown on the website.
+        </>
       }
       save={save}
-      onSubmit={(ev) => save.submit(ev, v)}
+      onSubmit={(ev) => save.submit(ev, { methods: rows })}
     >
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field id="bank-accountName" label="Account name" error={e.accountName}>
-          <input {...aria("bank-accountName", e.accountName)} className={inputClass} value={v.accountName} onChange={set("accountName")} autoComplete="off" />
-        </Field>
-        <Field id="bank-bankName" label="Bank" error={e.bankName}>
-          <input {...aria("bank-bankName", e.bankName)} className={inputClass} value={v.bankName} onChange={set("bankName")} autoComplete="off" />
-        </Field>
-        <Field id="bank-sortCode" label="Sort code" error={e.sortCode}>
-          <input {...aria("bank-sortCode", e.sortCode)} className={inputClass} value={v.sortCode} onChange={set("sortCode")} inputMode="numeric" placeholder="12-34-56" autoComplete="off" />
-        </Field>
-        <Field id="bank-accountNumber" label="Account number" error={e.accountNumber}>
-          <input {...aria("bank-accountNumber", e.accountNumber)} className={inputClass} value={v.accountNumber} onChange={set("accountNumber")} inputMode="numeric" autoComplete="off" />
-        </Field>
-        <Field id="bank-iban" label="IBAN" optional error={e.iban} className="sm:col-span-2">
-          <input {...aria("bank-iban", e.iban)} className={inputClass} value={v.iban} onChange={set("iban")} autoComplete="off" />
-        </Field>
-        <Field id="bank-instructions" label="Payment instructions" optional error={e.instructions} hint="E.g. “Use your order number as the payment reference.”" className="sm:col-span-2">
-          <textarea {...aria("bank-instructions", e.instructions)} className={textareaClass} value={v.instructions} onChange={set("instructions")} rows={3} />
-        </Field>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground tabular-nums">
+          <span className="font-semibold text-foreground">{enabledCount}</span> of {rows.length} offered at checkout
+        </p>
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" className="h-9" onClick={() => setAll(true)}>
+            Turn all on
+          </Button>
+          <Button type="button" variant="outline" className="h-9" onClick={() => setAll(false)}>
+            Turn all off
+          </Button>
+        </div>
       </div>
+      {e.methods && <p className="text-sm text-destructive">{e.methods}</p>}
+      <details className="rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm">
+        <summary className="cursor-pointer font-medium">Placeholders you can use</summary>
+        <ul className="mt-2 grid gap-1 text-muted-foreground sm:grid-cols-2">
+          {[
+            ["{{first_name}}", "customer's first name"],
+            ["{{order_no}}", "order number (payment reference)"],
+            ["{{amount}}", "order total, e.g. £120.00"],
+            ["{{method}}", "payment method name"],
+            ["{{pay_by}}", `due date (${PAYMENT_DUE_DAYS} days after sending)`],
+          ].map(([token, what]) => (
+            <li key={token}>
+              <code className="text-foreground">{token}</code> {what}
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      {GROUP_ORDER.map((group) => {
+        const groupRows = rows.filter((r) => getPaymentMethodDef(r.key)?.group === group);
+        if (!groupRows.length) return null;
+        return (
+          <section key={group} aria-label={PAYMENT_GROUP_LABEL[group]}>
+            <h3 className="mb-2 text-xs font-semibold tracking-[0.06em] text-muted-foreground uppercase">{PAYMENT_GROUP_LABEL[group]}</h3>
+            <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border">
+              {groupRows.map((row) => {
+                const def = getPaymentMethodDef(row.key)!;
+                const index = rows.findIndex((r) => r.key === row.key);
+                const err = e[`methods.${index}.template`];
+                const needsDetails = UNFILLED_MARKER.test(row.template);
+                const isOpen = open === row.key || !!err;
+                const id = `pm-${row.key}`;
+                return (
+                  <li key={row.key} className={cn("bg-card", !row.enabled && "bg-muted/30")}>
+                    <div className="flex items-center gap-3 px-3 py-2.5 sm:px-4">
+                      <PaymentMethodIcon method={row.key} className={cn(!row.enabled && "opacity-40 grayscale")} />
+                      <div className="min-w-0 flex-1">
+                        <p className={cn("truncate text-sm font-medium", !row.enabled && "text-muted-foreground")}>{def.label}</p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {row.enabled ? (needsDetails ? <span className="text-warning">Needs your details</span> : "Details ready") : "Hidden at checkout"}
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="h-9 px-2.5 text-xs"
+                        aria-expanded={isOpen}
+                        aria-controls={`${id}-template`}
+                        onClick={() => setOpen(isOpen ? null : row.key)}
+                      >
+                        {isOpen ? "Close" : "Edit details"}
+                      </Button>
+                      <label className="relative inline-flex h-11 cursor-pointer items-center">
+                        <span className="sr-only">Offer {def.label} at checkout</span>
+                        <input
+                          type="checkbox"
+                          role="switch"
+                          className="peer sr-only"
+                          checked={row.enabled}
+                          onChange={(ev) => update(row.key, { enabled: ev.target.checked })}
+                        />
+                        <span
+                          aria-hidden="true"
+                          className="h-6 w-10 rounded-full bg-foreground/15 transition-colors peer-checked:bg-brand peer-focus-visible:ring-3 peer-focus-visible:ring-ring/40 after:absolute after:top-1/2 after:left-0.5 after:size-5 after:-translate-y-1/2 after:rounded-full after:bg-white after:shadow-sm after:transition-transform peer-checked:after:translate-x-4"
+                        />
+                      </label>
+                    </div>
+                    {isOpen && (
+                      <div id={`${id}-template`} className="border-t border-border px-3 py-3 sm:px-4">
+                        <Field id={`${id}-tpl`} label={`${def.label} payment details`} error={err} hint="Sent as plain text. Line breaks are kept.">
+                          <textarea
+                            {...aria(`${id}-tpl`, err)}
+                            className={cn(textareaClass, "min-h-56 font-mono text-[13px]")}
+                            value={row.template}
+                            onChange={(ev) => update(row.key, { template: ev.target.value })}
+                            rows={10}
+                            maxLength={3000}
+                            spellCheck={false}
+                          />
+                        </Field>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        );
+      })}
     </Card>
   );
 }

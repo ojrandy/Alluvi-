@@ -5,7 +5,7 @@ navTitle: "Shipping Policy"
 description: "Alluvi shipping policy. Tracked 24-hour UK delivery with cold chain packaging for research peptides. Learn about dispatch times, carriers, and delivery procedures."
 ---
 
-This Shipping Policy outlines how orders placed on alluvi.org are processed, dispatched, and delivered.
+This Shipping Policy outlines how orders placed on alluvihealthcare.co are processed, dispatched, and delivered.
 
 ## Dispatch Time
 
@@ -38,7 +38,7 @@ International buyers are responsible for any applicable customs duties, VAT, or 
 
 ## Delivery Issues
 
-If your parcel is delayed, lost, or arrives damaged, please contact us at [support@alluvi.org](mailto:support@alluvi.org) within 72 hours of the expected delivery date. Include your order number and tracking details.
+If your parcel is delayed, lost, or arrives damaged, please contact us at [info@alluvihealthcare.co](mailto:info@alluvihealthcare.co) within 72 hours of the expected delivery date. Include your order number and tracking details.
 
 ## Address Accuracy
 
@@ -48,6 +48,6 @@ Ensure your delivery details are entered correctly. We cannot be held responsibl
 
 For any data-related queries, please contact:
 
-Email: [research@alluvi.org](mailto:research@alluvi.org)
+Email: [info@alluvihealthcare.co](mailto:info@alluvihealthcare.co)
 
-Website: [https://alluvi.org](https://alluvi.org)
+Website: [https://alluvihealthcare.co](https://alluvihealthcare.co)
