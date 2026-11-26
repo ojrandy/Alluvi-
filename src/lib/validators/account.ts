@@ -67,8 +67,9 @@ export const accountDetailsSchema = z
     if (!anyAddress) return;
     if (!v.line1) ctx.addIssue({ code: "custom", path: ["line1"], message: "Address is required" });
     if (!v.city) ctx.addIssue({ code: "custom", path: ["city"], message: "Town / city is required" });
-    if (!v.postcode) ctx.addIssue({ code: "custom", path: ["postcode"], message: "Postcode is required" });
-    else if (v.country === "GB" && !UK_POSTCODE.test(v.postcode)) {
+    // Postcode is required for the UK only; many countries have none.
+    if (!v.postcode && v.country === "GB") ctx.addIssue({ code: "custom", path: ["postcode"], message: "Postcode is required" });
+    else if (v.postcode && v.country === "GB" && !UK_POSTCODE.test(v.postcode)) {
       ctx.addIssue({ code: "custom", path: ["postcode"], message: "Enter a valid UK postcode" });
     }
   });

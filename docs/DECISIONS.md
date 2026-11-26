@@ -190,3 +190,11 @@ scroll-progress keyframes) and CSS. No GSAP dependency (~70KB). Deliberate devia
 - **New dependency `simple-icons` (16.36.0, CC0):** the brand marks for the dropdown. Named imports + `sideEffects:false` tree-shake to the ~19 icons used (one ~20 KB client chunk, verified). Brands it lacks (Remitly, USDC) use neutral lucide glyphs.
 
 **Consequences:** The `bank_details` setting and its card are removed (migration 0001 deletes the row; it only held placeholders). The response promise and due period are constants in `payment-methods.ts`. A method switched off after a customer loaded checkout is rejected with a field error and the list refreshes. Being able to accept PayPal/Zelle/etc. for this product category is the client's own business and compliance decision (see the PROJECT_TRACKER risk).
+
+## ADR-022: Smartsupp live chat on the storefront
+
+**Context:** The client asked for Smartsupp live chat. The project otherwise avoids third-party services.
+
+**Decision:** Load the client's Smartsupp snippet (`src/components/store/smartsupp-chat.tsx`) in the `(store)` layout only, never in `/admin`, with `next/script` `strategy="lazyOnload"` so it loads in browser idle time and never blocks LCP or checkout. The widget key is public (it ships to every browser), so it lives in code, not in env. No npm dependency.
+
+**Consequences:** Visitors' browsers contact `smartsuppchat.com`; the privacy/cookie copy should mention Smartsupp. Chats are handled in the client's Smartsupp dashboard, not in /admin. To remove it, delete the component and its one line in the store layout.

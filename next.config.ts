@@ -22,7 +22,7 @@ const LEGACY_REDIRECTS: { source: string; destination: string }[] = [
 
 const nextConfig: NextConfig = {
   // Dev-only: lets devices on the local network (and the 127.0.0.1 loopback) load dev assets/HMR.
-  allowedDevOrigins: ["127.0.0.1", "192.168.1.177", "192.168.*.*"],
+  allowedDevOrigins: ["127.0.0.1", "192.168.1.177", "192.168.*.*", "10.*.*.*"],
   cacheComponents: true,
   partialPrefetching: true,
   // Policy pages read content/pages/*.md at render time; ship them with the server bundle.

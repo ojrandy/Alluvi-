@@ -43,7 +43,8 @@ const customerFields = z.object({
   addressLine1: text(255, "Address"),
   addressLine2: optionalText(255),
   city: text(100, "Town / city"),
-  postcode: text(20, "Postcode"),
+  // Required (and UK-validated) for GB only: many countries have no postcodes. See refine().
+  postcode: z.string().trim().max(20, "Postcode is too long"),
   country: z.enum(COUNTRY_CODES, "Select a country"),
   shippingMethod: z.string().trim().min(1, "Choose a shipping option").max(50),
   // Shape only here; placeOrder checks it against the methods enabled in /admin/settings (ADR-021).
@@ -57,7 +58,9 @@ const customerFields = z.object({
 });
 
 function refine<T extends z.infer<typeof customerFields>>(v: T, ctx: z.RefinementCtx) {
-  if (v.country === "GB" && !UK_POSTCODE.test(v.postcode.trim())) {
+  if (v.country === "GB" && !v.postcode.trim()) {
+    ctx.addIssue({ code: "custom", path: ["postcode"], message: "Postcode is required" });
+  } else if (v.country === "GB" && !UK_POSTCODE.test(v.postcode.trim())) {
     ctx.addIssue({ code: "custom", path: ["postcode"], message: "Enter a valid UK postcode" });
   }
   if (v.createAccount && (!v.password || v.password.length < 10)) {

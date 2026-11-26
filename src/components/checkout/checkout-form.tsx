@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Lock, ShoppingBag } from "lucide-react";
@@ -39,6 +39,21 @@ type Props = {
 const pickShipping = (options: ShippingOption[], country: string) =>
   options.find((o) => (country === "GB") === o.key.startsWith(UK_ONLY_SHIPPING_PREFIX))?.key ?? options[0]?.key ?? "";
 
+/** UK first, then every other country, named and sorted in the shopper's language (~250 entries). */
+function countryOptionsFor(lang: string) {
+  const locale = lang === "pt" ? "pt-BR" : "en-GB";
+  let names: Intl.DisplayNames | null = null;
+  if (lang === "pt") {
+    try {
+      names = new Intl.DisplayNames([locale], { type: "region" });
+    } catch {
+      names = null;
+    }
+  }
+  const [uk, ...rest] = SHIPPING_COUNTRIES.map((c) => ({ code: c.code, label: names?.of(c.code) ?? c.name }));
+  return [uk, ...rest.sort((a, b) => a.label.localeCompare(b.label, locale))];
+}
+
 export function CheckoutForm({ shippingOptions, paymentMethods, promoLabel, account }: Props) {
   const loggedIn = !!account;
   // A saved country outside the shipping list (e.g. a list change since) falls back to the UK.
@@ -52,14 +67,6 @@ export function CheckoutForm({ shippingOptions, paymentMethods, promoLabel, acco
   const [placed, setPlaced] = useState(false);
   const t = useT();
   const lang = useLang();
-  const countryName = (code: string, fallback: string) => {
-    if (lang !== "pt") return fallback;
-    try {
-      return new Intl.DisplayNames(["pt-BR"], { type: "region" }).of(code) ?? fallback;
-    } catch {
-      return fallback;
-    }
-  };
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -104,6 +111,7 @@ export function CheckoutForm({ shippingOptions, paymentMethods, promoLabel, acco
     if (formError) document.getElementById("checkout-error")?.focus();
   }, [formError]);
 
+  const countryOptions = useMemo(() => countryOptionsFor(lang), [lang]);
   const quote = useCheckoutQuote(lines, shippingMethod, country, hydrated && !placed);
   const visibleOptions = shippingOptions.filter((o) => (country === "GB") === o.key.startsWith(UK_ONLY_SHIPPING_PREFIX));
 
@@ -202,9 +210,9 @@ export function CheckoutForm({ shippingOptions, paymentMethods, promoLabel, acco
           </FormField>
           <FormField id="country" label="Country" error={errors.country?.message} className="sm:col-span-2">
             <select id="country" autoComplete="country" className={cn(controlClass, "appearance-none bg-surface")} {...register("country")}>
-              {SHIPPING_COUNTRIES.map((c) => (
+              {countryOptions.map((c) => (
                 <option key={c.code} value={c.code}>
-                  {countryName(c.code, c.name)}
+                  {c.label}
                 </option>
               ))}
             </select>
@@ -218,7 +226,7 @@ export function CheckoutForm({ shippingOptions, paymentMethods, promoLabel, acco
           <FormField id="city" label="Town / city" error={errors.city?.message}>
             <TextInput id="city" autoComplete="address-level2" error={errors.city?.message} {...register("city")} />
           </FormField>
-          <FormField id="postcode" label="Postcode" error={errors.postcode?.message}>
+          <FormField id="postcode" label="Postcode" optional={country !== "GB"} error={errors.postcode?.message}>
             <TextInput id="postcode" autoComplete="postal-code" autoCapitalize="characters" error={errors.postcode?.message} {...register("postcode")} />
           </FormField>
         </fieldset>
