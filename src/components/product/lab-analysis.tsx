@@ -1,5 +1,7 @@
-import { ArrowUpRight, FlaskConical } from "lucide-react";
+import Image from "next/image";
+import { ArrowUpRight, Expand, FlaskConical } from "lucide-react";
 import type { ProductSpecs } from "@/db/schema";
+import type { Certificate } from "@/lib/certificates";
 import { LabReportLink } from "@/components/content/lab-report-link";
 
 /**
@@ -7,7 +9,15 @@ import { LabReportLink } from "@/components/content/lab-report-link";
  * "How to read the numbers", independent reports). On the live site this opens as a modal on page
  * load; here it is inline so it never blocks the page or steals focus.
  */
-export function LabAnalysis({ specs, reportUrl }: { specs: ProductSpecs; reportUrl: string | null }) {
+export function LabAnalysis({
+  specs,
+  reportUrl,
+  certificate,
+}: {
+  specs: ProductSpecs;
+  reportUrl: string | null;
+  certificate: Certificate | null;
+}) {
   const compounds = specs.compounds ?? [];
   const tiles = [
     { label: "Batch number", value: specs.batchNumber },
@@ -70,6 +80,8 @@ export function LabAnalysis({ specs, reportUrl }: { specs: ProductSpecs; reportU
 
       {compounds.length > 0 && specs.fillVolume && <HowToRead specs={specs} />}
 
+      {certificate && <CertificateFigure certificate={certificate} />}
+
       {reports.length > 1 && (
         <div className="mt-6">
           <h3 className="eyebrow text-muted-foreground">Independent test reports</h3>
@@ -99,6 +111,38 @@ export function LabAnalysis({ specs, reportUrl }: { specs: ProductSpecs; reportU
         </LabReportLink>
       )}
     </section>
+  );
+}
+
+/** The certificate of analysis itself; opens full size in a new tab. */
+function CertificateFigure({ certificate: c }: { certificate: Certificate }) {
+  return (
+    <figure className="mt-6">
+      <h3 className="eyebrow text-muted-foreground">Certificate of analysis</h3>
+      <a
+        href={c.image}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group relative mx-auto mt-3 block max-w-xs overflow-hidden rounded-2xl border border-border bg-white shadow-lg transition-colors hover:border-white/30"
+      >
+        <Image
+          src={c.image}
+          alt={c.alt}
+          width={c.width}
+          height={c.height}
+          sizes="(max-width: 640px) 80vw, 320px"
+          className="h-auto w-full"
+        />
+        <span className="absolute right-2 bottom-2 inline-flex items-center gap-1.5 rounded-full bg-black/75 px-3 py-1.5 text-xs font-semibold text-white opacity-90 transition-opacity group-hover:opacity-100">
+          <Expand className="size-3.5" aria-hidden="true" />
+          View full size
+          <span className="sr-only"> (opens in a new tab)</span>
+        </span>
+      </a>
+      <figcaption className="mt-2 text-center text-xs text-muted-foreground">
+        Janoshik task #{c.task}
+      </figcaption>
+    </figure>
   );
 }
 

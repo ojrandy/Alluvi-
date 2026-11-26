@@ -10,20 +10,16 @@ import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 import { site } from "@/lib/site";
 import { LAB_LINK_PLACEHOLDER, labLink } from "@/lib/lab-links";
+import { CERTIFICATES } from "@/lib/certificates";
 import styles from "./testing-steps.module.css";
 
-/**
- * A Janoshik certificate issued for alluvihealthcare.co: the report image (put it in
- * public/images/) and its verify.janoshik.com link.
- */
+/** A Janoshik certificate issued for alluvihealthcare.co (see lib/certificates). */
 type Report = { image: string; alt: string; url: string };
 type Step = { number: string; title: string; description: string; report: Report | null };
 
 /**
- * Copy verbatim from the live "Quality Assurance Protocol" section.
- * `report: null` shows the "certificate pending" card. Our Janoshik certificates are requested and
- * not yet issued. When they arrive, fill each step, e.g.
- *   report: { image: "/images/coa-reta40.png", alt: "Janoshik certificate of analysis — Retatrutide 40mg", url: "https://verify.janoshik.com/tests/…" },
+ * Copy verbatim from the live "Quality Assurance Protocol" section. Each step shows one of our
+ * Janoshik certificates; `report: null` falls back to the "certificate pending" card.
  */
 const STEPS: Step[] = [
   {
@@ -31,34 +27,34 @@ const STEPS: Step[] = [
     title: "Batch Production",
     description:
       "Research peptides are synthesised under controlled laboratory conditions, with weekly internal documented formulation testing.",
-    report: null,
+    report: CERTIFICATES["retatrutide-40mg"],
   },
   {
     number: "02",
     title: "Third-Party Lab Testing",
     description:
       "Alluvi randomly selects a batch of pens from thousands to be sent to Janoshik, a globally recognised laboratory, for fully independent verification. Janoshik then randomly selects one pen for testing.",
-    report: null,
+    report: CERTIFICATES["tirzepatide-40mg"],
   },
   {
     number: "03",
     title: "Purity & Potency Analysis",
     description: "Analytical testing confirms purity percentage and potency before any batch is approved for release.",
-    report: null,
+    report: CERTIFICATES["retatrutide-20mg"],
   },
   {
     number: "04",
     title: "Weekly Internal QC",
     description:
       "Weekly internal quality-control testing checks consistency and traceability across all research products.",
-    report: null,
+    report: CERTIFICATES["bpc-157-tb-500-40mg"],
   },
   {
     number: "05",
     title: "Verified & Released",
     description:
       "A certificate of analysis is recorded and released to the public, strictly for research and development use.",
-    report: null,
+    report: CERTIFICATES["glow-70mg"],
   },
 ];
 

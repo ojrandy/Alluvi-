@@ -172,6 +172,8 @@ scroll-progress keyframes) and CSS. No GSAP dependency (~70KB). Deliberate devia
 
 **Consequences:** Admin-entered Janoshik links are redirected too until the rule is removed. When real certificates arrive: store their URLs and delete the host check in `labLink()`.
 
+**Update 2026-11-26:** The client supplied certificate images for five products (Reta 40/20, Tirz 40, BPC/TB 40, Glow 70) showing manufacturer `www.alluvihealthcare.co`. They are shown on the home QA section and product lab panels (`src/lib/certificates.ts`, `public/images/coa/`). They carry the **same task numbers and verification keys** as the old reports (which read `www.alluvi.org`), so the host check in `labLink()` stays until someone confirms at janoshik.com/verify that the keys now return the new domain. NAD+ (#239746) has no new certificate yet.
+
 ## ADR-021: Customer chooses a payment method; the admin emails the details per order
 **Date:** 2026-11-24 · **Status:** Accepted (client decision) · supersedes ADR-004
 

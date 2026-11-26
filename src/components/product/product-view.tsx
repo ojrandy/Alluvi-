@@ -5,6 +5,7 @@ import { LabReportLink } from "@/components/content/lab-report-link";
 import { AddToCartPanel } from "@/components/store/add-to-cart";
 import { ProductCard } from "@/components/store/product-card";
 import { site } from "@/lib/site";
+import { certificateFor } from "@/lib/certificates";
 import { formatPriceLabel } from "@/lib/money";
 import type { ProductCard as ProductCardData, ProductDetail } from "@/server/queries/products";
 import { LabAnalysis } from "./lab-analysis";
@@ -19,7 +20,8 @@ type Props = { product: ProductDetail; related: ProductCardData[]; shortName: st
 export function ProductView({ product: p, related, shortName }: Props) {
   const specs = p.specs;
   const disclaimer = specs.disclaimer ?? site.productDisclaimer;
-  const hasLab = (specs.compounds?.length ?? 0) > 0 || !!specs.batchNumber || !!p.labReportUrl;
+  const certificate = certificateFor(p.slug);
+  const hasLab = (specs.compounds?.length ?? 0) > 0 || !!specs.batchNumber || !!p.labReportUrl || !!certificate;
   const packageContents = specs.packageContents ?? [];
 
   return (
@@ -101,7 +103,7 @@ export function ProductView({ product: p, related, shortName }: Props) {
       </div>
 
       <div className="mt-16 grid grid-cols-1 gap-6 md:mt-24 lg:grid-cols-[1.4fr_1fr]">
-        {hasLab ? <LabAnalysis specs={specs} reportUrl={p.labReportUrl} /> : null}
+        {hasLab ? <LabAnalysis specs={specs} reportUrl={p.labReportUrl} certificate={certificate} /> : null}
         {packageContents.length > 0 && (
           <section
             aria-labelledby="package-title"
