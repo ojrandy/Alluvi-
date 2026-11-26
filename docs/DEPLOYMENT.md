@@ -41,7 +41,7 @@ In production the app refuses to place orders without them (IP hashing and the o
    - Application mode: Production
    - Application root: `alluvi-app` (outside `public_html`)
    - Application URL: the canonical domain
-   - Startup file: `server.js` (produced by Next standalone build)
+   - Startup file: `server.js` (the boot wrapper produced by `npm run release`)
    - Add all env vars from `.env.example` in the app's *Environment variables* section.
 2. **Database:** cPanel → *MySQL Databases*: create the DB and a user, then grant ALL privileges.
    `DATABASE_URL=mysql://<cpuser>_<dbuser>:<pass>@localhost:3306/<cpuser>_<db>`
@@ -55,28 +55,39 @@ In production the app refuses to place orders without them (IP hashing and the o
    private half is stored in GitHub secrets. If the plan has no SSH, fall back to FTP deploy (see below).
 6. **SSL:** cPanel → *SSL/TLS Status* → AutoSSL on the domain. Force HTTPS redirect in *Domains*.
 
-## GitHub Actions pipeline (`.github/workflows/deploy.yml`, built in D2-8)
+## GitHub Actions pipeline (`.github/workflows/deploy.yml`, ADR-023)
 
 ```
-push to main
-  └─ job: build
-       ├─ setup-node (version from .nvmrc), npm ci
-       ├─ npm run typecheck && npm run lint
-       ├─ next build  (next.config: output "standalone")
-       ├─ assemble: .next/standalone + .next/static → .next/standalone/.next/static
-       │            + public → .next/standalone/public + drizzle/ migrations
-       └─ upload artifact
-  └─ job: deploy (needs build, environment: production)
-       ├─ rsync artifact → ~/alluvi-app  over SSH   (FTP fallback: SamKirkland/FTP-Deploy-Action)
-       ├─ ssh: source nodevenv activate && node scripts/migrate.mjs   (drizzle migrator, no dev deps)
-       └─ ssh: touch ~/alluvi-app/tmp/restart.txt   (Passenger restart)
+push to main (or Actions → Deploy → Run workflow)
+  └─ job: build (ubuntu, Node from .nvmrc)
+       ├─ npm ci → typecheck → lint → next build (output: standalone)
+       ├─ npm run release   → .next/standalone = next-server.js + boot server.js
+       │                      + .next/static + public + drizzle + content
+       └─ tar → artifact
+  └─ job: deploy (environment: production)
+       ├─ rsync --delete-after → APP_DIR over SSH (keeps tmp/, *.log, .htaccess)
+       ├─ touch APP_DIR/tmp/restart.txt
+       └─ curl the site until 200
+first request after restart → server.js: GET_LOCK → drizzle migrate → insert-only seed → start Next
 ```
 
-**GitHub secrets:** `SSH_HOST`, `SSH_PORT` (Namecheap shared uses **21098**), `SSH_USER`, `SSH_KEY`,
-`APP_DIR`. Runtime env vars live in cPanel, **not** in GitHub.
+**GitHub secrets** (repo → Settings → Secrets and variables → Actions):
+
+| Secret | Value |
+|---|---|
+| `SSH_HOST` | `premium277.web-hosting.com` |
+| `SSH_PORT` | `21098` |
+| `SSH_USER` | cPanel username |
+| `SSH_KEY` | private key whose public half is authorized in cPanel → SSH Access |
+| `APP_DIR` | `/home/<cpuser>/alluvi-app` |
+
+Optional repository *variable* `NEXT_PUBLIC_SITE_URL` (default `https://alluvihealthcare.co`); it is baked in at build time.
+Runtime env vars live in cPanel, **not** in GitHub. Never click cPanel's *Run NPM Install*: the bundle ships its own `node_modules`.
 
 **Why build in CI:** shared hosting kills processes that use too much RAM or CPU. `next build`
 on the server will fail or get the account throttled.
+
+**Why migrate at boot:** cPanel env vars reach only the Passenger process, so an SSH step can't see `DATABASE_URL`. If the DB step fails, the app refuses to start; the reason is in `APP_DIR/stderr.log`.
 
 ## DNS & email deliverability (launch-blocking)
 - [ ] Domain points at the Namecheap hosting (nameservers or A record).

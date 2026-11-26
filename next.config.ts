@@ -21,6 +21,9 @@ const LEGACY_REDIRECTS: { source: string; destination: string }[] = [
 ];
 
 const nextConfig: NextConfig = {
+  // Self-contained server bundle for cPanel/Passenger (ADR-007, DEPLOYMENT.md). Assembled into the
+  // deploy folder by scripts/assemble-release.mjs.
+  output: "standalone",
   // Dev-only: lets devices on the local network (and the 127.0.0.1 loopback) load dev assets/HMR.
   allowedDevOrigins: ["127.0.0.1", "192.168.1.177", "192.168.*.*", "10.*.*.*"],
   cacheComponents: true,

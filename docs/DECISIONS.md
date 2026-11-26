@@ -198,3 +198,11 @@ scroll-progress keyframes) and CSS. No GSAP dependency (~70KB). Deliberate devia
 **Decision:** Load the client's Smartsupp snippet (`src/components/store/smartsupp-chat.tsx`) in the `(store)` layout only, never in `/admin`, with `next/script` `strategy="lazyOnload"` so it loads in browser idle time and never blocks LCP or checkout. The widget key is public (it ships to every browser), so it lives in code, not in env. No npm dependency.
 
 **Consequences:** Visitors' browsers contact `smartsuppchat.com`; the privacy/cookie copy should mention Smartsupp. Chats are handled in the client's Smartsupp dashboard, not in /admin. To remove it, delete the component and its one line in the store layout.
+
+## ADR-023: Standalone bundle deployed by rsync; migrations + seed run at app boot
+
+**Context:** D2-8. Namecheap shared hosting can't run `next build`, and cPanel's Node app env vars (DATABASE_URL, secrets) reach only the Passenger process, not an SSH shell, so CI can't run migrations over SSH without duplicating the DB password into GitHub.
+
+**Decision:** `output: "standalone"`. `scripts/assemble-release.mjs` copies static/public/drizzle/content into `.next/standalone`, renames Next's `server.js` to `next-server.js`, and bundles `scripts/boot-server.ts` with esbuild as the new `server.js` (cPanel startup file). At boot it takes a MySQL named lock (`GET_LOCK`), applies drizzle migrations, runs an insert-only seed (settings if missing; products only when the table is empty, so admin deletions stick), then starts Next. It fails closed: if the DB step fails the app does not start. GitHub Actions builds on Linux, rsyncs the bundle to `APP_DIR` over SSH and touches `tmp/restart.txt`. `esbuild` (already in the tree via tsx/drizzle-kit) becomes a direct devDependency for the bundling step.
+
+**Consequences:** Runtime env stays only in cPanel. A deploy with a new migration migrates on the first request after restart (a few hundred ms). A broken migration takes the site down with the cause in `stderr.log`; fix forward. Local `npm run db:migrate` / `db:seed` are unchanged.

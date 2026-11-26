@@ -1,0 +1,104 @@
+# Build in CI, deploy the standalone bundle to Namecheap over SSH (ADR-007, docs/DEPLOYMENT.md).
+# Shared hosting can't run `next build` (RAM/CPU limits), so only the built app is uploaded.
+# Migrations + seed run when the app boots (scripts/boot-server.ts), with cPanel's env vars.
+#
+# Repository secrets: SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, APP_DIR
+# Optional repository variable: NEXT_PUBLIC_SITE_URL (default https://alluvihealthcare.co)
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://alluvihealthcare.co' }}
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
+      - run: npm run release
+
+      - name: Pack release
+        run: tar -czf release.tgz -C .next/standalone .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: release.tgz
+          retention-days: 14
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release
+
+      - name: Unpack
+        run: mkdir release && tar -xzf release.tgz -C release
+
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Upload
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          APP_DIR: ${{ secrets.APP_DIR }}
+        run: |
+          SSH="ssh -i ~/.ssh/deploy_key -p $SSH_PORT -o BatchMode=yes"
+          # CloudLinux may leave node_modules as a symlink to its virtualenv; the bundle ships its own.
+          $SSH "$SSH_USER@$SSH_HOST" "mkdir -p '$APP_DIR' && cd '$APP_DIR' && if [ -L node_modules ]; then rm node_modules; fi"
+          # --delete-after removes stale build files; tmp/, logs and .htaccess belong to the host.
+          rsync -az --delete-after \
+            --exclude 'tmp/' --exclude '*.log' --exclude '.htaccess' \
+            -e "$SSH" release/ "$SSH_USER@$SSH_HOST:$APP_DIR/"
+
+      - name: Restart app
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          APP_DIR: ${{ secrets.APP_DIR }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" -o BatchMode=yes "$SSH_USER@$SSH_HOST" \
+            "cd '$APP_DIR' && mkdir -p tmp && touch tmp/restart.txt"
+
+      - name: Smoke test
+        env:
+          SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://alluvihealthcare.co' }}
+        run: |
+          for i in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE_URL/" || true)
+            echo "attempt $i: HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 10
+          done
+          echo "Site did not return 200. Check ~/alluvi-app/stderr.log on the server." && exit 1
