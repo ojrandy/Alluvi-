@@ -19,19 +19,22 @@ export const metadata: Metadata = {
   }),
 };
 
-// Copy below is verbatim from the live /about page (content-recovery/raw/pages/about.json).
+// Copy below is from the live /about page (content-recovery/raw/pages/about.json), except claims that
+// could not be evidenced (ADR-024): purity is from published Janoshik reports (content/products.json,
+// 99.82–99.84%), the certificate count from src/lib/certificates.ts; member count and in-house API /
+// ISO claims removed.
 const STATS = [
   { value: "48+", label: "Advanced formulations developed" },
   { value: "26.3k+", label: "R&D-tested research units" },
-  { value: "99.95%", label: "Lab tested purity" },
-  { value: "1.26M+", label: "Members through UK and Europe in 2026 alone" },
+  { value: "99.8%+", label: "Purity on published Janoshik reports" },
+  { value: "5", label: "Products with independent Janoshik certificates" },
 ];
 
 const CAPABILITIES = [
-  { img: "box01", alt: "Built for Peptide R&D", title: "Built for Peptide R&D", text: "We manufacture core APIs for our peptide range in-house, controlling quality at every step." },
+  { img: "box01", alt: "Built for Peptide R&D", title: "Built for Peptide R&D", text: "Our peptide range is produced under batch-level quality control, from synthesis to fill." },
   { img: "box02", alt: "Real-Time Monitoring", title: "Real-Time Monitoring", text: "Every compound undergoes batch-level monitoring with full transparency into metabolite levels and purity." },
   { img: "box03", alt: "Precision Synthesis", title: "Precision Synthesis", text: "Rapid research compound production formulated, filled, and dispatched with precision timing and documented chain of custody." },
-  { img: "box04", alt: "ISO-Certified Filling", title: "Automated Filling", text: "Alluvi operates ISO-certified filling lines for research pens, delivering precise fill accuracy and sterility for laboratory applications." },
+  { img: "box04", alt: "Automated Filling", title: "Automated Filling", text: "Alluvi operates automated filling lines for research pens, delivering precise fill accuracy and sterility for laboratory applications." },
   { img: "box05", alt: "Secure Procurement", title: "Secure Chain of Custody", text: "Every unit is traceable with tamper-evident labelling and secure procurement logs designed for R&D compliance." },
   { img: "box06", alt: "Cold Chain Solutions", title: "Cold Chain Critical", text: "Validated cold-chain packaging keeps compounds stable and compliant during sensitive laboratory delivery." },
 ];
@@ -90,12 +93,12 @@ export default function AboutPage() {
       />
       <FeatureRow
         reverse
-        eyebrow="Always in-house"
-        title="Precision Peptide API Manufacturing, In-House at Alluvi"
-        text="Alluvi's in-house R&D lab develops research-grade peptide APIs with full documentation, batch validation, and ISO-certified clean-room standards. Every compound is produced under controlled conditions to meet stringent R&D specifications, ensuring quality from synthesis through dispatch."
+        eyebrow="Quality controlled"
+        title="Precision Peptide Production, Documented at Every Step"
+        text="Alluvi's R&D team produces research-grade peptides with full documentation and batch validation, and independent Janoshik testing on certified batches. Every compound is produced under controlled conditions to meet stringent R&D specifications, ensuring quality from synthesis through dispatch."
         cta={{ label: "Explore lab capabilities", href: "#capabilities" }}
         image={{ src: "/images/about/firstsecond.webp", alt: "Manufacturing" }}
-        tag="ISO-certified clean-room"
+        tag="Batch-validated · documented"
       />
 
       <section id="capabilities" aria-labelledby="capabilities-title" className="container-page section-y scroll-mt-24">

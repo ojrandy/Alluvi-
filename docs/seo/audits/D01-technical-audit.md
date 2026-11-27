@@ -87,7 +87,7 @@
   60-day roadmap.
 - *Task:* **SEO-D02-1** (interim) · ADR for the proper fix · Owner: Claude · Effort: S (interim) / L (proper)
 
-**H2 · Host duplication: `www` serves 200, and http redirects to `www`**
+**H2 · Host duplication: `www` serves 200** *(corrected 2026-11-27: http → https stays on the same host; see Fix status)*
 - *Evidence (live):* `https://www.alluvihealthcare.co/` → 200 (no redirect); `http://alluvihealthcare.co/`
   → 301 → `https://www.alluvihealthcare.co/`. Canonicals on `www` point to the apex
   (`<link rel="canonical" href="https://alluvihealthcare.co/shop">`), so Google will likely consolidate. Still, the
@@ -356,9 +356,9 @@ The positive disclaimers are present and should stay: hero (`hero.tsx:55`), prod
 | Finding | Status | Where |
 |---|---|---|
 | C1 soft 404 | **Fixed**: `ensureStatic = "navigation"` + existence check before Suspense; unknown product/policy slugs → 404 (verified) | product/policies `page.tsx`, ADR-024 |
-| C2 RUO copy | **Fixed** for Appendix D #1–16; `/our-location` 308 → `/about`, removed from footer + sitemap. #17 (product pen copy) → D05-2/D06-1. `/about` "in-house APIs" / "ISO-certified" kept as recovered copy pending owner evidence | ADR-024 |
+| C2 RUO copy | **Fixed** for Appendix D #1–16; `/our-location` 308 → `/about`, removed from footer + sitemap. #17 (product pen copy) → D05-2/D06-1. `/about`: "in-house APIs" and "ISO-certified" removed; stats "99.95% purity" (contradicted by our COAs, 99.82–99.84%) and "1.26M+ members" replaced with evidenced figures | ADR-024 |
 | H1 hidden pt-BR | **Interim**: `data-nosnippet` on pt-BR spans. Full removal on the 60-day roadmap | `t.tsx` |
-| H2 host | **Fixed** in app: `www` → apex 308. Owner: set the cPanel http→https redirect to the apex (it currently goes to `www`, now a 2-hop chain) | `next.config.ts` |
+| H2 host | **Fixed** in app: `www` → apex 308 (verified live). Correction: `http://alluvihealthcare.co` → `https://alluvihealthcare.co` in one hop; the original "http → www" reading was two interleaved curl outputs. Only `http://www.…` takes 2 hops (cPanel https, then the app rule), which is acceptable because nothing links to it. No cPanel change needed | `next.config.ts` |
 | H3 thin product copy | Deferred to SEO-D05-2 / D06-1 (needs keyword data) | — |
 | H4 structured data | **Fixed**: Organization + WebSite site-wide, BreadcrumbList, `hasMerchantReturnPolicy`, `mpn` removed. `shippingDetails` deferred (rates in DB) | `structured-data.ts` |
 | M1 Open Graph | **Fixed**: `openGraphFor()` + `opengraph-image.tsx` | |

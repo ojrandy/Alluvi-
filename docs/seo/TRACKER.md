@@ -4,7 +4,7 @@
 > one-line note, plus any section below the task affects.
 > Status: `TODO` · `IN PROGRESS` · `AWAITING APPROVAL` · `DONE` · `BLOCKED` · `SKIPPED`
 
-**Window:** Day 1 = Mon 30 Nov 2026 → Day 30 = Tue 29 Dec 2026 · **Current day:** — · **Last updated:** 2026-11-27
+**Window:** Day 1 = Mon 30 Nov 2026 → Day 30 = Tue 29 Dec 2026 · **Current day:** 0 (pre-plan) · **Last updated:** 2026-11-27
 
 ---
 
@@ -15,12 +15,12 @@
 |---|---|---|---|---|---|---|---|
 | 1 | 30 Nov | SEO-D01-1 | GSC (Domain), Bing WMT, GA4 consent check, Keyword Planner access | You | TODO | | |
 | 1 | 30 Nov | SEO-D01-2 | Technical SEO audit (read-only) | C | DONE | 2026-11-27 | Run early. [audits/D01-technical-audit.md](audits/D01-technical-audit.md): 2 Critical (soft 404s; RUO copy incl. /our-location "prescriptions"), 4 High, 7 Medium |
-| 2 | 1 Dec | SEO-D02-1 | Technical foundation (sitemap, robots, canonicals, 404, schema) | C | IN PROGRESS | | Committed 2026-11-27, awaiting "ship": real 404s, www→apex, Org/WebSite/Breadcrumb JSON-LD, return policy, per-page OG + share card, sitemap lastmod, pt-BR nosnippet, related ×4, CI origin guard (ADR-024). After deploy: verify live + Rich Results Test → DONE |
+| 2 | 1 Dec | SEO-D02-1 | Technical foundation (sitemap, robots, canonicals, 404, schema) | C | DONE | 2026-11-27 | Shipped in `366b13f` (mislabelled "Bing…"; see ADR-024) and verified live: real 404s, www→apex, Org/WebSite/Breadcrumb JSON-LD, return policy, per-page OG + share card, sitemap lastmod, pt-BR nosnippet, related ×4, CI origin guard (ADR-024). Owner: run Rich Results Test on a product URL |
 | 2 | 1 Dec | SEO-D02-2 | Submit sitemaps; inspect `/` and `/shop` | You | TODO | | |
 | 3 | 2 Dec | SEO-D03-1 | Keyword Planner export (UK) | You | TODO | | |
 | 3 | 2 Dec | SEO-D03-2 | Keyword research round 1 | C | TODO | | |
 | 4 | 3 Dec | SEO-D04-1 | Keyword→URL map v1 + metadata matrix | C→You | TODO | | |
-| 5 | 4 Dec | SEO-D05-1 | Compliance copy pass + ADR-024 | C→You | IN PROGRESS | | Site copy done 2026-11-27 (owner said "fix all"): Appendix D lines 1–16; /our-location 308 → /about. Left for D05-2/D06-1: product "pre-filled research pen / delivery mechanism" copy (#17); /about "in-house APIs" + "ISO-certified" claims need owner evidence |
+| 5 | 4 Dec | SEO-D05-1 | Compliance copy pass + ADR-024 | C→You | DONE | 2026-11-27 | Owner "fix all": Appendix D #1–16 + /our-location 308 → /about + /about unverifiable stats/claims removed (live). Product pen copy (#17) moves to D05-2/D06-1 |
 | 5 | 4 Dec | SEO-D05-2 | Product copy batch A (Reta 40/20, Tirz 40) | C→You | TODO | | |
 | 6 | 5 Dec | SEO-D06-1 | Product copy batch B (6 products) | C→You | TODO | | |
 | 6 | 5 Dec | SEO-D06-2 | Competitor & link-gap analysis | C | TODO | | |
@@ -178,4 +178,4 @@ The full keyword list lives in `seo/tracked-keywords.md` on the `seo-reports` br
 |---|---|---|
 | 2026-11-27 | Plan created. Canonical domain = alluvihealthcare.co; old domains abandoned (no migration). Footer "Research" section approved. RUO-contradicting copy may be removed. Claude drafts, owner approves. Keyword data = Google Keyword Planner. Weekly report routine created (Mon 08:00 Lagos) | Owner + Claude |
 | 2026-11-27 | SEO-D01-2 technical audit done (ahead of Day 1). `bbbc7bf` shipped sitemap.xml + robots.txt outside the plan, so D02-1 scope reduced. Owner decisions raised: /our-location (rewrite vs 301 → /about), press-release legal claims, pt-BR hidden-text approach (ADR) | Claude |
-| 2026-11-27 | Owner: "fix all". Audit fixes committed (ADR-024): C1, C2, H1 (interim), H2, H4, M1, M3–M7, L1, L2. Deferred by design: M2 titles/H1s + H3 product copy (need D03 keyword data, D04-1/D05-2/D06-1 drafts). /our-location → 308 /about. Not pushed yet | Claude |
+| 2026-11-27 | Owner: "fix all". Audit fixes shipped (ADR-024, commit 366b13f, verified live): C1, C2, H1 (interim), H2, H4, M1, M3–M7, L1, L2. Deferred by design: M2 titles/H1s + H3 product copy (need D03 keyword data, D04-1/D05-2/D06-1 drafts). /our-location → 308 /about | Claude |
