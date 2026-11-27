@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { openGraphFor } from "@/lib/metadata";
 import { Mail, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { site } from "@/lib/site";
@@ -7,6 +8,11 @@ export const metadata: Metadata = {
   title: "Wholesale",
   description: "Wholesale supply information for Alluvi research products.",
   alternates: { canonical: "/wholesale" },
+  openGraph: openGraphFor({
+    title: "Wholesale | Alluvi",
+    description: "Wholesale supply information for Alluvi research products.",
+    path: "/wholesale",
+  }),
 };
 
 // Verbatim from the live /wholesale page. The live inquiry form posted to the old backend; until the

@@ -40,7 +40,12 @@ export function ProductMarquee({ products }: { products: ProductCard[] }) {
                     </span>
                   </div>
                   <div className={styles.body}>
-                    <h3 className={styles.name}>{p.name}</h3>
+                    {/* Loop copies are decorative: a <p> keeps the outline to one heading per product. */}
+                    {copy === 0 ? (
+                      <h3 className={styles.name}>{p.name}</h3>
+                    ) : (
+                      <p className={styles.name}>{p.name}</p>
+                    )}
                     <p className={styles.price}>{formatPriceLabel(p.pricePence)}</p>
                     {!p.inStock && <span className={styles.stock}>
                         <T>Out of stock</T>

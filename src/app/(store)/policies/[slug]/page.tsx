@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
+import { openGraphFor } from "@/lib/metadata";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ChevronDown } from "lucide-react";
 import { extractHeadings, Markdown, type Heading } from "@/components/content/markdown";
 import { Skeleton } from "@/components/ui/skeleton";
+import { breadcrumbJsonLd, jsonLdHtml } from "@/lib/structured-data";
 import { cn } from "@/lib/utils";
-import { getPolicyPage, isPolicySlug, POLICY_SLUGS } from "@/server/content/pages";
+import { getPolicyPage, isPolicySlug, POLICY_SLUGS, type PolicySlug } from "@/server/content/pages";
+
+/**
+ * Fully static route (catalogue/content data is 'use cache'). An unknown slug is then rendered to
+ * completion before responding instead of streaming the fallback shell with a 200, so notFound()
+ * returns a real 404 (next/dist/docs ensureStatic.md "Dynamic route parameters"; SEO audit D01, C1).
+ */
+export const ensureStatic = "navigation";
 
 export function generateStaticParams() {
   return POLICY_SLUGS.map((slug) => ({ slug }));
@@ -20,27 +29,36 @@ export async function generateMetadata({ params }: PageProps<"/policies/[slug]">
     title: { absolute: page.metaTitle },
     description: page.description,
     alternates: { canonical: `/policies/${slug}` },
-    openGraph: { title: page.metaTitle, description: page.description, url: `/policies/${slug}` },
+    openGraph: openGraphFor({ title: page.metaTitle, description: page.description, path: `/policies/${slug}` }),
   };
 }
 
-export default function PolicyPage({ params }: PageProps<"/policies/[slug]">) {
+export default async function PolicyPage({ params }: PageProps<"/policies/[slug]">) {
+  // Check before the Suspense boundary so unknown slugs get a real 404, not a streamed soft 404
+  // (next/dist/docs streaming.md "The HTTP contract").
+  const { slug } = await params;
+  if (!isPolicySlug(slug)) notFound();
+
   return (
     <Suspense fallback={<PolicySkeleton />}>
-      <Policy params={params} />
+      <Policy slug={slug} />
     </Suspense>
   );
 }
 
-async function Policy({ params }: Pick<PageProps<"/policies/[slug]">, "params">) {
-  const { slug } = await params;
-  if (!isPolicySlug(slug)) notFound();
+async function Policy({ slug }: { slug: PolicySlug }) {
   const page = await getPolicyPage(slug);
   const headings = extractHeadings(page.body);
   const others = await Promise.all(POLICY_SLUGS.filter((s) => s !== slug).map((s) => getPolicyPage(s)));
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: page.navTitle, path: `/policies/${slug}` },
+  ]);
+
   return (
     <div className="container-page pt-12 pb-20 md:pt-20 md:pb-28">
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(breadcrumbs)} />
       <header className="max-w-3xl">
         <p className="eyebrow">{slug === "press-release" ? "Press release" : "Policies"}</p>
         <h1 className="text-h1 mt-4 text-balance">{page.title}</h1>

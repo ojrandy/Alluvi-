@@ -49,8 +49,8 @@ export const PT: Record<string, string> = {
   "UV authenticity mark": "Marca de autenticidade UV",
   "Tracked UK & EU dispatch": "Envio rastreado para Reino Unido e UE",
   "25+ ways to pay": "Mais de 25 formas de pagamento",
-  "Alluvi Labs develops and evaluates premium peptides and supplements, produced exclusively for controlled research and development purposes.":
-    "A Alluvi Labs desenvolve e avalia peptídeos e suplementos premium, produzidos exclusivamente para fins controlados de pesquisa e desenvolvimento.",
+  "Alluvi Labs develops and evaluates premium research peptides, produced exclusively for controlled research and development purposes.":
+    "A Alluvi Labs desenvolve e avalia peptídeos de pesquisa premium, produzidos exclusivamente para fins controlados de pesquisa e desenvolvimento.",
   Footer: "Rodapé",
   "All research peptides": "Todos os peptídeos de pesquisa",
   "Track your order": "Rastreie seu pedido",
@@ -110,7 +110,7 @@ export const PT: Record<string, string> = {
   "Advancing discovery through": "Impulsionando a descoberta por meio da pesquisa",
   research: "",
   "Alluvi Labs develops and evaluates": "A Alluvi Labs desenvolve e avalia",
-  "premium peptides and supplements": "peptídeos e suplementos premium",
+  "premium research peptides": "peptídeos de pesquisa premium",
   "All products are produced exclusively": "Todos os produtos são produzidos exclusivamente",
   "for controlled research and development purposes, guided by science.":
     "para fins controlados de pesquisa e desenvolvimento, guiados pela ciência.",
@@ -162,7 +162,7 @@ export const PT: Record<string, string> = {
     "Os peptídeos da Alluvi Labs usam um processo de solução próprio, projetado para manter os IFAs da Alluvi no ambiente certo do início ao fim.",
   "That means stronger support for purity, target pH, and consistent peptide content, once in an Alluvi pen, under the harshest storage conditions.":
     "Isso significa mais suporte à pureza, ao pH ideal e a um teor de peptídeo consistente dentro de uma caneta Alluvi, mesmo nas condições de armazenamento mais severas.",
-  "While others say 28 days in the fridge then throw it away,": "Enquanto outros dizem 28 dias na geladeira e depois descarte,",
+  "While others assume 28 days refrigerated is the limit,": "Enquanto outros assumem 28 dias refrigerado como limite,",
   "Alluvi put it to the test.": "a Alluvi colocou isso à prova.",
   "Room-temperature hold": "Armazenamento em temperatura ambiente",
   "Janoshik · Independent": "Janoshik · Independente",
@@ -177,7 +177,7 @@ export const PT: Record<string, string> = {
   Content: "Teor",
   Stable: "Estável",
   "Within range": "Dentro da faixa",
-  "This is why vials and Temu version peptide brands don't come close. Don't put your health at risk to save some quid.":
+  "This is why vials and Temu version peptide brands don't come close. Don't put your research at risk to save some quid.":
     "É por isso que frascos e marcas de peptídeos genéricas nem chegam perto. Não arrisque a qualidade da sua pesquisa para economizar alguns trocados.",
 
   // --- home: stability stages ---
@@ -217,8 +217,8 @@ export const PT: Record<string, string> = {
   // --- home: research platform ---
   "More than peptides.": "Mais do que peptídeos.",
   "A Complete Research Platform.": "Uma plataforma de pesquisa completa.",
-  "From research-grade compounds to structured data collection and nutritional analysis – Alluvi provides an integrated system designed for controlled research and development programs.":
-    "De compostos de grau de pesquisa à coleta estruturada de dados e análise nutricional – a Alluvi oferece um sistema integrado, projetado para programas controlados de pesquisa e desenvolvimento.",
+  "From research-grade compounds to structured data collection and analysis – Alluvi provides an integrated system designed for controlled research and development programs.":
+    "De compostos de grau de pesquisa à coleta e análise estruturada de dados – a Alluvi oferece um sistema integrado, projetado para programas controlados de pesquisa e desenvolvimento.",
   "Smart Tracking": "Acompanhamento inteligente",
   "Log every research observation with structured data capture built for controlled R&D programs.":
     "Registre cada observação de pesquisa com captura estruturada de dados, criada para programas controlados de P&D.",
@@ -230,11 +230,11 @@ export const PT: Record<string, string> = {
   "Precision Pens": "Canetas de precisão",
   "Pre-filled Retatrutide systems – sleek, pre-measured, and designed for evaluation in controlled research settings only.":
     "Sistemas de Retatrutide pré-envasados – elegantes, pré-medidos e projetados apenas para avaliação em ambientes controlados de pesquisa.",
-  "Alluvi precision dosing pen": "Caneta de precisão Alluvi",
+  "Alluvi pre-filled research pen": "Caneta de pesquisa pré-envasada Alluvi",
   "From compound": "Do composto",
   "to data.": "aos dados.",
-  "Research-grade compounds, structured data capture, scheduled supply, and precision dosing devices — one connected system for controlled R&D programs.":
-    "Compostos de grau de pesquisa, captura estruturada de dados, fornecimento programado e dispositivos de precisão — um sistema conectado para programas controlados de P&D.",
+  "Research-grade compounds, structured data capture, scheduled supply, and precision-filled research pens — one connected system for controlled R&D programs.":
+    "Compostos de grau de pesquisa, captura estruturada de dados, fornecimento programado e canetas de pesquisa envasadas com precisão — um sistema conectado para programas controlados de P&D.",
 
   // --- home: verify popup ---
   "Is your Alluvi fake? Packaging and security update": "Sua Alluvi é falsa? Atualização de embalagem e segurança",

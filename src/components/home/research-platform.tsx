@@ -30,7 +30,7 @@ export function ResearchPlatform() {
             </h2>
             <p className={styles.desc}>
               <T>
-                From research-grade compounds to structured data collection and nutritional analysis – Alluvi provides an integrated system designed for controlled research and development programs.
+                From research-grade compounds to structured data collection and analysis – Alluvi provides an integrated system designed for controlled research and development programs.
               </T>
               <br />
               <T>Not for human or veterinary consumption.</T>
@@ -100,7 +100,7 @@ export function ResearchPlatform() {
             <div className={styles.visual}>
               <Image
                 src="/images/foutfour.webp"
-                alt="Alluvi precision dosing pen"
+                alt="Alluvi pre-filled research pen"
                 width={1080}
                 height={277}
                 sizes="(max-width: 600px) 80vw, 300px"
@@ -118,7 +118,7 @@ export function ResearchPlatform() {
             </p>
             <p className={styles.footerDesc}>
               <T>
-                Research-grade compounds, structured data capture, scheduled supply, and precision dosing devices — one connected system for controlled R&amp;D programs.
+                Research-grade compounds, structured data capture, scheduled supply, and precision-filled research pens — one connected system for controlled R&amp;D programs.
               </T>
             </p>
             <Link href="/shop" className={styles.cta}>

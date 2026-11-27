@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { openGraphFor } from "@/lib/metadata";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -10,7 +11,12 @@ export const metadata: Metadata = {
   description:
     "Alluvi develops innovative research peptides and compounds for laboratory use. Science-backed formulations with Janoshik testing, cold chain delivery, and tracked UK shipping.",
   alternates: { canonical: "/about" },
-  openGraph: { title: "About Alluvi | Premium Research Peptides Supplier UK", url: "/about" },
+  openGraph: openGraphFor({
+    title: "About Alluvi | Premium Research Peptides Supplier UK",
+    description:
+      "Alluvi develops innovative research peptides and compounds for laboratory use. Science-backed formulations with Janoshik testing, cold chain delivery, and tracked UK shipping.",
+    path: "/about",
+  }),
 };
 
 // Copy below is verbatim from the live /about page (content-recovery/raw/pages/about.json).
@@ -25,7 +31,7 @@ const CAPABILITIES = [
   { img: "box01", alt: "Built for Peptide R&D", title: "Built for Peptide R&D", text: "We manufacture core APIs for our peptide range in-house, controlling quality at every step." },
   { img: "box02", alt: "Real-Time Monitoring", title: "Real-Time Monitoring", text: "Every compound undergoes batch-level monitoring with full transparency into metabolite levels and purity." },
   { img: "box03", alt: "Precision Synthesis", title: "Precision Synthesis", text: "Rapid research compound production formulated, filled, and dispatched with precision timing and documented chain of custody." },
-  { img: "box04", alt: "ISO-Certified Filling", title: "Automated Filling", text: "Alluvi operates ISO-certified filling lines for research pens, delivering precise dosing accuracy and sterility for laboratory applications." },
+  { img: "box04", alt: "ISO-Certified Filling", title: "Automated Filling", text: "Alluvi operates ISO-certified filling lines for research pens, delivering precise fill accuracy and sterility for laboratory applications." },
   { img: "box05", alt: "Secure Procurement", title: "Secure Chain of Custody", text: "Every unit is traceable with tamper-evident labelling and secure procurement logs designed for R&D compliance." },
   { img: "box06", alt: "Cold Chain Solutions", title: "Cold Chain Critical", text: "Validated cold-chain packaging keeps compounds stable and compliant during sensitive laboratory delivery." },
 ];

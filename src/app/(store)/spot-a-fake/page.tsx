@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { openGraphFor } from "@/lib/metadata";
 import Link from "next/link";
 import { ArrowRight, ScanSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,11 @@ export const metadata: Metadata = {
   title: "Spot a Fake",
   description: "Contact Alluvi with photos of your product to check if it is original or fake.",
   alternates: { canonical: "/spot-a-fake" },
+  openGraph: openGraphFor({
+    title: "Spot a Fake | Alluvi",
+    description: "Contact Alluvi with photos of your product to check if it is original or fake.",
+    path: "/spot-a-fake",
+  }),
 };
 
 /**

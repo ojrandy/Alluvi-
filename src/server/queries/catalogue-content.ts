@@ -31,6 +31,7 @@ export function contentCatalogue(): ProductDetail[] {
         images: p.images,
         stock: 100,
         inStock: true,
+        updatedAt: null,
         shortDescription: p.shortDescription,
         description: p.description,
         labReportUrl: p.labReportUrl,

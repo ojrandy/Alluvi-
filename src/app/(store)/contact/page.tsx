@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { openGraphFor } from "@/lib/metadata";
 import { FileText, Mail, MessageCircle, Send } from "lucide-react";
 import { T } from "@/components/i18n/t";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,11 @@ export const metadata: Metadata = {
   title: "Contact",
   description: "Contact Alluvi by email, Telegram or WhatsApp, or request a certificate of analysis.",
   alternates: { canonical: "/contact" },
+  openGraph: openGraphFor({
+    title: "Contact | Alluvi",
+    description: "Contact Alluvi by email, Telegram or WhatsApp, or request a certificate of analysis.",
+    path: "/contact",
+  }),
 };
 
 /**

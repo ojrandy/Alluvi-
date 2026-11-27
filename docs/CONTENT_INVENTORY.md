@@ -77,7 +77,7 @@ related products, and 4 images (front, pen, open, UV).
 | `/order-confirmation` | | Rebuilt as `/order-confirmation/[orderNo]`; bare URL 301 → `/track-order` | `(store)/order-confirmation/[orderNo]` |
 | `/track-order` | | Rebuild | `(store)/track-order` |
 | `/spot-a-fake`, `/fake-sellers` | | Rebuilt (D1-6); `/fake-sellers` 301 → `/spot-a-fake#watchlist` (watchlist copy kept there) | `(store)/spot-a-fake` |
-| `/our-location` | | Rebuild | `(store)/our-location` |
+| `/our-location` | | 301 → `/about` (pharmacy copy contradicted RUO; SEO D01 audit C2) | `next.config.ts` |
 | `/announcements` | | Rebuilt (D1-6, content verified) | `(store)/announcements` |
 | `/login`, `/signup`, `/account`, `/forgot-password`, `/reset-password` | | Rebuilt (D2-1A, ADR-005/016). Plus new `/verify-email`, `/account/details`, `/account/orders/[orderNo]`. All `noindex`. There were never config redirects for these routes, so none to remove | `(store)/login` etc., `(store)/account` |
 | `/order-information`, `/payment-review`, `/payment-completed` | | 301 → `/track-order` | — |

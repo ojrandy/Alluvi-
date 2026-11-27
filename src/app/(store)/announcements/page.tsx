@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { openGraphFor } from "@/lib/metadata";
 import Image from "next/image";
 import Link from "next/link";
 import { Send } from "lucide-react";
@@ -9,6 +10,11 @@ export const metadata: Metadata = {
   title: "Announcements",
   description: "Latest announcements and updates from Alluvi.",
   alternates: { canonical: "/announcements" },
+  openGraph: openGraphFor({
+    title: "Announcements | Alluvi",
+    description: "Latest announcements and updates from Alluvi.",
+    path: "/announcements",
+  }),
 };
 
 /** Verbatim from the live /announcements page. */

@@ -33,6 +33,16 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
+
+      # Canonicals, og:url, sitemap and JSON-LD are baked from NEXT_PUBLIC_SITE_URL at build time.
+      # Never ship a build that points search engines at localhost or plain http (SEO audit D01, M4).
+      - name: Guard canonical origin
+        run: |
+          case "$NEXT_PUBLIC_SITE_URL" in https://*) ;; *) echo "NEXT_PUBLIC_SITE_URL must be https (got: $NEXT_PUBLIC_SITE_URL)"; exit 1 ;; esac
+          if grep -rlE 'https?://(localhost|127\.0\.0\.1)' .next/server/app --include='*.html' --include='*.body' --include='*.rsc' | head -5 | grep .; then
+            echo "Built pages reference localhost; refusing to deploy."; exit 1
+          fi
+
       - run: npm run release
 
       - name: Pack release

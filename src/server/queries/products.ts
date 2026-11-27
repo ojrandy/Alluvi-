@@ -16,6 +16,8 @@ export type ProductCard = {
   image: ProductImageRef | null;
   stock: number;
   inStock: boolean;
+  /** ISO timestamp of the last DB edit (null for the content/ fallback); feeds sitemap lastmod. */
+  updatedAt: string | null;
 };
 
 export type ProductDetail = ProductCard & {
@@ -83,6 +85,7 @@ function toCard(p: ProductDetail): ProductCard {
     image: p.images[0] ?? null,
     stock: p.stock,
     inStock: p.inStock,
+    updatedAt: p.updatedAt,
   };
 }
 
@@ -131,6 +134,7 @@ async function loadActive(): Promise<ProductDetail[]> {
       images: imgs,
       stock: p.stock,
       inStock: p.stock > 0,
+      updatedAt: p.updatedAt ? p.updatedAt.toISOString() : null,
       shortDescription: p.shortDescription,
       description: p.description,
       labReportUrl: p.labReportUrl,

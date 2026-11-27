@@ -9,7 +9,7 @@ Thank you for choosing Alluvi. We take great pride in delivering premium-quality
 
 ## Research-Use Products
 
-All items sold by Alluvi, including peptide pens and supplements, are intended strictly for research and development purposes. As such, they are not intended for human consumption, diagnosis, or treatment. By purchasing, you agree to these terms.
+All items sold by Alluvi, including peptide pens and other research materials, are intended strictly for research and development purposes. As such, they are not intended for human consumption, diagnosis, or treatment. By purchasing, you agree to these terms.
 
 ## Returns Eligibility
 

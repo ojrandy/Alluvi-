@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { openGraphFor } from "@/lib/metadata";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ProductCard } from "@/components/store/product-card";
@@ -9,14 +10,13 @@ import { T } from "@/components/i18n/t";
 
 export const metadata: Metadata = {
   title: { absolute: "Professional Research Solutions | Alluvi Shop" },
-  description: "Premium laboratory R&D compounds. Clinical grade purity, rigorous testing.",
-  keywords: ["research peptides", "clinical grade", "BPC-157", "TB-500"],
+  description: "Premium research peptides for laboratory R&D. High-purity compounds with independent batch testing and tracked UK delivery.",
   alternates: { canonical: "/shop" },
-  openGraph: {
+  openGraph: openGraphFor({
     title: "Professional Research Solutions | Alluvi Shop",
-    description: "Premium laboratory R&D compounds. Clinical grade purity, rigorous testing.",
-    url: "/shop",
-  },
+    description: "Premium research peptides for laboratory R&D. High-purity compounds with independent batch testing and tracked UK delivery.",
+    path: "/shop",
+  }),
 };
 
 const SORTS = [

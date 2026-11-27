@@ -34,7 +34,7 @@ export function PensStability() {
           </T>
         </p>
         <p className={styles.statement}>
-          <T>While others say 28 days in the fridge then throw it away,</T>{" "}
+          <T>While others assume 28 days refrigerated is the limit,</T>{" "}
           <span className={styles.em}>
             <T>Alluvi put it to the test.</T>
           </span>
@@ -102,7 +102,7 @@ export function PensStability() {
           </dl>
         </div>
         <p className={styles.close}>
-          <T>{"This is why vials and Temu version peptide brands don't come close. Don't put your health at risk to save some quid."}</T>
+          <T>{"This is why vials and Temu version peptide brands don't come close. Don't put your research at risk to save some quid."}</T>
         </p>
       </div>
     </section>

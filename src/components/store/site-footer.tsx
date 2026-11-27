@@ -36,7 +36,7 @@ export function SiteFooter() {
           </Link>
           <p className="text-sm leading-relaxed text-muted-foreground">
             <T>
-              Alluvi Labs develops and evaluates premium peptides and supplements, produced exclusively for controlled research and development purposes.
+              Alluvi Labs develops and evaluates premium research peptides, produced exclusively for controlled research and development purposes.
             </T>
           </p>
           <ul className="space-y-2 text-sm">

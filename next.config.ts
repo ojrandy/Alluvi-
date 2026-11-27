@@ -6,6 +6,8 @@ import type { NextConfig } from "next";
  */
 const LEGACY_REDIRECTS: { source: string; destination: string }[] = [
   { source: "/fake-sellers", destination: "/spot-a-fake#watchlist" },
+  // Pharmacy/prescriptions copy contradicted research-use-only (SEO audit D01, C2); URL kept via 301.
+  { source: "/our-location", destination: "/about" },
   { source: "/order-confirmation", destination: "/track-order" },
   { source: "/order-information", destination: "/track-order" },
   { source: "/payment-review", destination: "/track-order" },
@@ -35,7 +37,16 @@ const nextConfig: NextConfig = {
     "/policies/*": ["./content/pages/**/*.md"],
   },
   async redirects() {
-    return LEGACY_REDIRECTS.map((r) => ({ ...r, permanent: true }));
+    return [
+      // One canonical host (SEO audit D01, H2): www.alluvihealthcare.co → alluvihealthcare.co, path kept.
+      {
+        source: "/:path*",
+        has: [{ type: "host" as const, value: "www.alluvihealthcare.co" }],
+        destination: "https://alluvihealthcare.co/:path*",
+        permanent: true,
+      },
+      ...LEGACY_REDIRECTS.map((r) => ({ ...r, permanent: true })),
+    ];
   },
   turbopack: {
     rules: {

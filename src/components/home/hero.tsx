@@ -45,7 +45,7 @@ export function HomeHero() {
         <p className={styles.lede}>
           <T>Alluvi Labs develops and evaluates</T>
           <br />
-          <T>premium peptides and supplements</T>
+          <T>premium research peptides</T>
           <br />
           <br />
           <T>All products are produced exclusively</T>
@@ -91,6 +91,8 @@ export function HomeHero() {
                   width={1600}
                   height={2168}
                   sizes="66vh"
+                  // Above the fold and the likely desktop LCP element: never lazy (SEO audit D01, M6).
+                  preload
                   className={styles.hand}
                 />
                 <div className={styles.screen}>

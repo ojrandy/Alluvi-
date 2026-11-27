@@ -19,7 +19,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: abs("/spot-a-fake"), changeFrequency: "monthly", priority: 0.6 },
     { url: abs("/about"), changeFrequency: "monthly", priority: 0.6 },
     { url: abs("/contact"), changeFrequency: "monthly", priority: 0.5 },
-    { url: abs("/our-location"), changeFrequency: "monthly", priority: 0.5 },
     { url: abs("/announcements"), changeFrequency: "weekly", priority: 0.5 },
   ];
 
@@ -33,6 +32,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: abs(`/product/${p.slug}`),
     changeFrequency: "weekly",
     priority: 0.8,
+    // Real edit time only; no lastmod is better than a made-up one.
+    ...(p.updatedAt ? { lastModified: p.updatedAt } : {}),
     ...(p.image ? { images: [abs(p.image.url)] } : {}),
   }));
 

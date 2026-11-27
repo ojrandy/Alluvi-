@@ -12,9 +12,7 @@ Alluvi acknowledges the recent Channel 4 News feature discussing research compou
 
 ## 2. The Nature of the Broadcast
 
-Contrary to the presentation of an "independent investigation," the programme reflected a coordinated communication effort supported by commercial competitors. Eli Lilly & Co., the manufacturer of Mounjaro (Tirzepatide), currently sells the same class of peptide for pharmaceutical use in the United States for more than $1,000 per pen and has lobbied for higher UK retail pricing. Following pricing restrictions in the UK and EU, Lilly has publicly signalled a reduction in supply to these markets recently.
-
-The purpose of the broadcast therefore appears less about consumer protection and more about preserving market exclusivity for a multinational pharmaceutical brand. Alluvi operates as a Research and Development lab in proteins and amino acids independently and transparently to develop research-grade generic analogues for laboratory study only NOT pharmaceutical—an activity permitted under UK and EU R&D law and unrelated to pharmaceutical retail.
+In Alluvi's view, the programme was presented as an "independent investigation" but did not reflect the facts of our operations or the distinction between licensed medicines and research materials. Alluvi operates as a Research and Development lab in proteins and amino acids independently and transparently to develop research-grade generic analogues for laboratory study only NOT pharmaceutical—an activity permitted under UK and EU R&D law and unrelated to pharmaceutical retail.
 
 ## 3. Official Channels Only
 
@@ -54,11 +52,9 @@ Peptides such as Retatrutide are chains of amino acids, long used in laboratory 
 
 [Request the independent laboratory test report](/contact#certificates)
 
-The regulatory distinction was recognised in MHRA v Peptide Clinics UK (2018), which held that "research-only" products without clinical claims fall outside the definition of a medicinal product.
-
 ## 7. Commercial Context and Public Misunderstanding
 
-It is crucial to note that Eli Lilly did not invent the Retatrutide peptide; it has existed in open biochemical literature for over a decade. Early experimental use was observed among researchers studying biochemical pathways. Alluvi's research-grade formulations simply make access to these peptides affordable for legitimate laboratory use.
+Peptide sequences such as Retatrutide are described in the published scientific literature and are studied by researchers investigating biochemical pathways. Alluvi's research-grade formulations make access to these peptides affordable for legitimate laboratory use.
 
 The media narrative portraying all independent R&D suppliers as "illegal sellers" ignores the underlying scientific community that relies on affordable generics for study and development. Suppressing such access risks entrenching monopolies and slowing innovation.
 
@@ -71,13 +67,13 @@ Alluvi operates under internal SOPs reflecting Good Laboratory Practice (GLP) an
 - Non-hazardous packaging per ADR 2019
 - Prominent R&D-only disclaimers
 
-Consumers are strongly advised not to purchase injectable products via social media or unverified resellers. Alluvi distributes solely through its official domains and official Telegram and WhatsApp channels listed above, for institutional and analytical use.
+Customers are strongly advised not to purchase research products via social media or unverified resellers. Alluvi distributes solely through its official domains and official Telegram and WhatsApp channels listed above, for institutional and analytical use.
 
 ## 9. Responsible Reporting and Transparency
 
 Media scrutiny of the health sector is vital, but it must be factual. Equating compliant R&D suppliers with unlicensed drug dealers misleads the public and breaches the Defamation Act 2013 (S. 4), which protects opinion only when based on verifiable facts. Mischaracterising a registered R&D company could constitute defamation or negligent misstatement (Byrne v Deane [1937] 1 KB 818).
 
-## 10. Social Impact and Real-World Results
+## 10. Scientific Interest
 
 While Alluvi makes no therapeutic claims, it acknowledges the ongoing global interest in biochemical research. Thousands of laboratories have utilized peptide-based research materials globally, reinforcing the value of continued scientific exploration. The broader scientific issue is not research peptides themselves, but misinformation and uncontrolled distribution outside legitimate laboratory channels.
 

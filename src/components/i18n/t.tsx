@@ -14,7 +14,9 @@ export function T({ children, pt }: { children: string; pt?: string }) {
   return (
     <>
       <span data-l="en">{children}</span>
-      <span data-l="pt" lang="pt-BR">
+      {/* data-nosnippet: the hidden pt-BR copy must never surface in English search snippets
+          (SEO audit D01, H1). */}
+      <span data-l="pt" lang="pt-BR" data-nosnippet="">
         {tr}
       </span>
     </>
