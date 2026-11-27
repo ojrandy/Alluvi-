@@ -24,6 +24,7 @@ export const PT: Record<string, string> = {
   Wholesale: "Atacado",
   "Press Release": "Comunicado de imprensa",
   "(opens in a new tab)": "(abre em uma nova aba)",
+  "Join us on Telegram": "Junte-se a nós no Telegram",
   "Important notices": "Avisos importantes",
   "Alluvi home": "Página inicial da Alluvi",
 

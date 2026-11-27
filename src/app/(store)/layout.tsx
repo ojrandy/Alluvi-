@@ -4,6 +4,7 @@ import { AnnouncementBar } from "@/components/store/announcement-bar";
 import { SiteFooter } from "@/components/store/site-footer";
 import { SiteHeader } from "@/components/store/site-header";
 import { SmartsuppChat } from "@/components/store/smartsupp-chat";
+import { TelegramBubble } from "@/components/store/telegram-bubble";
 
 export default function StoreLayout({ children }: LayoutProps<"/">) {
   return (
@@ -21,6 +22,7 @@ export default function StoreLayout({ children }: LayoutProps<"/">) {
       </main>
       <SiteFooter />
       <CartDrawer />
+      <TelegramBubble />
       <SmartsuppChat />
     </>
   );

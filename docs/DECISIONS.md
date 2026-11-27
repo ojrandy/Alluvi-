@@ -197,7 +197,7 @@ scroll-progress keyframes) and CSS. No GSAP dependency (~70KB). Deliberate devia
 
 **Decision:** Load the client's Smartsupp snippet (`src/components/store/smartsupp-chat.tsx`) in the `(store)` layout only, never in `/admin`, with `next/script` `strategy="lazyOnload"` so it loads in browser idle time and never blocks LCP or checkout. The widget key is public (it ships to every browser), so it lives in code, not in env. No npm dependency.
 
-**Consequences:** Visitors' browsers contact `smartsuppchat.com`; the privacy/cookie copy should mention Smartsupp. Chats are handled in the client's Smartsupp dashboard, not in /admin. To remove it, delete the component and its one line in the store layout.
+**Consequences:** Visitors' browsers contact `smartsuppchat.com`; the privacy/cookie copy should mention Smartsupp. Chats are handled in the client's Smartsupp dashboard, not in /admin. To remove it, delete the component and its one line in the store layout. A Telegram bubble (`telegram-bubble.tsx`, a plain link with no script) sits bottom-left, mirroring the Smartsupp launcher bottom-right from its measured geometry (fixed, 12px from the edge, bottom 24px, 56px tall). If Smartsupp's offset changes in its dashboard, update `bottom-6 left-3` in that component to match.
 
 ## ADR-023: Standalone bundle deployed by rsync; migrations + seed run at app boot
 
